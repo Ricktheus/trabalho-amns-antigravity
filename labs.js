@@ -16,7 +16,15 @@
     accent: '#B4530A', bg: '#FFFFFF', deep: '#FFFFFF',
     d: ['#B4530A', '#0C7C7A', '#BC2A53', '#3B4CA6'],
     dSoft: ['rgba(180,83,10,0.13)', 'rgba(12,124,122,0.13)',
-            'rgba(188,42,83,0.13)', 'rgba(59,76,166,0.13)']
+            'rgba(188,42,83,0.13)', 'rgba(59,76,166,0.13)'],
+    track: 'rgba(28,25,23,0.09)', dashed: 'rgba(28,25,23,0.22)',
+    catRGB: [[180, 83, 10], [12, 124, 122], [188, 42, 83], [59, 76, 166]],
+    surfRGB: [247, 245, 240], dark: false
+  };
+  /* rgba() a partir de uma das cores da série categórica do tema ativo */
+  var series = (F && F.series) || function (i, alpha) {
+    var c = C.catRGB[i % C.catRGB.length];
+    return 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + alpha + ')';
   };
   var MONO = '"IBM Plex Mono", ui-monospace, Menlo, monospace';
 
@@ -504,10 +512,10 @@
         // Barra 2: Quem apresenta o sintoma (Evidência)
         ctx.fillStyle = C.muted;
         ctx.fillText('2. Quem tem o sintoma (π_k × p(S|k)):', 20, 95);
-        ctx.fillStyle = 'rgba(28,25,23,0.07)'; ctx.fillRect(20, 105, 420, 26);
+        ctx.fillStyle = C.track; ctx.fillRect(20, 105, 420, 26);
         ctx.fillStyle = C.d[0]; ctx.fillRect(20, 105, 420 * num1, 26);
         ctx.fillStyle = C.d[1]; ctx.fillRect(20 + 420 * num1, 105, 420 * num2, 26);
-        ctx.fillStyle = '#FFFFFF';
+        ctx.fillStyle = C.deep;
         ctx.fillText((num1 * 100).toFixed(1) + '%', 26, 122);
         ctx.fillText((num2 * 100).toFixed(1) + '%', 26 + 420 * num1, 122);
 
@@ -622,7 +630,7 @@
             var py = p.Y(density);
             var pw = p.S(bWidth);
             var ph = p.Y(0) - py;
-            ctx.fillStyle = 'rgba(180, 83, 10, 0.42)';
+            ctx.fillStyle = series(0, 0.42);
             ctx.fillRect(px + 1, py, pw - 2, ph);
           }
 
@@ -812,7 +820,7 @@
         ctx.fillText('÷ p(x_n), o denominador comum:', bx, by - 10);
         ctx.fillStyle = C.d[0]; ctx.fillRect(bx, by, bw * g1, bh);
         ctx.fillStyle = C.d[1]; ctx.fillRect(bx + bw * g1, by, bw * g2, bh);
-        ctx.fillStyle = '#FFFFFF'; ctx.font = '600 12px ' + MONO; ctx.textBaseline = 'middle';
+        ctx.fillStyle = C.deep; ctx.font = '600 12px ' + MONO; ctx.textBaseline = 'middle';
         ctx.fillText((g1 * 100).toFixed(1) + '%', bx + 9, by + bh / 2);
         ctx.textAlign = 'right';
         ctx.fillText((g2 * 100).toFixed(1) + '%', bx + bw - 9, by + bh / 2);
@@ -987,7 +995,7 @@
         // Linhas de conexão dos pontos ao centróide atribuído
         for (var i = 0; i < pts.length; i++) {
           var c = centers[labels[i]];
-          p.line([pts[i], c], 'rgba(28,25,23,0.22)', 1, [3, 3]);
+          p.line([pts[i], c], C.dashed, 1, [3, 3]);
           p.dot(pts[i][0], pts[i][1], 5, C.d[labels[i]], 0.9);
         }
 
@@ -1794,7 +1802,7 @@
         vis.innerHTML =
           '<div style="display:flex;align-items:center;gap:10px">' +
             '<span style="width:140px;font-family:var(--mono);font-size:12px;color:var(--fg)">ln p(X | θ): ' + total + '</span>' +
-            '<div style="flex:1;height:32px;background:rgba(28,25,23,0.06);display:flex;border:1px solid var(--line-strong);border-radius:3px;overflow:hidden">' +
+            '<div style="flex:1;height:32px;background:rgba(var(--ink-rgb),0.06);display:flex;border:1px solid var(--line-strong);border-radius:3px;overflow:hidden">' +
               '<div style="width:' + (lVal / 1.1) + '%;background:var(--accent);display:flex;align-items:center;justify-content:center;color:var(--deep);font-weight:600;font-size:12px;font-family:var(--mono)">ℒ(q, θ) = ' + lVal + '</div>' +
               '<div style="width:' + (klVal / 1.1) + '%;background:var(--m3);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:12px;font-family:var(--mono)">' + (klVal > 0 ? 'KL = ' + klVal : '') + '</div>' +
             '</div>' +
@@ -1944,7 +1952,7 @@
         p.clip();
 
         var el = M.ellipseFromCov(S, 2.0);
-        p.ellipse(0, 0, el.rx, el.ry, el.theta, C.accent, 'rgba(180, 83, 10, 0.13)');
+        p.ellipse(0, 0, el.rx, el.ry, el.theta, C.accent, C.dSoft[0]);
 
         // Eixos principais (autovetores)
         var cos = Math.cos(-el.theta);
@@ -2021,7 +2029,7 @@
         // Elipses de 1, 2 e 3 sigmas de Mahalanobis
         [1.0, 2.0, 3.0].forEach(function (ns) {
           var el = M.ellipseFromCov(S, ns);
-          p.ellipse(0, 0, el.rx, el.ry, el.theta, 'rgba(28,25,23,0.28)', ns === 1.0 ? 'rgba(180,83,10,0.10)' : null);
+          p.ellipse(0, 0, el.rx, el.ry, el.theta, C.lineStrong, ns === 1.0 ? C.dSoft[0] : null);
         });
 
         // Linha euclidiana reta
@@ -2345,12 +2353,12 @@
         outLL.textContent = (ll > 0 ? '+' : '') + ll.toFixed(2);
 
         if (cReg.checked) {
-          alertBox.style.background = 'rgba(12, 124, 122, 0.10)';
+          alertBox.style.background = 'rgba(var(--m2-rgb), 0.12)';
           alertBox.style.color = 'var(--m2)';
           alertBox.style.border = '1px solid var(--m2)';
           alertBox.textContent = '✓ reg_covar segura σ² no piso — ln L fica limitado';
         } else if (ll > LL_REF + 1) {
-          alertBox.style.background = 'rgba(188, 42, 83, 0.10)';
+          alertBox.style.background = 'rgba(var(--m3-rgb), 0.12)';
           alertBox.style.color = 'var(--m3)';
           alertBox.style.border = '1px solid var(--m3)';
           alertBox.textContent = '⚠ singularidade: ln L cresce sem limite (→ +∞)';
@@ -2389,8 +2397,8 @@
           '<div class="lab-panel" style="display:flex;flex-direction:column;align-items:center">' +
             '<canvas class="anom-cv" width="460" height="250"></canvas>' +
             '<div class="legend" style="margin-top:9px;justify-content:center">' +
-              '<span><i style="background:#EFC6AF"></i>normal: p(x) ≥ τ (mais escuro = mais denso)</span>' +
-              '<span><i style="background:#FBF0F0;border:1px solid var(--line-strong)"></i>anomalia: p(x) &lt; τ</span>' +
+              '<span><i class="sw-normal"></i>normal: p(x) ≥ τ (mais denso = mais forte)</span>' +
+              '<span><i class="sw-anom"></i>anomalia: p(x) &lt; τ</span>' +
               '<span><i class="line" style="background:var(--d3)"></i>fronteira p(x) = τ</span>' +
             '</div>' +
             '<p class="lab-caption">Mover <b>ln(τ)</b> desloca a fronteira: quanto maior o limiar, maior a área do plano classificada como anomalia.</p>' +
@@ -2435,12 +2443,12 @@
 
         var isAnomaly = logP < tau;
         if (isAnomaly) {
-          alertBox.style.background = 'rgba(188, 42, 83, 0.10)';
+          alertBox.style.background = 'rgba(var(--m3-rgb), 0.12)';
           alertBox.style.color = 'var(--m3)';
           alertBox.style.border = '1px solid var(--m3)';
           alertBox.textContent = '🚨 ALERTA: ANOMALIA DETECTADA! (ln p < ln τ)';
         } else {
-          alertBox.style.background = 'rgba(12, 124, 122, 0.10)';
+          alertBox.style.background = 'rgba(var(--m2-rgb), 0.12)';
           alertBox.style.color = 'var(--m2)';
           alertBox.style.border = '1px solid var(--m2)';
           alertBox.textContent = '✓ PADRÃO NORMAL (ln p ≥ ln τ)';
@@ -2453,15 +2461,27 @@
            do limiar. Desenhá-la é o que dá efeito visível ao slider ln(τ):
            antes, mover τ só trocava o texto do alerta. */
         var BAND = 0.085;                   // meia-espessura da curva de nível
+        var EDGE = C.catRGB[2];
         p.field(function (gx, gy) {
           return evaluateDensity([gx, gy]) - tau;    // zero exatamente na fronteira
         }, function (v) {
-          if (Math.abs(v) < BAND) return [188, 42, 83, 255];      // curva p(x) = τ
-          if (v > 0) {                    // região normal, sombreada pela densidade
+          if (Math.abs(v) < BAND) return [EDGE[0], EDGE[1], EDGE[2], 255];   // curva p(x) = τ
+          // Região normal sombreada pela densidade; região de anomalia com um
+          // véu da cor da fronteira. As duas rampas partem da superfície do
+          // painel, então cada tema tem a sua.
+          if (C.dark) {
+            if (v > 0) {
+              var td = Math.min(1, v / 6);
+              return [Math.round(27 + 88 * td), Math.round(22 + 55 * td), Math.round(27 + 5 * td), 255];
+            }
+            var ad = Math.min(1, -v / 5);
+            return [Math.round(27 + 24 * ad), Math.round(22 + 5 * ad), Math.round(27 + 9 * ad), 255];
+          }
+          if (v > 0) {
             var t = Math.min(1, v / 6);
             return [Math.round(247 - 8 * t), Math.round(245 - 47 * t), Math.round(240 - 86 * t), 255];
           }
-          var a = Math.min(1, -v / 5);    // região de anomalia, rosa muito claro
+          var a = Math.min(1, -v / 5);
           return [Math.round(252 - 2 * a), Math.round(244 - 14 * a), Math.round(244 - 16 * a), 255];
         });
         p.frame({ grid: true });

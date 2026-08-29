@@ -130,6 +130,47 @@
     if (btnAll) btnAll.dataset.mode = locked === 0 ? 'reset' : 'all';
   }
 
+  /* --------------------------------------------------- 2d. Tema claro/escuro */
+  var THEME_KEY = 'vld-tema';
+  var theme = 'light';
+
+  function readStoredTheme() {
+    try { return localStorage.getItem(THEME_KEY); } catch (e) { return null; }
+  }
+  function storeTheme(t) {
+    try { localStorage.setItem(THEME_KEY, t); } catch (e) { /* modo privado */ }
+  }
+
+  /* Troca os tokens no <html>. Todo o CSS já lê esses tokens; só os desenhos em
+     Canvas precisam ser refeitos, porque leram as cores uma vez ao iniciar. */
+  function applyTheme(t, redraw) {
+    theme = (t === 'dark') ? 'dark' : 'light';
+    var root = document.documentElement;
+    if (theme === 'dark') root.setAttribute('data-theme', 'dark');
+    else root.removeAttribute('data-theme');
+    storeTheme(theme);
+
+    var btn = document.getElementById('btn-theme');
+    if (btn) {
+      var dark = theme === 'dark';
+      btn.setAttribute('aria-pressed', dark ? 'true' : 'false');
+      var icon = btn.querySelector('.theme-icon');
+      var label = btn.querySelector('.theme-label');
+      if (icon) icon.textContent = dark ? '◑' : '◐';
+      if (label) label.textContent = dark ? 'Tema claro' : 'Tema escuro';
+    }
+
+    // as cores dos gráficos foram lidas dos tokens uma vez, ao carregar:
+    // relê-las agora é o que faz o Canvas acompanhar a troca de tema
+    if (window.FigCore && window.FigCore.readTheme) window.FigCore.readTheme();
+    if (redraw === false) return;      // no arranque, quem desenha é o init()
+    renderFigures();
+    if (window.LAB && slides[current]) window.LAB.onSlideEnter(slides[current]);
+    var live = document.getElementById('live');
+    if (live) live.textContent = 'Tema ' + (theme === 'dark' ? 'escuro' : 'claro') + ' ativado.';
+  }
+  function toggleTheme() { applyTheme(theme === 'dark' ? 'light' : 'dark'); }
+
   /* -------------------------------------------------------- 3. Navegação */
   function show(i, push) {
     i = Math.max(0, Math.min(slides.length - 1, i));
@@ -263,6 +304,7 @@
       case 'o': case 'O': overlay('overview'); break;
       case 'g': case 'G': overlay('glossary'); break;
       case 'f': case 'F': fullscreen(); break;
+      case 't': case 'T': toggleTheme(); break;
       case 'c': case 'C': document.body.classList.toggle('chrome-hidden'); break;
       case '?': case 'h': case 'H': overlay('help'); break;
       case 'Escape':
@@ -462,6 +504,7 @@
 
   /* ------------------------------------- 8. Figuras calculadas no navegador */
   function renderFigures() {
+    if (window.FigCore && window.FigCore.readTheme) window.FigCore.readTheme();
     var list = document.querySelectorAll('canvas[data-viz]');
     for (var i = 0; i < list.length; i++) {
       var cv = list[i], name = cv.dataset.viz;
@@ -590,6 +633,8 @@
     stage = document.getElementById('stage');
     wrap = document.getElementById('stage-wrap');
     slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+    // o tema escolhido na sessão anterior vale desde o primeiro quadro
+    applyTheme(readStoredTheme() || 'light', false);
     decorate();
     buildOverview();
     wireTabs();
@@ -604,6 +649,8 @@
     if (btnGlossary) btnGlossary.addEventListener('click', function () { overlay('glossary'); });
     document.getElementById('btn-help').addEventListener('click', function () { overlay('help'); });
     document.getElementById('btn-full').addEventListener('click', fullscreen);
+    var btnTheme = document.getElementById('btn-theme');
+    if (btnTheme) btnTheme.addEventListener('click', toggleTheme);
     document.querySelectorAll('.ov-close').forEach(function (b) {
       b.addEventListener('click', function () { overlay(b.dataset.close, false); });
     });

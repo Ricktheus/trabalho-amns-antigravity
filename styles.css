@@ -27,6 +27,7 @@
   --accent-soft: rgba(180, 83, 10, 0.10);
   --accent-line: rgba(180, 83, 10, 0.45);
   --accent-ink:  #FFFFFF;   /* texto sobre preenchimento de destaque */
+  --accent-hover:#96450A;
 
   /* Marcadores de bloco (uso funcional: identificar a seção) */
   --m0: #6D3FC4;   /* Bloco 0 · Nivelamento */
@@ -47,6 +48,87 @@
   --gap: 24px;
   --pad-x: 60px;
   --pad-y: 38px;
+
+  /* Componentes RGB, para traços e véus com opacidade variável */
+  --ink-rgb:    28, 25, 23;    /* a cor da tinta sobre o papel */
+  --accent-rgb: 180, 83, 10;
+  --m2-rgb:     12, 124, 122;
+  --m3-rgb:     188, 42, 83;
+  --m4-rgb:     59, 76, 166;
+  --chrome-rgb: 231, 227, 218; /* barra inferior e recortes sobre ela */
+
+  /* Superfícies derivadas */
+  --panel:      #FFFFFF;       /* caixas internas dos laboratórios */
+  --code-bg:    #FBF9F5;
+  --notes-bg:   #FBFAF7;
+  --warn-bg:    #FDF3E3;
+  --warn-fg:    #7A3B06;
+  --cover-glow: rgba(180, 83, 10, 0.09);
+  --stage-shadow: 0 1px 3px rgba(28,25,23,0.10), 0 12px 40px rgba(28,25,23,0.13);
+
+  /* Realce de sintaxe do Python */
+  --c-cm: #6B7F6B;   /* comentário */
+  --c-kw: #A32B54;   /* palavra-chave */
+  --c-st: #3F7A46;   /* string */
+  --c-nu: #3B4CA6;   /* número */
+  --c-pa: #0C6E6C;   /* parâmetro nomeado */
+}
+
+/* --------------------------------------------------------------------------
+   1b. TEMA ESCURO (alternado pelo botão "Tema" ou pela tecla T)
+   Só os tokens mudam: nenhuma regra abaixo precisa saber qual tema está ativo.
+   -------------------------------------------------------------------------- */
+html[data-theme="dark"] {
+  /* Base grafite-vinho */
+  --bg:          #131013;
+  --bg-deep:     #0D0A0D;
+  --surface:     #1B161B;
+  --surface-2:   #221B22;
+
+  --line:        rgba(238, 232, 229, 0.11);
+  --line-strong: rgba(238, 232, 229, 0.24);
+
+  --fg:          #EFE9E6;
+  --fg-muted:    #A99FA2;
+  --fg-dim:      #7B7276;
+
+  --accent:      #E9B44C;
+  --accent-soft: rgba(233, 180, 76, 0.14);
+  --accent-line: rgba(233, 180, 76, 0.42);
+  --accent-ink:  #131013;
+  --accent-hover:#F2C570;
+
+  --m0: #B388FF;
+  --m1: #E9B44C;
+  --m2: #5BC0BE;
+  --m3: #D96C82;
+  --m4: #9BA9E8;
+
+  --d1: #E9B44C;
+  --d2: #5BC0BE;
+  --d3: #D96C82;
+  --d4: #9BA9E8;
+
+  --ink-rgb:    238, 232, 229;
+  --accent-rgb: 233, 180, 76;
+  --m2-rgb:     91, 192, 190;
+  --m3-rgb:     217, 108, 130;
+  --m4-rgb:     155, 169, 232;
+  --chrome-rgb: 9, 7, 9;
+
+  --panel:      #0D0A0D;
+  --code-bg:    #0D0A0D;
+  --notes-bg:   #0F0C0F;
+  --warn-bg:    #3A2A12;
+  --warn-fg:    #F0D9A8;
+  --cover-glow: rgba(122, 26, 52, 0.30);
+  --stage-shadow: 0 0 0 1px rgba(238, 232, 229, 0.07);
+
+  --c-cm: #6E7F6E;
+  --c-kw: #D96C82;
+  --c-st: #8FBF8F;
+  --c-nu: #9BA9E8;
+  --c-pa: #7FB4B4;
 }
 
 * { box-sizing: border-box; }
@@ -76,7 +158,7 @@ html, body {
   transform-origin: center center;
   background: var(--bg);
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(28,25,23,0.10), 0 12px 40px rgba(28,25,23,0.13);
+  box-shadow: var(--stage-shadow);
   border-radius: 4px;
 }
 
@@ -221,7 +303,7 @@ ul.sub > li::before { content: "·"; position: absolute; left: 2px; color: var(-
    -------------------------------------------------------------------------- */
 .formula {
   position: relative;
-  background: linear-gradient(90deg, var(--accent-soft), rgba(180, 83, 10, 0.025));
+  background: linear-gradient(90deg, var(--accent-soft), rgba(var(--accent-rgb), 0.025));
   border-left: 2px solid var(--accent);
   padding: 13px 18px 13px 20px;
   overflow-x: auto; overflow-y: hidden;
@@ -266,7 +348,7 @@ ul.sub > li::before { content: "·"; position: absolute; left: 2px; color: var(-
 #katex-warning {
   display: none;
   position: fixed; left: 0; right: 0; bottom: 38px; z-index: 40;
-  background: #FDF3E3; color: #7A3B06;
+  background: var(--warn-bg); color: var(--warn-fg);
   font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em;
   padding: 7px 16px; text-align: center;
   border-top: 1px solid var(--accent-line);
@@ -286,8 +368,8 @@ body.no-katex #katex-warning { display: block; }
   white-space: nowrap;
 }
 .tag.intuicao { border-color: var(--accent-line); color: var(--accent); background: var(--accent-soft); }
-.tag.expansao { border-color: rgba(59,76,166,0.45); color: var(--m4); background: rgba(59,76,166,0.08); }
-.tag.aviso    { border-color: rgba(188,42,83,0.5);  color: var(--m3); background: rgba(188,42,83,0.07); }
+.tag.expansao { border-color: rgba(var(--m4-rgb),0.45); color: var(--m4); background: rgba(var(--m4-rgb),0.08); }
+.tag.aviso    { border-color: rgba(var(--m3-rgb),0.5);  color: var(--m3); background: rgba(var(--m3-rgb),0.07); }
 
 .note-box {
   border-left: 2px solid var(--line-strong);
@@ -317,6 +399,16 @@ figcaption b { color: var(--fg-muted); font-weight: 600; }
 .legend i { width: 10px; height: 10px; display: inline-block; flex: 0 0 auto; }
 .legend i.line { height: 2px; width: 16px; }
 .legend i.ring { background: none; border: 1.5px solid currentColor; border-radius: 50%; }
+/* Amostras da legenda do laboratório de anomalias: seguem os mesmos tons que
+   o campo desenha no canvas, em qualquer um dos dois temas. */
+.legend i.sw-normal {
+  background: color-mix(in srgb, var(--accent) 40%, var(--surface));
+  border: 1px solid var(--line);
+}
+.legend i.sw-anom {
+  background: color-mix(in srgb, var(--m3) 10%, var(--surface));
+  border: 1px solid var(--line-strong);
+}
 
 /* --------------------------------------------------------------------------
    8. DIAGRAMAS EM CSS
@@ -450,7 +542,7 @@ table.binmat th, table.binmat td {
 table.binmat th { color: var(--fg-dim); font-weight: 500; font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; }
 table.binmat td.one { color: var(--accent); background: var(--accent-soft); }
 table.binmat td.rowlab { text-align: left; color: var(--fg); font-family: var(--sans); font-size: 12.5px; }
-table.binmat tr.row-best td { background: rgba(180, 83, 10, 0.05); }
+table.binmat tr.row-best td { background: rgba(var(--accent-rgb), 0.05); }
 table.binmat .best-tag {
   font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.1em; text-transform: uppercase;
   color: var(--accent-ink); background: var(--accent);
@@ -487,7 +579,7 @@ table.cmp tbody th {
   color: var(--fg-muted); width: 19%;
 }
 table.cmp td { color: var(--fg-dim); }
-table.cmp tbody tr:hover td, table.cmp tbody tr:hover th { background: rgba(28,25,23,0.035); }
+table.cmp tbody tr:hover td, table.cmp tbody tr:hover th { background: rgba(var(--ink-rgb),0.035); }
 table.cmp col.k { }
 table.cmp .th-mark { display: inline-block; width: 8px; height: 8px; margin-right: 7px; vertical-align: 1px; }
 table.cmp .katex { font-size: 0.94em; }
@@ -496,7 +588,7 @@ table.cmp .katex { font-size: 0.94em; }
    10. CÓDIGO PYTHON
    -------------------------------------------------------------------------- */
 .codeblock {
-  background: #FBF9F5;
+  background: var(--code-bg);
   border: 1px solid var(--line);
   border-left: 2px solid var(--accent-line);
   border-radius: 3px;
@@ -507,12 +599,12 @@ table.cmp .katex { font-size: 0.94em; }
 .codeblock pre { margin: 0; font-family: var(--mono); font-size: 11.4px; line-height: 1.52; color: var(--fg-muted); white-space: pre; }
 /* Listagens longas: mesma legibilidade, cabendo na altura do slide. */
 .codeblock.dense pre { font-size: 10.4px; line-height: 1.45; }
-.codeblock .cm { color: #6B7F6B; font-style: italic; }   /* comentário */
-.codeblock .kw { color: #A32B54; }                        /* palavra-chave */
+.codeblock .cm { color: var(--c-cm); font-style: italic; }
+.codeblock .kw { color: var(--c-kw); }
 .codeblock .fn { color: var(--accent); }                  /* função/classe */
-.codeblock .st { color: #3F7A46; }                        /* string */
-.codeblock .nu { color: #3B4CA6; }                        /* número */
-.codeblock .pa { color: #0C6E6C; }                        /* parâmetro nomeado */
+.codeblock .st { color: var(--c-st); }
+.codeblock .nu { color: var(--c-nu); }
+.codeblock .pa { color: var(--c-pa); }
 
 /* Saída de console: o resultado real da execução do código ao lado */
 .console {
@@ -558,7 +650,7 @@ table.cmp .katex { font-size: 0.94em; }
   grid-template-columns: 7fr 5fr;
   grid-template-rows: 1fr auto;      /* conteúdo ocupa a altura; rodapé no pé */
   background:
-    radial-gradient(120% 90% at 0% 100%, rgba(180, 83, 10, 0.09), transparent 62%),
+    radial-gradient(120% 90% at 0% 100%, var(--cover-glow), transparent 62%),
     var(--bg);
 }
 .cover-main { padding: 56px 44px 26px 60px; display: flex; flex-direction: column; }
@@ -610,15 +702,15 @@ table.cmp .katex { font-size: 0.94em; }
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
   display: flex; align-items: center; gap: 14px;
   padding: 8px 16px;
-  background: linear-gradient(to top, rgba(231,227,218,0.97) 55%, rgba(231,227,218,0));
+  background: linear-gradient(to top, rgba(var(--chrome-rgb),0.97) 55%, rgba(var(--chrome-rgb),0));
   font-family: var(--mono); font-size: 11px; color: var(--fg-dim);
   transition: opacity .25s ease;
 }
 body.chrome-hidden #chrome { opacity: 0; pointer-events: none; }
 
-#progressbar { position: relative; flex: 1 1 auto; height: 3px; background: rgba(28,25,23,0.14); border-radius: 2px; }
+#progressbar { position: relative; flex: 1 1 auto; height: 3px; background: rgba(var(--ink-rgb),0.14); border-radius: 2px; }
 #progressfill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); width: 0; transition: width .18s ease; }
-#progressbar .seg { position: absolute; top: -3px; bottom: -3px; width: 1px; background: rgba(231,227,218,0.95); }
+#progressbar .seg { position: absolute; top: -3px; bottom: -3px; width: 1px; background: rgba(var(--chrome-rgb),0.95); }
 
 .btn {
   appearance: none; background: transparent; color: var(--fg-muted);
@@ -632,10 +724,14 @@ body.chrome-hidden #chrome { opacity: 0; pointer-events: none; }
 .btn.btn-primary {
   background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600;
 }
-.btn.btn-primary:hover { background: #96450A; border-color: #96450A; color: var(--accent-ink); }
+.btn.btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); color: var(--accent-ink); }
 .btn.btn-primary:disabled:hover { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 .btn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Botão de alternância de tema */
+#btn-theme .theme-icon { font-size: 12px; line-height: 1; vertical-align: -1px; }
+#btn-theme .theme-label { letter-spacing: 0.06em; }
 
 #counter { min-width: 118px; color: var(--fg-muted); letter-spacing: 0.06em; }
 #counter b { color: var(--accent); font-weight: 600; }
@@ -646,8 +742,8 @@ body.chrome-hidden #chrome { opacity: 0; pointer-events: none; }
    -------------------------------------------------------------------------- */
 #notes-panel {
   position: fixed; right: 0; top: 0; bottom: 0; width: 420px; z-index: 35;
-  background: #FBFAF7; border-left: 1px solid var(--line-strong);
-  box-shadow: -8px 0 30px rgba(28,25,23,0.10);
+  background: var(--notes-bg); border-left: 1px solid var(--line-strong);
+  box-shadow: -8px 0 30px rgba(var(--ink-rgb),0.10);
   padding: 22px 24px 60px; overflow-y: auto;
   transform: translateX(100%); transition: transform .22s ease;
 }
@@ -764,7 +860,7 @@ body.notes-open #notes-panel { transform: translateX(0); }
   background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent-line);
 }
 .badge-aprof {
-  background: rgba(59, 76, 166, 0.10); color: var(--m4); border: 1px solid rgba(59, 76, 166, 0.35);
+  background: rgba(var(--m4-rgb), 0.10); color: var(--m4); border: 1px solid rgba(var(--m4-rgb), 0.35);
 }
 
 /* --------------------------------------------------------------------------
@@ -839,7 +935,7 @@ body.notes-open #notes-panel { transform: translateX(0); }
   display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
 }
 .lab-stats-box {
-  background: #FFFFFF; border: 1px solid var(--line); border-radius: 3px;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 3px;
   padding: 10px 12px; font-size: 13px; color: var(--fg-muted);
   display: flex; flex-direction: column; gap: 4px;
 }
@@ -874,7 +970,7 @@ body.notes-open #notes-panel { transform: translateX(0); }
 .dec-sym { font-family: var(--mono); font-size: 32px; color: var(--accent); font-weight: 600; min-height: 44px; display: flex; align-items: center; }
 .dec-sym .katex-display { margin: 0; font-size: 32px; }
 .dec-nome { font-size: 18px; font-weight: 600; color: var(--fg); }
-.dec-box { font-size: 13.5px; line-height: 1.5; color: var(--fg-muted); background: #FFFFFF; padding: 10px 14px; border-left: 3px solid var(--line-strong); border-radius: 2px; }
+.dec-box { font-size: 13.5px; line-height: 1.5; color: var(--fg-muted); background: var(--panel); padding: 10px 14px; border-left: 3px solid var(--line-strong); border-radius: 2px; }
 .dec-box b { color: var(--fg); font-size: 11px; text-transform: uppercase; font-family: var(--mono); letter-spacing: 0.08em; display: block; margin-bottom: 4px; }
 .dec-box.dec-trad { border-left-color: var(--accent); }
 .dec-box.dec-ex { border-left-color: var(--m2); }
@@ -885,7 +981,7 @@ body.notes-open #notes-panel { transform: translateX(0); }
   display: flex; align-items: center; gap: 10px; font-size: 12px;
 }
 .prog-bar {
-  flex: 1 1 auto; height: 10px; background: rgba(28,25,23,0.10); border-radius: 2px; overflow: hidden;
+  flex: 1 1 auto; height: 10px; background: rgba(var(--ink-rgb),0.10); border-radius: 2px; overflow: hidden;
 }
 .prog-fill {
   height: 100%; width: 0%; background: var(--accent); transition: width 0.15s ease;

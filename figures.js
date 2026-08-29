@@ -9,30 +9,73 @@
   'use strict';
   var M = global.MLCore;
 
-  /* Paleta do tema claro. Espelha os tokens de styles.css: quando a folha de
-     estilo está disponível, os valores são lidos dela para que exista uma
-     única fonte de verdade para as cores. */
+  /* Paleta dos gráficos. Espelha os tokens de styles.css: os valores são lidos
+     da folha de estilo para que exista uma única fonte de verdade das cores.
+     `C` é sempre o MESMO objeto — labs.js guarda uma referência a ele — e
+     readTheme() reescreve seus campos quando o tema muda. */
   function token(name, fallback) {
     try {
       var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
       return v || fallback;
     } catch (e) { return fallback; }
   }
-  var C = {
-    fg: token('--fg', '#1B1917'),
-    muted: token('--fg-muted', '#45403B'),
-    dim: token('--fg-dim', '#756E68'),
-    line: 'rgba(28,25,23,0.14)', lineStrong: 'rgba(28,25,23,0.30)',
-    accent: token('--accent', '#B4530A'),
-    bg: token('--bg', '#FFFFFF'),
-    deep: '#FFFFFF',
-    d: [token('--d1', '#B4530A'), token('--d2', '#0C7C7A'),
-        token('--d3', '#BC2A53'), token('--d4', '#3B4CA6')],
-    gray: '#8A837D',
-    /* versões translúcidas das séries, para preenchimentos sobre fundo claro */
-    dSoft: ['rgba(180,83,10,0.13)', 'rgba(12,124,122,0.13)',
-            'rgba(188,42,83,0.13)', 'rgba(59,76,166,0.13)']
-  };
+  function isDark() {
+    try { return document.documentElement.getAttribute('data-theme') === 'dark'; }
+    catch (e) { return false; }
+  }
+  var C = {};
+  /* rgba() a partir de uma das cores da série do tema ativo */
+  function series(i, alpha) {
+    var c = C.catRGB[i % C.catRGB.length];
+    return 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + alpha + ')';
+  }
+  function readTheme() {
+    var dark = isDark();
+    var ink = token('--ink-rgb', dark ? '238, 232, 229' : '28, 25, 23');
+    var rgba = function (a) { return 'rgba(' + ink + ',' + a + ')'; };
+
+    C.fg = token('--fg', dark ? '#EFE9E6' : '#1B1917');
+    C.muted = token('--fg-muted', dark ? '#A99FA2' : '#45403B');
+    C.dim = token('--fg-dim', dark ? '#7B7276' : '#756E68');
+    C.accent = token('--accent', dark ? '#E9B44C' : '#B4530A');
+    C.bg = token('--bg', dark ? '#131013' : '#FFFFFF');
+    /* o "papel" atrás dos gráficos: halos de marcador e texto sobre séries */
+    C.deep = dark ? '#0D0A0D' : '#FFFFFF';
+    C.line = rgba(0.14);
+    C.lineStrong = rgba(0.30);
+    C.gray = dark ? '#6E666A' : '#8A837D';
+    C.d = [token('--d1', dark ? '#E9B44C' : '#B4530A'),
+           token('--d2', dark ? '#5BC0BE' : '#0C7C7A'),
+           token('--d3', dark ? '#D96C82' : '#BC2A53'),
+           token('--d4', dark ? '#9BA9E8' : '#3B4CA6')];
+    /* versões translúcidas das séries, para preenchimentos */
+    C.dSoft = dark
+      ? ['rgba(233,180,76,0.13)', 'rgba(91,192,190,0.13)',
+         'rgba(217,108,130,0.13)', 'rgba(155,169,232,0.13)']
+      : ['rgba(180,83,10,0.13)', 'rgba(12,124,122,0.13)',
+         'rgba(188,42,83,0.13)', 'rgba(59,76,166,0.13)'];
+
+    /* Detalhes de desenho que também dependem do tema */
+    C.dark = dark;
+    C.grid = rgba(dark ? 0.055 : 0.07);        // linhas de grade
+    C.boxBg = dark ? 'rgba(13,10,13,0.82)' : 'rgba(255,255,255,0.88)';
+    C.track = rgba(dark ? 0.10 : 0.09);        // trilho das barras
+    C.hair = rgba(0.22);                        // filetes de separação
+    C.dashed = rgba(dark ? 0.15 : 0.22);        // tracejados sobre o fundo
+    C.heatDot = dark ? '#0D0A0D' : C.fg;        // pontos sobre o mapa de calor
+    C.heatDotAlpha = dark ? 0.45 : 0.35;
+    C.onHeat = dark ? 'rgba(239,233,230,0.85)' : 'rgba(27,25,23,0.75)';
+    C.violet = dark ? '#C6A0DA' : '#6D3FC4';
+    C.violetSoft = dark ? 'rgba(198,160,218,0.09)' : 'rgba(109,63,196,0.10)';
+    /* componentes RGB da superfície dos painéis, para preencher com putImageData */
+    C.surfRGB = dark ? [27, 22, 27] : [247, 245, 240];
+    /* paleta categórica dos campos de rótulo (células de Voronoi) */
+    C.catRGB = dark
+      ? [[233, 180, 76], [91, 192, 190], [217, 108, 130], [155, 169, 232]]
+      : [[180, 83, 10], [12, 124, 122], [188, 42, 83], [59, 76, 166]];
+    return C;
+  }
+  readTheme();
   var MONO = '"IBM Plex Mono", ui-monospace, Menlo, monospace';
   var SANS = '"IBM Plex Sans", -apple-system, "Segoe UI", Roboto, sans-serif';
   var DPR = 2;
@@ -121,7 +164,7 @@
     var g = this.g, i, yTickW = 0;
     g.save();
     if (o.grid !== false) {
-      g.strokeStyle = 'rgba(28,25,23,0.07)'; g.lineWidth = 1;
+      g.strokeStyle = C.grid; g.lineWidth = 1;
       var xt = o.xticks || this.ticks(this.xlim, 5);
       var yt = o.yticks || this.ticks(this.ylim, 4);
       for (i = 0; i < xt.length; i++) {
@@ -247,7 +290,7 @@
     var px = this.X(x) + (o.dx || 0), py = this.Y(y) + (o.dy || 0);
     if (o.box) {
       var wpx = g.measureText(txt).width;
-      g.fillStyle = o.box === true ? 'rgba(255,255,255,0.88)' : o.box;
+      g.fillStyle = o.box === true ? C.boxBg : o.box;
       var bx = o.align === 'center' ? px - wpx / 2 - 4 : (o.align === 'right' ? px - wpx - 4 : px - 4);
       g.fillRect(bx, py - 8, wpx + 8, 16);
     }
@@ -349,7 +392,8 @@
     });
   }
 
-  global.FigCore = { Plot: Plot, panels: panels, subPlot: subPlot, C: C, MONO: MONO, SANS: SANS, DPR: DPR,
+  global.FigCore = { Plot: Plot, panels: panels, subPlot: subPlot, C: C, readTheme: readTheme, series: series,
+                     MONO: MONO, SANS: SANS, DPR: DPR,
     blobs3: blobs3, blobs4: blobs4, anisoData: anisoData, overlapData: overlapData,
     limitsData: limitsData, digitsData: digitsData, data: data, ANISO_T: ANISO_T };
 })(window);
@@ -360,7 +404,7 @@
 (function (global) {
   'use strict';
   var M = global.MLCore, F = global.FigCore;
-  var Plot = F.Plot, panels = F.panels, subPlot = F.subPlot, C = F.C, MONO = F.MONO;
+  var Plot = F.Plot, panels = F.panels, subPlot = F.subPlot, C = F.C, MONO = F.MONO, series = F.series;
   var VIZ = {};
 
   function limitsOf(X, m) {
@@ -383,7 +427,7 @@
       });
       p.clip();
       for (var i = 0; i < d.X.length; i++) {
-        p.dot(d.X[i][0], d.X[i][1], 2.6, mode === 'sup' ? C.d[d.y[i]] : '#8A837D', mode === 'sup' ? 0.82 : 0.80);
+        p.dot(d.X[i][0], d.X[i][1], 2.6, mode === 'sup' ? C.d[d.y[i]] : C.gray, mode === 'sup' ? 0.82 : 0.80);
       }
       if (mode === 'unsup') {
         // Contornos tracejados = fatores geradores latentes z_k, desconhecidos
@@ -391,7 +435,7 @@
           var pts = d.X.filter(function (_, i) { return d.y[i] === k; });
           var mx = pts.reduce(function (s, q) { return s + q[0]; }, 0) / pts.length;
           var my = pts.reduce(function (s, q) { return s + q[1]; }, 0) / pts.length;
-          p.ellipse(mx, my, 2.9, 2.9, 0, 'rgba(180,83,10,0.75)', null, [5, 4]);
+          p.ellipse(mx, my, 2.9, 2.9, 0, series(0, 0.75), null, [5, 4]);
           p.label(mx, my, 'z = ' + (k + 1) + ' ?', C.accent, { align: 'center', size: 10.5, box: true, dy: 0 });
         });
       }
@@ -475,17 +519,18 @@
     })();
     return 'Dois campos sobre os mesmos dois grupos parcialmente sobrepostos. À esquerda, o K-Means pinta apenas duas cores chapadas separadas por uma fronteira reta. À direita, a mistura gaussiana pinta um degradê contínuo: perto da fronteira a responsabilidade vale cerca de 0,5 e cresce suavemente até 1 no núcleo de cada componente.';
   };
-  /* Rampa de duas componentes: interpola do teal (t=0) ao âmbar (t=1).
-     Sobre fundo claro, o preenchimento entra com alfa baixo — as duas pontas
-     ficam como tintas suaves e o meio, cinza-neutro. */
+  /* Rampa de duas componentes: interpola do teal (t=0) ao âmbar (t=1),
+     nas cores da série do tema ativo, com alfa baixo. */
   function rampTwo(t) {
-    return [Math.round(12 + t * 168), Math.round(124 - t * 41), Math.round(122 - t * 112), 78];
+    var a = C.catRGB[1], b = C.catRGB[0];
+    return [Math.round(a[0] + t * (b[0] - a[0])),
+            Math.round(a[1] + t * (b[1] - a[1])),
+            Math.round(a[2] + t * (b[2] - a[2])),
+            C.dark ? 82 : 78];
   }
-  /* Paleta categórica em RGB para os campos de rótulo (células de Voronoi) */
-  var CAT_RGB = [[180, 83, 10], [12, 124, 122], [188, 42, 83], [59, 76, 166]];
   function catColor(alpha) {
     return function (v) {
-      var c = CAT_RGB[Math.round(v) % CAT_RGB.length];
+      var c = C.catRGB[Math.round(v) % C.catRGB.length];
       return [c[0], c[1], c[2], alpha];
     };
   }
@@ -509,7 +554,7 @@
       g.beginPath(); g.moveTo(p.X(-3.9), p.Y(0)); g.lineTo(p.X(3.9), p.Y(0)); g.stroke();
       [0, 1].forEach(function (k) {
         p.ellipse(mus[k][0], mus[k][1], 0.72, 0.72, 0, k ? C.d[1] : C.d[0], k ? C.dSoft[1] : C.dSoft[0]);
-        p.ellipse(mus[k][0], mus[k][1], 1.42, 1.42, 0, k ? 'rgba(12,124,122,0.45)' : 'rgba(180,83,10,0.45)', null, [4, 4]);
+        p.ellipse(mus[k][0], mus[k][1], 1.42, 1.42, 0, k ? series(1, 0.45) : series(0, 0.45), null, [4, 4]);
         p.label(mus[k][0], mus[k][1], 'μ' + (k + 1), k ? C.d[1] : C.d[0], { align: 'center', size: 11 });
       });
       // ponto x_n
@@ -519,7 +564,7 @@
       // barras de responsabilidade
       var by = p.h - 20, bw = 190;
       [[g1, C.d[0], 'γ_n1', 14], [g2, C.d[1], 'γ_n2', 14 + bw + 52]].forEach(function (b) {
-        g.fillStyle = 'rgba(28,25,23,0.09)'; g.fillRect(b[3], by, bw, 9);
+        g.fillStyle = C.track; g.fillRect(b[3], by, bw, 9);
         g.fillStyle = b[1]; g.fillRect(b[3], by, bw * b[0], 9);
         g.fillStyle = C.dim; g.font = '10px ' + MONO; g.textBaseline = 'bottom'; g.textAlign = 'left';
         g.fillText(b[2], b[3], by - 3);
@@ -713,7 +758,7 @@
 (function (global) {
   'use strict';
   var M = global.MLCore, F = global.FigCore, VIZ = global.VIZ, U = global.FigUtil;
-  var Plot = F.Plot, panels = F.panels, subPlot = F.subPlot, C = F.C, MONO = F.MONO;
+  var Plot = F.Plot, panels = F.panels, subPlot = F.subPlot, C = F.C, MONO = F.MONO, series = F.series;
 
   /* Ajuste da mistura de Bernoulli reaproveitado pelos slides 16, 19 e 20 */
   function bernFit() {
@@ -730,7 +775,7 @@
       g.fillStyle = 'rgb(' + t + ',' + t + ',' + t + ')';
       g.fillRect(x + c * cell, y + r * cell, cell + 0.5, cell + 0.5);
     }
-    g.strokeStyle = 'rgba(28,25,23,0.22)'; g.lineWidth = 1;
+    g.strokeStyle = C.hair; g.lineWidth = 1;
     g.strokeRect(x + 0.5, y + 0.5, 8 * cell, 8 * cell);
   }
 
@@ -761,7 +806,7 @@
       var idx = rc[0] * 8 + rc[1], v = mu[idx], yy = gy + 16 + i * 46;
       g.fillStyle = C.muted; g.font = '10.5px ' + MONO; g.textBaseline = 'alphabetic';
       g.fillText('d = ' + (idx + 1) + '  (lin ' + (rc[0] + 1) + ', col ' + (rc[1] + 1) + ')', bx, yy);
-      g.fillStyle = 'rgba(28,25,23,0.09)'; g.fillRect(bx, yy + 5, bw, 8);
+      g.fillStyle = C.track; g.fillRect(bx, yy + 5, bw, 8);
       g.fillStyle = v > 0.5 ? C.accent : C.d[1]; g.fillRect(bx, yy + 5, bw * v, 8);
       g.fillStyle = C.fg; g.font = '10.5px ' + MONO;
       g.fillText(v.toFixed(3), bx + bw + 9, yy + 13);
@@ -845,13 +890,14 @@
       return Math.exp(M.logSumExp(ls));
     }, function (v, mn, mx) {
       var t = Math.pow(v / (mx || 1), 0.42);        // gama < 1 realça as caudas
-      // tinta âmbar sobre papel: a opacidade cresce com a densidade
-      return [180, 83, 10, Math.round(12 + t * 216)];
+      // tinta de destaque sobre o papel: a opacidade cresce com a densidade
+      var a = C.catRGB[0];
+      return [a[0], a[1], a[2], Math.round(12 + t * 216)];
     });
-    for (var n = 0; n < a.X.length; n++) p.dot(a.X[n][0], a.X[n][1], 1.7, C.fg, 0.35);
+    for (var n = 0; n < a.X.length; n++) p.dot(a.X[n][0], a.X[n][1], 1.7, C.heatDot, C.heatDotAlpha);
     gm.mus.forEach(function (m, k) {
       var e = M.ellipseFromCov(gm.sigmas[k], 2);
-      p.ellipse(m[0], m[1], e.rx, e.ry, e.theta, 'rgba(27,25,23,0.75)', null);
+      p.ellipse(m[0], m[1], e.rx, e.ry, e.theta, C.onHeat, null);
       p.ring(m[0], m[1], 3, C.fg, 2);
     });
     p.unclip();
@@ -909,7 +955,7 @@
       for (var n = 0; n < a.X.length; n++) p.dot(a.X[n][0], a.X[n][1], 1.8, C.gray, 0.45);
       gm.mus.forEach(function (m, k) {
         var e = M.ellipseFromCov(gm.sigmas[k], 2);
-        p.ellipse(m[0], m[1], e.rx, e.ry, e.theta, isBest ? C.accent : C.d[1], isBest ? C.dSoft[0] : 'rgba(12,124,122,0.07)');
+        p.ellipse(m[0], m[1], e.rx, e.ry, e.theta, isBest ? C.accent : C.d[1], isBest ? C.dSoft[0] : series(1, 0.07));
         p.ring(m[0], m[1], 2.4, C.fg, 1.6);
       });
       p.unclip();
@@ -962,7 +1008,7 @@
     }
     gm.mus.forEach(function (m, k) {
       var e = M.ellipseFromCov(gm.sigmas[k], 2);
-      p2.ellipse(m[0], m[1], e.rx, e.ry, e.theta, '#6D3FC4', 'rgba(109,63,196,0.10)');
+      p2.ellipse(m[0], m[1], e.rx, e.ry, e.theta, C.violet, C.violetSoft);
       p2.ring(m[0], m[1], 3.4, C.fg, 2.2);
     });
     // destaca as amostras de fronteira (baixa confiança)

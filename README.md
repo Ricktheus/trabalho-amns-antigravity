@@ -3,7 +3,7 @@
 Material didático interativo e apresentação acadêmica em **73 slides HTML** sobre modelos de variáveis latentes discretas, K-Means, Misturas de Bernoulli, algoritmo EM e Gaussian Mixture Models.
 
 **Disciplina:** Aprendizado de Máquina Não Supervisionado — Bacharelado em IA  
-**Formato:** deck único linear com 73 slides (28 de núcleo + 45 laboratórios/aprofundamentos), em tema claro  
+**Formato:** deck único linear com 73 slides (28 de núcleo + 45 laboratórios/aprofundamentos), com tema claro e escuro alternáveis  
 **Rota de 60 minutos:** Marcada com a insígnia `[NÚCLEO]` para a banca avaliadora  
 **Percurso:**
 - **Bloco 0 · Nivelamento e fundamentos:** álgebra linear, decodificador de notação e Bayes (slides 01–07)
@@ -30,6 +30,12 @@ node build.js      # lê os fontes e regera apresentacao.html
 
 ---
 
+## Temas
+
+A apresentação abre em **tema claro**. O botão **Tema** na barra inferior — ou a tecla `T` — alterna para o tema escuro e de volta; a escolha fica guardada no navegador e vale para as próximas sessões. Os gráficos em Canvas relêem as cores dos tokens CSS a cada troca, então figuras e laboratórios acompanham o tema.
+
+---
+
 ## Como navegar e apresentar
 
 | Ação | Atalho |
@@ -41,6 +47,7 @@ node build.js      # lê os fontes e regera apresentacao.html
 | **Notas do apresentador** | `N` |
 | **Visão geral dos 73 slides** | `O` (com filtros: Todos / Núcleo / Aprofundamento) |
 | **Glossário de símbolos e termos** | `G` |
+| **Alternar tema claro / escuro** | `T` (ou o botão **Tema** na barra) |
 | **Tela cheia** | `F` |
 | **Ocultar barra de controles** | `C` |
 | **Tela de ajuda** | `?` ou `H` |
@@ -109,9 +116,9 @@ Os slides 19, 37 e 57 mostram, ao lado da listagem, a **saída real do console**
 | :--- | :--- |
 | **`apresentacao.html`** | **Versão de arquivo único independente (gerada por `build.js`).** |
 | `index.html` | Código-fonte dos 73 slides, notas, modais e estrutura semântica. |
-| `styles.css` | Design system: tokens do tema claro, tipografia IBM Plex e layouts de labs. |
+| `styles.css` | Design system: tokens dos temas claro e escuro, tipografia IBM Plex e layouts de labs. |
 | `viz.js` | Motor de machine learning (`MLCore`): K-Means, EM-Bernoulli, EM-GMM, Mahalanobis, Silhueta, BIC. |
-| `figures.js` | Camada de renderização gráfica em Canvas 2D (`FigCore`, `VIZ`). |
+| `figures.js` | Camada de renderização gráfica em Canvas 2D (`FigCore`, `VIZ`); lê as cores dos tokens CSS. |
 | `labs.js` | Controladores dos 24 laboratórios interativos com ciclo de vida e KaTeX integrado. |
 | `script.js` | Controle de navegação, micro-passos reveláveis, glossário e atalhos de teclado. |
 | `build.js` | Compilador que embute estilos e scripts em `apresentacao.html`. |
