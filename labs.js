@@ -401,7 +401,7 @@
 
         // Desenhar no canvas
         ctx.clearRect(0, 0, 460, 230);
-        var p = new F.Plot(cv, { w: 460, h: 230, xlim: [-1, 11], ylim: [0, 0.45], pad: { l: 30, r: 15, t: 20, b: 30 } });
+        var p = new F.Plot(cv, { w: 460, h: 230, xlim: [-1, 11], ylim: [0, 0.45], pad: { l: 48, r: 15, t: 20, b: 30 } });
         p.frame({ xlabel: 'x', ylabel: 'densidade p(x)' });
         p.clip();
 
@@ -540,7 +540,7 @@
       inst.el.innerHTML =
         '<div class="lab-grid-2">' +
           '<div class="lab-panel">' +
-            '<div class="lab-title">Processo Generativo: p(x) = ∑_z p(z) p(x|z)</div>' +
+            '<div class="lab-title">Processo generativo: ' + tex('p(\\mathbf{x}) = \\sum_z p(z)\\, p(\\mathbf{x} \\mid z)') + '</div>' +
             '<div class="node accent" style="margin-bottom:10px">' +
               '<b>Passo 1:</b> Sorteia componente <code>z ~ Cat(π)</code><br>' +
               '<b>Passo 2:</b> Sorteia amostra <code>x ~ 𝒩(μ_z, σ_z²)</code>' +
@@ -590,7 +590,7 @@
 
       function draw() {
         ctx.clearRect(0, 0, 460, 240);
-        var p = new F.Plot(cv, { w: 460, h: 240, xlim: [-8, 8], ylim: [0, 0.25], pad: { l: 28, r: 10, t: 15, b: 25 } });
+        var p = new F.Plot(cv, { w: 460, h: 240, xlim: [-8, 8], ylim: [0, 0.25], pad: { l: 46, r: 10, t: 15, b: 25 } });
         p.frame({ xlabel: 'x', ylabel: 'p(x)' });
         p.clip();
 
@@ -671,7 +671,7 @@
     build: function (inst) {
       inst.el.innerHTML =
         '<div class="lab-panel" style="max-width:800px;margin:0 auto">' +
-          '<div class="lab-title">Clique num componente para ativar o vetor 1-de-K (z ∈ {0,1}⁴):</div>' +
+          '<div class="lab-title">Clique num componente para ativar o vetor 1-de-K &nbsp;' + tex('\\mathbf{z} \\in \\{0,1\\}^4') + '</div>' +
           '<div class="onehot-selector" style="display:flex;gap:16px;justify-content:center;margin:16px 0">' +
             '<button type="button" class="btn btn-oh active" data-k="0">Componente 1 (k=1)</button>' +
             '<button type="button" class="btn btn-oh" data-k="1">Componente 2 (k=2)</button>' +
@@ -787,7 +787,7 @@
 
         /* Painel de cima: as duas densidades ponderadas e a leitura em x_n */
         var top = F.subPlot(ctx, { x: 0, y: 0, w: 410, h: 208 },
-          { xlim: [-4.6, 4.6], ylim: [0, 0.235], pad: { l: 44, r: 12, t: 14, b: 30 } });
+          { xlim: [-4.6, 4.6], ylim: [0, 0.235], pad: { l: 48, r: 12, t: 14, b: 30 } });
         top.frame({ xlabel: 'x', ylabel: 'densidade ponderada' });
         top.clip();
         for (var k = 0; k < 2; k++) {
@@ -1057,7 +1057,7 @@
       inst.el.innerHTML =
         '<div class="lab-grid-2">' +
           '<div class="lab-panel">' +
-            '<div class="lab-title">Derivação: Minimizando J(μ) = ∑_{i=1}^N (x_i − μ)²</div>' +
+            '<div class="lab-title">Minimizando ' + tex('J(\\mu) = \\sum_{i=1}^{N} (x_i - \\mu)^2') + '</div>' +
             '<div class="node accent" style="font-size:13px;line-height:1.6">' +
               '1. Derivada: <code>dJ/dμ = ∑ 2(x_i − μ)(−1) = −2 ∑ (x_i − μ)</code><br>' +
               '2. Igualando a zero: <code>−2 (∑ x_i − N·μ) = 0</code><br>' +
@@ -1097,7 +1097,7 @@
         outGrad.textContent = grad.toFixed(2) + (Math.abs(grad) < 0.1 ? ' (Zero!)' : '');
 
         ctx.clearRect(0, 0, 460, 230);
-        var p = new F.Plot(cv, { w: 460, h: 230, xlim: [0, 10], ylim: [20, 120], pad: { l: 30, r: 15, t: 15, b: 25 } });
+        var p = new F.Plot(cv, { w: 460, h: 230, xlim: [0, 10], ylim: [20, 120], pad: { l: 46, r: 15, t: 15, b: 25 } });
         p.frame({ xlabel: 'μ', ylabel: 'J(μ)' });
         p.clip();
 
@@ -1207,7 +1207,7 @@
       inst.el.innerHTML =
         '<div class="lab-grid-2">' +
           '<div class="lab-panel">' +
-            '<div class="lab-title">Semeadura Probabilística: p(x) ∝ D(x)²</div>' +
+            '<div class="lab-title">Semeadura probabilística: ' + tex('p(\\mathbf{x}) \\propto D(\\mathbf{x})^2') + '</div>' +
             '<div class="lab-btn-row">' +
               '<button type="button" class="btn btn-kmpp-spin">🎯 Sortear Próximo Centróide</button>' +
               '<button type="button" class="btn btn-kmpp-reset">Reiniciar</button>' +
@@ -1597,7 +1597,7 @@
     build: function (inst) {
       inst.el.innerHTML =
         '<div class="lab-panel" style="max-width:800px;margin:0 auto">' +
-          '<div class="lab-title">A Obstrução Algébrica: ln(a + b) ≠ ln(a) + ln(b)</div>' +
+          '<div class="lab-title">A obstrução algébrica: ' + tex('\\ln(a + b) \\neq \\ln a + \\ln b') + '</div>' +
           '<div class="slider-row" style="margin:14px 0"><label>Termo a:</label><input type="range" class="s-log-a" min="1" max="20" step="1" value="2"><span class="v-log-a">2</span></div>' +
           '<div class="slider-row" style="margin:14px 0"><label>Termo b:</label><input type="range" class="s-log-b" min="1" max="20" step="1" value="8"><span class="v-log-b">8</span></div>' +
           '<div class="lab-grid-2" style="margin-top:16px">' +
@@ -1770,7 +1770,7 @@
     build: function (inst) {
       inst.el.innerHTML =
         '<div class="lab-panel" style="max-width:820px;margin:0 auto">' +
-          '<div class="lab-title">Decomposição Fundamental: ln p(X) = ℒ(q, θ) + KL(q ∥ p(Z|X, θ))</div>' +
+          '<div class="lab-title">Decomposição fundamental: ' + tex('\\ln p(X) = \\mathcal{L}(q, \\boldsymbol\\theta) + \\mathrm{KL}(q \\,\\|\\, p(Z \\mid X, \\boldsymbol\\theta))') + '</div>' +
           '<div class="lab-btn-row" style="justify-content:center;margin:14px 0">' +
             '<button type="button" class="btn btn-bound-step">▶ Próximo Passo do EM</button>' +
             '<button type="button" class="btn btn-bound-rst">Reiniciar</button>' +
@@ -1893,7 +1893,7 @@
       inst.el.innerHTML =
         '<div class="lab-grid-2">' +
           '<div class="lab-panel">' +
-            '<div class="lab-title">Ajuste os parâmetros da matriz Σ:</div>' +
+            '<div class="lab-title">Ajuste os parâmetros da matriz ' + tex('\\boldsymbol\\Sigma') + '</div>' +
             '<div class="slider-row"><label>Desvio σ₁ (eixo X):</label><input type="range" class="s-cov-s1" min="0.5" max="3.0" step="0.1" value="2.0"><span class="v-cov-s1">2.0</span></div>' +
             '<div class="slider-row"><label>Desvio σ₂ (eixo Y):</label><input type="range" class="s-cov-s2" min="0.5" max="3.0" step="0.1" value="1.0"><span class="v-cov-s2">1.0</span></div>' +
             '<div class="slider-row"><label>Correlação ρ:</label><input type="range" class="s-cov-rho" min="-0.95" max="0.95" step="0.05" value="0.70"><span class="v-cov-rho">0.70</span></div>' +
@@ -1974,7 +1974,7 @@
       inst.el.innerHTML =
         '<div class="lab-grid-2">' +
           '<div class="lab-panel">' +
-            '<div class="lab-title">Mova o ponto probe (x₁, x₂) e compare as distâncias:</div>' +
+            '<div class="lab-title">Mova o ponto probe ' + tex('(x_1, x_2)') + ' e compare as distâncias</div>' +
             '<div class="slider-row"><label>Posição x₁:</label><input type="range" class="s-mah-x" min="-4" max="4" step="0.2" value="2.5"><span class="v-mah-x">2.5</span></div>' +
             '<div class="slider-row"><label>Posição x₂:</label><input type="range" class="s-mah-y" min="-4" max="4" step="0.2" value="1.0"><span class="v-mah-y">1.0</span></div>' +
             '<div class="lab-stats-box" style="margin-top:14px">' +
@@ -2201,7 +2201,7 @@
         var minB = Math.min.apply(null, bics) - 50;
         var maxB = Math.max.apply(null, bics) + 50;
 
-        var p = new F.Plot(cv, { w: 460, h: 240, xlim: [0.5, 6.5], ylim: [minB, maxB], pad: { l: 45, r: 15, t: 15, b: 25 } });
+        var p = new F.Plot(cv, { w: 460, h: 240, xlim: [0.5, 6.5], ylim: [minB, maxB], pad: { l: 56, r: 15, t: 15, b: 25 } });
         p.frame({ xlabel: 'Número de Componentes K', ylabel: 'Score BIC (menor é melhor)' });
         p.clip();
 
@@ -2377,7 +2377,7 @@
       inst.el.innerHTML =
         '<div class="lab-grid-2">' +
           '<div class="lab-panel">' +
-            '<div class="lab-title">Arraste a amostra de teste x_probe e ajuste o limiar τ:</div>' +
+            '<div class="lab-title">Arraste a amostra de teste e ajuste o limiar ' + tex('\\tau') + '</div>' +
             '<div class="slider-row"><label>Posição x₁:</label><input type="range" class="s-anom-x" min="-6" max="6" step="0.2" value="4.5"><span class="v-anom-x">4.5</span></div>' +
             '<div class="slider-row"><label>Posição x₂:</label><input type="range" class="s-anom-y" min="-6" max="6" step="0.2" value="-3.0"><span class="v-anom-y">-3.0</span></div>' +
             '<div class="slider-row"><label>Limiar ln(τ):</label><input type="range" class="s-anom-tau" min="-16" max="-3" step="0.5" value="-9.0"><span class="v-anom-tau">-9.0</span></div>' +

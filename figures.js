@@ -118,7 +118,7 @@
   /* Moldura com eixos rotulados, grade discreta e marcações numéricas */
   Plot.prototype.frame = function (o) {
     o = o || {};
-    var g = this.g, i;
+    var g = this.g, i, yTickW = 0;
     g.save();
     if (o.grid !== false) {
       g.strokeStyle = 'rgba(28,25,23,0.07)'; g.lineWidth = 1;
@@ -136,7 +136,13 @@
       if (o.showTicks !== false) {
         for (i = 0; i < xt.length; i++) g.fillText(fmt(xt[i]), this.X(xt[i]), this.pad.t + this.ih + 6);
         g.textAlign = 'right'; g.textBaseline = 'middle';
-        for (i = 0; i < yt.length; i++) g.fillText(fmt(yt[i]), this.pad.l - 6, this.Y(yt[i]));
+        for (i = 0; i < yt.length; i++) {
+          var lab = fmt(yt[i]);
+          // guarda a marcação mais larga: o rótulo do eixo y se posiciona à
+          // esquerda dela, em vez de sobrepô-la num x fixo
+          yTickW = Math.max(yTickW, g.measureText(lab).width);
+          g.fillText(lab, this.pad.l - 6, this.Y(yt[i]));
+        }
       }
     }
     g.strokeStyle = C.lineStrong; g.lineWidth = 1;
@@ -146,7 +152,8 @@
       g.fillText(o.xlabel, this.pad.l + this.iw / 2, this.h - 1);
     }
     if (o.ylabel) {
-      g.save(); g.translate(9, this.pad.t + this.ih / 2); g.rotate(-Math.PI / 2);
+      var lx = Math.max(3, Math.min(9, this.pad.l - 6 - yTickW - 12));
+      g.save(); g.translate(lx, this.pad.t + this.ih / 2); g.rotate(-Math.PI / 2);
       g.fillStyle = C.muted; g.font = '10.5px ' + MONO; g.textAlign = 'center'; g.textBaseline = 'top';
       g.fillText(o.ylabel, 0, 0); g.restore();
     }
