@@ -35,26 +35,25 @@
     <div class="rule" aria-hidden="true"></div>
     <p class="sub">Material autodidático completo em 73 slides: dos fundamentos de álgebra linear e probabilidade ao particionamento geométrico e à inferência estatística com o algoritmo EM.</p>
     <div style="flex:1 1 auto"></div>
-    <div class="cover-map" aria-label="Percurso da apresentação">
-      <div class="mrow"><i class="dot" style="background:var(--m0)"></i> Bloco 0 · Nivelamento &nbsp;<span style="color:var(--line-strong)">→</span>&nbsp; Álgebra linear, notação e Bayes (slides 01–07)</div>
-      <div class="mrow"><i class="dot" style="background:var(--m1)"></i> Bloco 1 · Henrique &nbsp;<span style="color:var(--line-strong)">→</span>&nbsp; Variáveis latentes e 1-de-K (slides 08–21)</div>
-      <div class="mrow"><i class="dot" style="background:var(--m2)"></i> Bloco 2 · Lucas &nbsp;<span style="color:var(--line-strong)">→</span>&nbsp; K-Means e algoritmo de Lloyd (slides 22–40)</div>
-      <div class="mrow"><i class="dot" style="background:var(--m3)"></i> Bloco 3 · Antonio &nbsp;<span style="color:var(--line-strong)">→</span>&nbsp; Misturas de Bernoulli e algoritmo EM (slides 41–58)</div>
-      <div class="mrow"><i class="dot" style="background:var(--m4)"></i> Bloco 4 · Bianca &nbsp;<span style="color:var(--line-strong)">→</span>&nbsp; Gaussian Mixture Models e comparação (slides 59–73)</div>
+    <div class="cover-stats" aria-label="Conteúdo do material">
+      <div class="cstat"><b>73</b><span>slides<br>(28 de núcleo)</span></div>
+      <div class="cstat"><b>24</b><span>laboratórios<br>interativos</span></div>
+      <div class="cstat"><b>4</b><span>implementações<br>em Python</span></div>
+      <div class="cstat"><b>60</b><span>minutos<br>de rota núcleo</span></div>
     </div>
   </div>
   <div class="cover-side">
     <div>
-      <div class="eyebrow">Apresentação · Rota de 60 min (28 slides de núcleo)</div>
+      <div class="eyebrow">Percurso da apresentação</div>
       <ul class="team">
-        <li><i class="bar" style="background:var(--m1)"></i><span class="nm">Henrique Matheus</span><span class="tm">Bloco 1</span></li>
-        <li><i class="bar" style="background:var(--m2)"></i><span class="nm">Lucas Nogueira</span><span class="tm">Bloco 2</span></li>
-        <li><i class="bar" style="background:var(--m3)"></i><span class="nm">Antonio Carlos</span><span class="tm">Bloco 3</span></li>
-        <li><i class="bar" style="background:var(--m4)"></i><span class="nm">Bianca Visco</span><span class="tm">Bloco 4</span></li>
+        <li><i class="bar" style="background:var(--m0)"></i><span class="nm">Bloco 0 · Nivelamento<em>Álgebra linear, notação e Bayes</em></span><span class="tm">01–07</span></li>
+        <li><i class="bar" style="background:var(--m1)"></i><span class="nm">Bloco 1 · Fundamentos<em>Variáveis latentes e 1-de-K</em></span><span class="tm">08–21</span></li>
+        <li><i class="bar" style="background:var(--m2)"></i><span class="nm">Bloco 2 · K-Means<em>Lloyd, escolha de K e limitações</em></span><span class="tm">22–40</span></li>
+        <li><i class="bar" style="background:var(--m3)"></i><span class="nm">Bloco 3 · Bernoulli<em>Dados binários e algoritmo EM</em></span><span class="tm">41–58</span></li>
+        <li><i class="bar" style="background:var(--m4)"></i><span class="nm">Bloco 4 · GMM<em>Covariâncias, BIC e comparação</em></span><span class="tm">59–73</span></li>
       </ul>
     </div>
     <div class="meta">
-      73 slides (28 núcleo + 45 aprofundamentos/labs)<br>
       Bishop · Murphy · scikit-learn<br>
       <span style="color:var(--fg-dim)">Pressione <b style="color:var(--accent)">?</b> para ajuda ou <b style="color:var(--accent)">G</b> para o Glossário</span>
     </div>
@@ -119,24 +118,26 @@
          data-ref="Probabilidade Condicional e Regra da Soma">
   <h2 class="s-title">Probabilidade conjunta, condicional e a lei da probabilidade total</h2>
   <div class="s-body">
-    <div class="c6 stack">
-      <div class="eyebrow accent">Regras Fundamentais da Probabilidade</div>
-      <div class="formula">
-        <span class="formula-label">1. Regra do Produto</span>
-        <span class="tex">\[ p(\mathbf{x}, z) = p(z)\, p(\mathbf{x}\mid z) \]</span>
-        <span class="plain">p(x, z) = p(z) · p(x | z)</span>
-      </div>
-      <div class="formula">
-        <span class="formula-label">2. Regra da Soma (Marginalização)</span>
-        <span class="tex">\[ p(\mathbf{x}) = \sum_{z} p(\mathbf{x}, z) = \sum_{z} p(z)\, p(\mathbf{x}\mid z) \]</span>
-        <span class="plain">p(x) = Σ_z p(x, z) = Σ_z p(z) · p(x | z)</span>
-      </div>
-      <div class="note-box intuicao">
-        <span class="tag intuicao">intuição</span>
-        Para descobrir a probabilidade de observar um dado \(\mathbf{x}\), somamos sobre todos os cenários possíveis da causa oculta \(z\).
+    <div class="c12">
+      <div class="eyebrow accent" style="margin-bottom:8px">Regras fundamentais da probabilidade</div>
+      <div class="formula-row">
+        <div class="formula sm">
+          <span class="formula-label">1. Regra do produto</span>
+          <span class="tex">\[ p(\mathbf{x}, z) = p(z)\, p(\mathbf{x}\mid z) \]</span>
+          <span class="plain">p(x, z) = p(z) · p(x | z)</span>
+        </div>
+        <div class="formula sm">
+          <span class="formula-label">2. Regra da soma (marginalização)</span>
+          <span class="tex">\[ p(\mathbf{x}) = \sum_{z} p(\mathbf{x}, z) = \sum_{z} p(z)\, p(\mathbf{x}\mid z) \]</span>
+          <span class="plain">p(x) = Σ_z p(x, z) = Σ_z p(z) · p(x | z)</span>
+        </div>
+        <div class="note-box intuicao">
+          <span class="tag intuicao">intuição</span>
+          Para descobrir a probabilidade de observar \(\mathbf{x}\), somamos sobre todos os cenários possíveis da causa oculta \(z\).
+        </div>
       </div>
     </div>
-    <div class="c6 stack">
+    <div class="c12">
       <div data-lab="lab-bayes-intro"></div>
     </div>
   </div>
@@ -561,46 +562,66 @@
          data-ref="Implementação em Python puro (NumPy)">
   <h2 class="s-title">Código Python: calculando responsabilidades \(\gamma_{nk}\) do zero</h2>
   <div class="s-body">
-    <div class="c12">
-      <div class="codeblock" style="max-height:460px;overflow-y:auto">
+    <div class="c7">
+      <div class="codeblock">
 <pre><span class="kw">import</span> numpy <span class="kw">as</span> np
 
 <span class="kw">def</span> <span class="fn">compute_responsibilities</span>(X, pis, mus, sigmas):
-    <span class="st">"""
-    Calcula as responsabilidades gamma_nk pelo Teorema de Bayes puro em NumPy.
-    X: matriz (N, D) | pis: vetor (K,) | mus: (K, D) | sigmas: (K, D, D)
-    Retorna: gamma de formato (N, K), onde cada linha soma 1.0
-    """</span>
+    <span class="cm"># X: (N, D) | pis: (K,) | mus: (K, D) | sigmas: (K, D, D)</span>
+    <span class="cm"># Retorna gamma (N, K), com cada linha somando 1.0</span>
     N, D = X.shape
     K = len(pis)
     likelihoods = np.zeros((N, K))
-    
-    <span class="cm"># 1. Avalia a verossimilhança gaussiana condicional p(x_n | theta_k) para cada componente</span>
+
+    <span class="cm"># 1. Verossimilhança gaussiana p(x_n | theta_k) por componente</span>
     <span class="kw">for</span> k <span class="kw">in</span> range(K):
-        diff = X - mus[k]  <span class="cm"># (N, D)</span>
+        diff = X - mus[k]                        <span class="cm"># (N, D)</span>
         inv_sigma = np.linalg.inv(sigmas[k])
         det_sigma = np.linalg.det(sigmas[k])
-        
-        <span class="cm"># Distância quadrática de Mahalanobis: diag(diff @ inv_sigma @ diff.T)</span>
+        <span class="cm"># Mahalanobis²: diag(diff @ inv_sigma @ diff.T)</span>
         dist_sq = np.sum(diff @ inv_sigma * diff, axis=<span class="nu">1</span>)
         norm_const = <span class="nu">1.0</span> / np.sqrt(((<span class="nu">2</span> * np.pi) ** D) * det_sigma)
         likelihoods[:, k] = norm_const * np.exp(-<span class="nu">0.5</span> * dist_sq)
-    
+
     <span class="cm"># 2. Multiplica pelo prior: numerador = pi_k * p(x_n | theta_k)</span>
-    weighted = likelihoods * pis  <span class="cm"># broadcasting (N, K)</span>
-    
-    <span class="cm"># 3. Normaliza pela evidência marginal p(x_n): soma sobre todos os K componentes</span>
+    weighted = likelihoods * pis                 <span class="cm"># broadcasting (N, K)</span>
+
+    <span class="cm"># 3. Normaliza pela evidência p(x_n) = soma sobre os K componentes</span>
     evidence = np.sum(weighted, axis=<span class="nu">1</span>, keepdims=<span class="kw">True</span>)
-    gamma = weighted / evidence  <span class="cm"># garante que sum_k gamma_nk = 1.0 para todo n</span>
-    
+    gamma = weighted / evidence                  <span class="cm"># sum_k gamma_nk = 1.0</span>
     <span class="kw">return</span> gamma
 </pre>
+      </div>
+    </div>
+    <div class="c5 stack tight">
+      <div class="console">
+        <div class="console-bar">Saída do console · Python 3 + NumPy</div>
+<pre><span class="pr">&gt;&gt;&gt; </span>X = np.array([[-1.5, 0.2], [0.0, 0.0],
+<span class="pr">... </span>              [ 1.4, -0.3], [2.6, 1.1]])
+<span class="pr">&gt;&gt;&gt; </span>pis    = np.array([0.4, 0.6])
+<span class="pr">&gt;&gt;&gt; </span>mus    = np.array([[-1.5, 0.0], [1.5, 0.0]])
+<span class="pr">&gt;&gt;&gt; </span>sigmas = np.array([np.eye(2), 1.5 * np.eye(2)])
+<span class="pr">&gt;&gt;&gt; </span>gamma = compute_responsibilities(X, pis, mus, sigmas)
+
+<span class="pr">&gt;&gt;&gt; </span>gamma.round(3)
+<span class="ou">array([[0.952, 0.048],
+       [0.407, 0.593],
+       [0.015, 0.985],
+       [0.   , 1.   ]])</span>
+
+<span class="pr">&gt;&gt;&gt; </span>gamma.sum(axis=1)
+<span class="ou">array([1., 1., 1., 1.])</span>
+</pre>
+      </div>
+      <div class="note-box intuicao">
+        <span class="tag intuicao">leitura</span>
+        A amostra \((-1{,}5,\ 0{,}2)\) pertence com <b>95,2%</b> ao componente 1; \((0,\ 0)\) fica na fronteira (<b>40,7% / 59,3%</b>) — é exatamente essa incerteza que o K-Means descarta. Toda linha soma 1,0 por construção.
       </div>
     </div>
   </div>
   <div class="slide-notes" hidden>
     <h4>Código Didático</h4>
-    <p>Explique cada uma das 3 etapas do código: avaliação da densidade gaussiana multivariada, ponderação pelo prior \(\pi_k\) e divisão pela evidência para fechar a probabilidade posterior em 1.0.</p>
+    <p>Explique cada uma das 3 etapas do código: avaliação da densidade gaussiana multivariada, ponderação pelo prior \(\pi_k\) e divisão pela evidência para fechar a probabilidade posterior em 1.0. A saída ao lado é o resultado real da execução deste código.</p>
   </div>
 </section>
 
@@ -665,41 +686,19 @@
       <div class="arrow-down" aria-hidden="true">↓</div>
       <div class="node" style="border-color:var(--m2)">
         <div class="n-title" style="color:var(--m2)">A seguir · Bloco 2</div>
-        <b style="font-size:15px">Lucas Nogueira</b><br>
+        <b style="font-size:15px">K-Means Clustering</b><br>
         <span style="font-family:var(--mono);font-size:11.5px;color:var(--fg-dim)">K-Means Clustering — Lloyd, escolha de \(K\) e limitações</span>
-      </div>
-    </div>
-    <div class="c12">
-      <div class="quick-check">
-        <div class="quick-check-title">⚡ Checagem rápida de fixação</div>
-        <div class="qc-grid">
-          <div class="qc-card">
-            <div class="qc-q">1. O que acontece com a soma \(\sum_k \gamma_{nk}\) para qualquer amostra?</div>
-            <button type="button" class="qc-btn">Ver resposta</button>
-            <div class="qc-ans">Vale estritamente 1.0, pois o denominador normaliza a soma das probabilidades a posteriori.</div>
-          </div>
-          <div class="qc-card">
-            <div class="qc-q">2. Qual a diferença fundamental entre \(\mathbf{x}\) e \(\mathbf{z}\)?</div>
-            <button type="button" class="qc-btn">Ver resposta</button>
-            <div class="qc-ans">\(\mathbf{x}\) é mensurado diretamente (observado); \(\mathbf{z}\) é a causa oculta que inferimos por Bayes.</div>
-          </div>
-          <div class="qc-card">
-            <div class="qc-q">3. Por que usar a codificação 1-de-K?</div>
-            <button type="button" class="qc-btn">Ver resposta</button>
-            <div class="qc-ans">Porque permite escrever \(p(\mathbf{z}) = \prod \pi_k^{z_k}\), facilitando derivações analíticas.</div>
-          </div>
-        </div>
       </div>
     </div>
   </div>
   <div class="slide-notes" hidden>
     <h4>Passagem de bastão [13:00 – 15:00]</h4>
-    <p class="fala">"Para apresentar o K-Means Clustering, passo a palavra ao meu colega Lucas Nogueira. Muito obrigado!"</p>
+    <p class="fala">"Encerro aqui o Bloco 1 e passo a palavra para o Bloco 2, sobre K-Means Clustering. Muito obrigado!"</p>
   </div>
 </section>
 
 <!-- ====================================================================== -->
-<!-- BLOCO 2 — LUCAS NOGUEIRA                                               -->
+<!-- BLOCO 2 — K-MEANS CLUSTERING                                           -->
 <!-- ====================================================================== -->
 
 <!-- ============================== SLIDE 22 ============================== -->
@@ -729,7 +728,7 @@
   </div>
   <div class="slide-notes" hidden>
     <h4>Fala sugerida [15:00 – 17:00]</h4>
-    <p class="fala">"Olá a todos, sou o Lucas Nogueira e apresentarei o K-Means. O objetivo é particionar \(N\) observações em \(K\) clusters homogêneos representados por centróides \(\mu_k\). Usamos uma atribuição rígida \(r_{nk} \in \{0, 1\}\)."</p>
+    <p class="fala">"Damos início ao Bloco 2, sobre K-Means. O objetivo é particionar \(N\) observações em \(K\) clusters homogêneos representados por centróides \(\mu_k\). Usamos uma atribuição rígida \(r_{nk} \in \{0, 1\}\)."</p>
   </div>
 </section>
 
@@ -804,14 +803,17 @@
       </ul>
     </div>
     <div class="c5 stack center">
-      <div class="diagram" role="img" aria-label="Ciclo do algoritmo de Lloyd">
-        <div class="node dim"><div class="n-title">1 · Inicializar</div>\(K\) centróides \(\boldsymbol\mu_k^{(0)}\)</div>
+      <div class="diagram steps-flow" role="img" aria-label="Ciclo do algoritmo de Lloyd: inicializar, atribuir, atualizar e testar a convergência; os passos 2 e 3 se repetem em laço">
+        <div class="node"><div class="n-title">1 · Inicializar</div>\(K\) centróides \(\boldsymbol\mu_k^{(0)}\)</div>
         <div class="arrow-down" aria-hidden="true">↓</div>
-        <div class="node accent"><div class="n-title">2 · Atribuir \(r_{nk}\)</div>centróide mais próximo</div>
+        <div class="loop-wrap">
+          <span class="loop-tag" aria-hidden="true">laço</span>
+          <div class="node"><div class="n-title">2 · Atribuir \(r_{nk}\)</div>cada ponto vai ao centróide mais próximo</div>
+          <div class="arrow-down" aria-hidden="true">↓</div>
+          <div class="node"><div class="n-title">3 · Atualizar \(\boldsymbol\mu_k\)</div>cada centróide vira a média dos seus pontos</div>
+        </div>
         <div class="arrow-down" aria-hidden="true">↓</div>
-        <div class="node accent"><div class="n-title">3 · Atualizar \(\boldsymbol\mu_k\)</div>média dos pontos atribuídos</div>
-        <div class="arrow-down" aria-hidden="true">↓</div>
-        <div class="node"><div class="n-title">4 · Convergiu?</div>repete até estabilizar</div>
+        <div class="node"><div class="n-title">4 · Convergiu?</div>se algum \(r_{nk}\) mudou, volta ao passo 2</div>
       </div>
     </div>
   </div>
@@ -1115,48 +1117,72 @@
          data-ref="Implementação Completa do Algoritmo de Lloyd em Python">
   <h2 class="s-title">Código Python: K-Means do zero em 25 linhas de NumPy</h2>
   <div class="s-body">
-    <div class="c12">
-      <div class="codeblock" style="max-height:460px;overflow-y:auto">
+    <div class="c7">
+      <div class="codeblock dense">
 <pre><span class="kw">import</span> numpy <span class="kw">as</span> np
 
 <span class="kw">class</span> <span class="fn">KMeansScratch</span>:
     <span class="kw">def</span> <span class="fn">__init__</span>(self, n_clusters=<span class="nu">3</span>, max_iter=<span class="nu">100</span>, tol=<span class="nu">1e-4</span>):
-        self.K = n_clusters
-        self.max_iter = max_iter
-        self.tol = tol
+        self.K, self.max_iter, self.tol = n_clusters, max_iter, tol
 
     <span class="kw">def</span> <span class="fn">fit</span>(self, X):
         N, D = X.shape
-        <span class="cm"># 1. Inicialização aleatória dos centróides</span>
+        <span class="cm"># Inicialização: K amostras sorteadas como centróides</span>
         rng = np.random.default_rng(<span class="nu">42</span>)
         self.centroids = X[rng.choice(N, self.K, replace=<span class="kw">False</span>)]
-        
+
         <span class="kw">for</span> it <span class="kw">in</span> range(self.max_iter):
-            <span class="cm"># PASSO 1 (Atribuição): calcula distâncias de todos os pontos aos K centróides</span>
-            <span class="cm"># diff tem formato (N, K, D) via broadcasting</span>
+            <span class="cm"># PASSO 1 (Atribuição): distância de cada ponto a cada centróide</span>
             diff = X[:, np.newaxis, :] - self.centroids[np.newaxis, :, :]
-            dist_sq = np.sum(diff ** <span class="nu">2</span>, axis=<span class="nu">2</span>)  <span class="cm"># (N, K)</span>
+            dist_sq = np.sum(diff ** <span class="nu">2</span>, axis=<span class="nu">2</span>)      <span class="cm"># (N, K)</span>
             self.labels = np.argmin(dist_sq, axis=<span class="nu">1</span>)  <span class="cm"># r_nk rígido</span>
-            
-            <span class="cm"># PASSO 2 (Atualização): recalcula cada centróide como a média aritmética</span>
+
+            <span class="cm"># PASSO 2 (Atualização): centróide = média dos pontos do cluster</span>
             new_centroids = np.array([
-                X[self.labels == k].mean(axis=<span class="nu">0</span>) <span class="kw">if</span> np.any(self.labels == k) <span class="kw">else</span> self.centroids[k]
-                <span class="kw">for</span> k <span class="kw">in</span> range(self.K)
-            ])
-            
-            <span class="cm"># Critério de convergência: se os centróides não se moverem além de tol</span>
+                X[self.labels == k].mean(axis=<span class="nu">0</span>) <span class="kw">if</span> np.any(self.labels == k)
+                <span class="kw">else</span> self.centroids[k] <span class="kw">for</span> k <span class="kw">in</span> range(self.K)])
+
+            <span class="cm"># Convergência: os centróides pararam de se mover</span>
             shift = np.linalg.norm(new_centroids - self.centroids)
             self.centroids = new_centroids
-            <span class="kw">if</span> shift < self.tol:
+            <span class="kw">if</span> shift &lt; self.tol:
+                self.n_iter_ = it + <span class="nu">1</span>
                 <span class="kw">break</span>
         <span class="kw">return</span> self
 </pre>
       </div>
     </div>
+    <div class="c5 stack tight">
+      <div class="console">
+        <div class="console-bar">Saída do console · Python 3 + NumPy</div>
+<pre><span class="pr">&gt;&gt;&gt; </span><span class="cm"># 3 grupos gaussianos de 60 pontos cada</span>
+<span class="pr">&gt;&gt;&gt; </span>rng = np.random.default_rng(0)
+<span class="pr">&gt;&gt;&gt; </span>X = np.vstack([rng.normal([-4,-2], 1.2, (60,2)),
+<span class="pr">... </span>               rng.normal([ 0, 3], 1.2, (60,2)),
+<span class="pr">... </span>               rng.normal([ 4,-1], 1.2, (60,2))])
+<span class="pr">&gt;&gt;&gt; </span>km = KMeansScratch(n_clusters=3).fit(X)
+
+<span class="pr">&gt;&gt;&gt; </span>km.n_iter_
+<span class="ou">4</span>
+<span class="pr">&gt;&gt;&gt; </span>km.centroids.round(2)
+<span class="ou">array([[-0.24,  3.03],
+       [-4.  , -1.75],
+       [ 4.02, -1.16]])</span>
+<span class="pr">&gt;&gt;&gt; </span>np.bincount(km.labels)
+<span class="ou">array([60, 61, 59])</span>
+<span class="pr">&gt;&gt;&gt; </span>((X - km.centroids[km.labels])**2).sum()
+<span class="ou">513.8</span>
+</pre>
+      </div>
+      <div class="note-box intuicao">
+        <span class="tag intuicao">leitura</span>
+        Quatro iterações bastam: os centróides recuperam os centros verdadeiros \((-4,-2)\), \((0,3)\) e \((4,-1)\) com erro &lt; 0,3, e os tamanhos ficam em 60/61/59 — dois pontos da fronteira trocaram de grupo.
+      </div>
+    </div>
   </div>
   <div class="slide-notes" hidden>
     <h4>NumPy Broadcasting</h4>
-    <p>Destaque o truque `X[:, np.newaxis, :] - centroids` que calcula as distâncias de todas as \(N\) amostras para todos os \(K\) centróides em uma única instrução vetorial veloz em C.</p>
+    <p>Destaque o truque `X[:, np.newaxis, :] - centroids` que calcula as distâncias de todas as \(N\) amostras para todos os \(K\) centróides em uma única instrução vetorial veloz em C. A saída ao lado é o resultado real da execução deste código.</p>
   </div>
 </section>
 
@@ -1199,14 +1225,14 @@
       </ul>
       <div class="node" style="border-color:var(--m3)">
         <div class="n-title" style="color:var(--m3)">A seguir · Bloco 3</div>
-        <b style="font-size:15px">Antonio Carlos</b><br>
-        <span style="font-family:var(--mono);font-size:11.5px;color:var(--fg-dim)">Misturas de Bernoulli e o algoritmo EM</span>
+        <b style="font-size:15px">Misturas de Bernoulli</b><br>
+        <span style="font-family:var(--mono);font-size:11.5px;color:var(--fg-dim)">Dados binários e o algoritmo EM</span>
       </div>
     </div>
   </div>
   <div class="slide-notes" hidden>
     <h4>Passagem de bastão [28:30 – 30:00]</h4>
-    <p class="fala">"Para explicar como modelar dados discretos e contornar essas limitações, passo a palavra ao Antonio Carlos. Muito obrigado!"</p>
+    <p class="fala">"Para explicar como modelar dados discretos e contornar essas limitações, seguimos para o Bloco 3. Muito obrigado!"</p>
   </div>
 </section>
 
@@ -1234,30 +1260,8 @@
       <div class="arrow-down" aria-hidden="true">↓</div>
       <div class="node" style="border-color:var(--m3)">
         <div class="n-title" style="color:var(--m3)">Bloco 3</div>
-        <b style="font-size:15px">Antonio Carlos</b><br>
-        <span style="font-family:var(--mono);font-size:11.5px;color:var(--fg-dim)">Misturas de Bernoulli &amp; Algoritmo EM</span>
-      </div>
-    </div>
-    <div class="c12">
-      <div class="quick-check">
-        <div class="quick-check-title">⚡ Checagem rápida de fixação</div>
-        <div class="qc-grid">
-          <div class="qc-card">
-            <div class="qc-q">1. O K-Means sempre atinge o mínimo global de J?</div>
-            <button type="button" class="qc-btn">Ver resposta</button>
-            <div class="qc-ans">Não. Garante apenas mínimo local ou ponto estacionário, dependendo da inicialização.</div>
-          </div>
-          <div class="qc-card">
-            <div class="qc-q">2. Por que a derivada de J em relação a \(\mu\) resulta na média?</div>
-            <button type="button" class="qc-btn">Ver resposta</button>
-            <div class="qc-ans">Porque o termo quadrático tem derivada linear \(-2\sum(x_i - \mu)=0 \implies \mu = \bar{x}\).</div>
-          </div>
-          <div class="qc-card">
-            <div class="qc-q">3. O que acontece se não padronizarmos variáveis de escalas diferentes?</div>
-            <button type="button" class="qc-btn">Ver resposta</button>
-            <div class="qc-ans">A variável de maior magnitude numérica dominará todas as distâncias euclidianas.</div>
-          </div>
-        </div>
+        <b style="font-size:15px">Misturas de Bernoulli</b><br>
+        <span style="font-family:var(--mono);font-size:11.5px;color:var(--fg-dim)">Dados binários &amp; Algoritmo EM</span>
       </div>
     </div>
   </div>
@@ -1309,7 +1313,7 @@
   </div>
   <div class="slide-notes" hidden>
     <h4>Fala sugerida [30:00 – 32:00]</h4>
-    <p class="fala">"Olá a todos, sou o Antonio Carlos. Muitos problemas lidam com dados estritamente binários em \(\{0,1\}^D\). Tratar dados booleanos com a métrica euclidiana gera distorções severas. Precisamos da distribuição de Bernoulli."</p>
+    <p class="fala">"Damos início ao Bloco 3. Muitos problemas lidam com dados estritamente binários em \(\{0,1\}^D\). Tratar dados booleanos com a métrica euclidiana gera distorções severas. Precisamos da distribuição de Bernoulli."</p>
   </div>
 </section>
 
@@ -1726,10 +1730,10 @@
 <!-- ============================== SLIDE 57 ============================== -->
 <section class="slide" id="slide-57" data-member-id="3" data-time="02:00" data-type="aprofundamento"
          data-ref="Implementação de Mistura de Bernoulli em NumPy Puro">
-  <h2 class="s-title">Código Python: Mistura de Bernoulli com EM e Log-Sum-Exp do zero</h2>
+  <h2 class="s-title">Código Python: mistura de Bernoulli com EM estável</h2>
   <div class="s-body">
-    <div class="c12">
-      <div class="codeblock" style="max-height:460px;overflow-y:auto">
+    <div class="c7">
+      <div class="codeblock dense">
 <pre><span class="kw">import</span> numpy <span class="kw">as</span> np
 
 <span class="kw">def</span> <span class="fn">logsumexp</span>(a, axis=<span class="kw">None</span>, keepdims=<span class="kw">False</span>):
@@ -1746,32 +1750,52 @@
         rng = np.random.default_rng(<span class="nu">42</span>)
         self.pis = np.ones(self.K) / self.K
         self.mus = rng.uniform(<span class="nu">0.25</span>, <span class="nu">0.75</span>, size=(self.K, D))
-        
         <span class="kw">for</span> it <span class="kw">in</span> range(self.max_iter):
-            <span class="cm"># PASSO E: log-verossimilhança condicional de cada componente</span>
+            <span class="cm"># PASSO E — ln p(x|mu_k) = sum_d x_d ln(mu_kd) + (1-x_d) ln(1-mu_kd)</span>
             log_p_xk = np.zeros((N, self.K))
             <span class="kw">for</span> k <span class="kw">in</span> range(self.K):
-                <span class="cm"># ln p(x | mu_k) = sum_d [ x_d * ln(mu_kd) + (1-x_d) * ln(1 - mu_kd) ]</span>
-                mu_clip = np.clip(self.mus[k], <span class="nu">1e-12</span>, <span class="nu">1</span> - <span class="nu">1e-12</span>)
-                log_p_xk[:, k] = X @ np.log(mu_clip) + (<span class="nu">1</span> - X) @ np.log(<span class="nu">1</span> - mu_clip)
-            
-            <span class="cm"># Numerador em log: ln(pi_k) + ln p(x | mu_k)</span>
-            log_joint = log_p_xk + np.log(self.pis)  <span class="cm"># (N, K)</span>
-            log_evidence = logsumexp(log_joint, axis=<span class="nu">1</span>, keepdims=<span class="kw">True</span>)
-            gamma = np.exp(log_joint - log_evidence)  <span class="cm"># responsabilidades (N, K)</span>
-            
-            <span class="cm"># PASSO M: atualização analítica com suavização de Laplace</span>
-            N_k = np.sum(gamma, axis=<span class="nu">0</span>)  <span class="cm"># (K,)</span>
+                mu = np.clip(self.mus[k], <span class="nu">1e-12</span>, <span class="nu">1</span> - <span class="nu">1e-12</span>)
+                log_p_xk[:, k] = X @ np.log(mu) + (<span class="nu">1</span> - X) @ np.log(<span class="nu">1</span> - mu)
+            <span class="cm"># Bayes em espaço log: nunca sai do log, nunca sofre underflow</span>
+            log_joint = log_p_xk + np.log(self.pis)         <span class="cm"># (N, K)</span>
+            log_ev = logsumexp(log_joint, axis=<span class="nu">1</span>, keepdims=<span class="kw">True</span>)
+            gamma = np.exp(log_joint - log_ev)              <span class="cm"># (N, K)</span>
+            <span class="cm"># PASSO M — atualização analítica (suavização de Laplace)</span>
+            N_k = np.sum(gamma, axis=<span class="nu">0</span>)                      <span class="cm"># (K,)</span>
             self.pis = N_k / N
-            self.mus = (gamma.T @ X + self.alpha) / (N_k[:, np.newaxis] + <span class="nu">2</span> * self.alpha)
+            self.mus = (gamma.T @ X + self.alpha) / (N_k[:, <span class="kw">None</span>] + <span class="nu">2</span> * self.alpha)
         <span class="kw">return</span> self
 </pre>
+      </div>
+    </div>
+    <div class="c5 stack tight">
+      <div class="console">
+        <div class="console-bar">Saída do console · Python 3 + NumPy</div>
+<pre><span class="pr">&gt;&gt;&gt; </span><span class="cm"># 3 protótipos de 6 bits, 40 cópias cada,</span>
+<span class="pr">&gt;&gt;&gt; </span><span class="cm"># com 10% dos bits invertidos por ruído</span>
+<span class="pr">&gt;&gt;&gt; </span>X.shape
+<span class="ou">(120, 6)</span>
+<span class="pr">&gt;&gt;&gt; </span>m = BernoulliMixtureEM(K=3).fit(X)
+
+<span class="pr">&gt;&gt;&gt; </span>m.pis.round(3)
+<span class="ou">array([0.31, 0.34, 0.35])</span>
+<span class="pr">&gt;&gt;&gt; </span>m.mus.round(2)
+<span class="ou">array([[0.05, 0.06, 0.81, 0.97, 0.06, 0.04],
+       [0.08, 0.  , 0.15, 0.16, 0.95, 0.85],
+       [0.74, 0.88, 0.1 , 0.05, 0.08, 0.09]])</span>
+<span class="pr">&gt;&gt;&gt; </span>ln_L[0], ln_L[-1]
+<span class="ou">(-529.3, -334.4)</span>
+</pre>
+      </div>
+      <div class="note-box intuicao">
+        <span class="tag intuicao">leitura</span>
+        Os três \(\boldsymbol\mu_k\) reconstroem os protótipos <code>001100</code>, <code>000011</code> e <code>110000</code> — o ruído de 10% aparece como valores em 0,05–0,15 em vez de 0. Os pesos ficam em \(\approx 1/3\) e \(\ln L\) sobe monotonamente de −529,3 para −334,4.
       </div>
     </div>
   </div>
   <div class="slide-notes" hidden>
     <h4>Código Didático</h4>
-    <p>Destaque a multiplicação matricial `X @ np.log(mu_clip)` que avalia a verossimilhança de todos os bits simultaneamente e o uso de `logsumexp` para computar a evidência sem risco de underflow.</p>
+    <p>Destaque a multiplicação matricial `X @ np.log(mu)` que avalia a verossimilhança de todos os bits simultaneamente e o uso de `logsumexp` para computar a evidência sem risco de underflow. A saída ao lado é o resultado real da execução deste código.</p>
   </div>
 </section>
 
@@ -1800,36 +1824,14 @@
       <div class="arrow-down" aria-hidden="true">↓</div>
       <div class="node" style="border-color:var(--m4)">
         <div class="n-title" style="color:var(--m4)">A seguir · Bloco 4</div>
-        <b style="font-size:15px">Bianca Visco</b><br>
-        <span style="font-family:var(--mono);font-size:11.5px;color:var(--fg-dim)">Gaussian Mixture Models e comparação final</span>
-      </div>
-    </div>
-    <div class="c12">
-      <div class="quick-check">
-        <div class="quick-check-title">⚡ Checagem rápida de fixação</div>
-        <div class="qc-grid">
-          <div class="qc-card">
-            <div class="qc-q">1. O que representa cada pixel do vetor \(\boldsymbol\mu_k\)?</div>
-            <button type="button" class="qc-btn">Ver resposta</button>
-            <div class="qc-ans">A probabilidade \(\mu_{kd} \in [0,1]\) de aquele bit específico estar aceso no cluster \(k\).</div>
-          </div>
-          <div class="qc-card">
-            <div class="qc-q">2. Por que a log-verossimilhança \(\ln p(X)\) nunca cai no EM?</div>
-            <button type="button" class="qc-btn">Ver resposta</button>
-            <div class="qc-ans">Porque o Passo E zera KL e o Passo M maximiza a cota inferior \(\mathcal{L}\).</div>
-          </div>
-          <div class="qc-card">
-            <div class="qc-q">3. Como o truque Log-Sum-Exp impede o subfluxo?</div>
-            <button type="button" class="qc-btn">Ver resposta</button>
-            <div class="qc-ans">Fatorando o maior expoente \(a_{\max}\), mantendo o maior termo em \(e^0 = 1\).</div>
-          </div>
-        </div>
+        <b style="font-size:15px">Gaussian Mixture Models</b><br>
+        <span style="font-family:var(--mono);font-size:11.5px;color:var(--fg-dim)">Covariâncias, BIC e comparação final</span>
       </div>
     </div>
   </div>
   <div class="slide-notes" hidden>
     <h4>Passagem de bastão [43:30 – 45:00]</h4>
-    <p class="fala">"Para apresentar os Gaussian Mixture Models e a comparação final, passo a palavra à Bianca Visco. Muito obrigado!"</p>
+    <p class="fala">"Para apresentar os Gaussian Mixture Models e a comparação final, seguimos para o Bloco 4. Muito obrigado!"</p>
   </div>
 </section>
 
@@ -1868,7 +1870,7 @@
   </div>
   <div class="slide-notes" hidden>
     <h4>Fala sugerida [45:00 – 47:30]</h4>
-    <p class="fala">"Olá a todos, sou a Bianca Visco e concluirei a apresentação com os Gaussian Mixture Models. A matriz de covariância \(\Sigma_k\) é a chave: ela modela dispersão e covariâncias cruzadas, permitindo formatos de elipsóides em qualquer orientação."</p>
+    <p class="fala">"Damos início ao Bloco 4, que conclui a apresentação com os Gaussian Mixture Models. A matriz de covariância \(\Sigma_k\) é a chave: ela modela dispersão e covariâncias cruzadas, permitindo formatos de elipsóides em qualquer orientação."</p>
   </div>
 </section>
 
@@ -2094,9 +2096,10 @@
     </div>
     <div class="c7" style="margin-top:2px">
       <table class="binmat" style="width:100%">
-        <thead><tr><th style="text-align:left">covariance_type</th><th>parâmetros \(p\)</th><th>\(\ln \hat{L}\)</th><th>BIC</th></tr></thead>
+        <thead><tr><th style="text-align:left">covariance_type</th><th>parâmetros \(p\)</th><th>\(\ln \hat{L}\)</th><th>BIC <span class="th-hint">(menor = melhor)</span></th></tr></thead>
         <tbody data-out="cov-table"></tbody>
       </table>
+      <p class="table-note"><i class="swatch-best" aria-hidden="true"></i> A célula destacada é o <b>menor BIC</b>, o modelo escolhido: <code>'full'</code> tem a maior verossimilhança, mas os 6 parâmetros extras não pagam a penalidade \(p\ln N\).</p>
     </div>
   </div>
   <div class="slide-notes" hidden>
@@ -2226,15 +2229,16 @@ proba = gmm.<span class="fn">predict_proba</span>(X)
   <div class="s-body">
     <div class="c7 stack">
       <div class="eyebrow accent">Três mensagens finais</div>
-      <ul class="points sm">
-        <li><strong>Um só arcabouço:</strong> variáveis latentes discretas unem particionamento geométrico e inferência estatística.</li>
-        <li><strong>K-Means é rápido, mas restrito</strong> por hipóteses esféricas e descarte da incerteza.</li>
-        <li><strong>Modelos de mistura sob EM</strong> modelam a incerteza real com capacidade generativa completa.</li>
+      <ul class="points">
+        <li><strong>Um só arcabouço:</strong> variáveis latentes discretas unem o particionamento geométrico e a inferência estatística.</li>
+        <li><strong>K-Means é rápido, mas restrito</strong> por hipóteses esféricas e pelo descarte da incerteza.</li>
+        <li><strong>Modelos de mistura sob EM</strong> modelam a incerteza real e mantêm capacidade generativa completa.</li>
       </ul>
-      <div class="formula sm">
+      <div class="formula">
         <span class="formula-label">O elo formal unificador</span>
         <span class="tex">\[ \boldsymbol\Sigma_k = \epsilon\mathbf{I},\;\; \pi_k = 1/K,\;\; \epsilon \to 0 \quad\Longrightarrow\quad \gamma_{nk} \to r_{nk} \in \{0,1\} \]</span>
         <span class="plain">Σ_k = ε·I, π_k = 1/K, ε → 0 ⟹ γ_nk → r_nk</span>
+        <span class="formula-cap">No limite de variância nula, a responsabilidade suave colapsa na atribuição rígida: o K-Means é um caso particular do GMM.</span>
       </div>
     </div>
     <div class="c5 stack">
@@ -2248,32 +2252,10 @@ proba = gmm.<span class="fn">predict_proba</span>(X)
           <li><b>Dempster, A. P. et al.</b> <em>EM Algorithm</em>. JRSS-B, 1977.</li>
         </ul>
       </div>
-      <div class="node accent" style="text-align:center;padding:8px 12px">
+      <div class="node accent thanks">
         <div class="n-title" style="justify-content:center">Obrigado pela atenção</div>
-        Henrique · Lucas · Antonio · Bianca<br>
-        <span style="font-family:var(--mono);font-size:11px;color:var(--fg-dim)">Estamos à disposição para perguntas da banca</span>
-      </div>
-    </div>
-    <div class="c12">
-      <div class="quick-check">
-        <div class="quick-check-title">⚡ Checagem rápida final (Perguntas da Banca)</div>
-        <div class="qc-grid">
-          <div class="qc-card">
-            <div class="qc-q">1. Qual a relação formal exata entre K-Means e GMM?</div>
-            <button type="button" class="qc-btn">Ver resposta</button>
-            <div class="qc-ans">K-Means é o limite assintótico de GMM com \(\boldsymbol\Sigma_k = \epsilon\mathbf{I}, \pi_k=1/K\) quando \(\epsilon \to 0\).</div>
-          </div>
-          <div class="qc-card">
-            <div class="qc-q">2. O que ocorre se uma gaussiana colapsar sobre 1 ponto?</div>
-            <button type="button" class="qc-btn">Ver resposta</button>
-            <div class="qc-ans">A variância \(\sigma^2 \to 0\) e \(\ln p \to +\infty\) (singularidade espúria, evitada por <code>reg_covar</code>).</div>
-          </div>
-          <div class="qc-card">
-            <div class="qc-q">3. Como selecionar o número de componentes K em GMM?</div>
-            <button type="button" class="qc-btn">Ver resposta</button>
-            <div class="qc-ans">Minimizando o critério BIC (\(-2\ln\hat L + p\ln N\)), que penaliza o excesso de parâmetros livres.</div>
-          </div>
-        </div>
+        <b>Bloco 0 · Bloco 1 · Bloco 2 · Bloco 3 · Bloco 4</b>
+        <span>Estamos à disposição para as perguntas da banca</span>
       </div>
     </div>
   </div>
@@ -2396,10 +2378,10 @@ proba = gmm.<span class="fn">predict_proba</span>(X)
   <p class="ov-sub" style="max-width:85ch">
     Caso necessitem apresentar estritamente em 60 minutos sem os aprofundamentos práticos, a sequência exata de núcleo é:<br>
     <b>Capa:</b> 01 &nbsp;·&nbsp;
-    <b>Henrique (Bloco 1):</b> 08, 10, 13, 15, 17, 21 &nbsp;·&nbsp;
-    <b>Lucas (Bloco 2):</b> 22, 23, 25, 29, 30, 33, 39, 40 &nbsp;·&nbsp;
-    <b>Antonio (Bloco 3):</b> 41, 42, 45, 47, 48, 52, 53, 58 &nbsp;·&nbsp;
-    <b>Bianca (Bloco 4):</b> 59, 60, 65, 68, 70, 72, 73.
+    <b>Bloco 1:</b> 08, 10, 13, 15, 17, 21 &nbsp;·&nbsp;
+    <b>Bloco 2:</b> 22, 23, 25, 29, 30, 33, 39, 40 &nbsp;·&nbsp;
+    <b>Bloco 3:</b> 41, 42, 45, 47, 48, 52, 53, 58 &nbsp;·&nbsp;
+    <b>Bloco 4:</b> 59, 60, 65, 68, 70, 72, 73.
   </p>
 </div>
 

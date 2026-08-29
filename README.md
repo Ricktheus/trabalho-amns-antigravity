@@ -5,12 +5,12 @@ Material didático interativo e apresentação acadêmica em **73 slides HTML** 
 **Disciplina:** Aprendizado de Máquina Não Supervisionado — Bacharelado em IA  
 **Formato:** Deck único linear com 73 slides (28 de Núcleo + 45 Laboratórios/Aprofundamentos)  
 **Rota de 60 minutos:** Marcada com a insígnia `[NÚCLEO]` para a banca avaliadora  
-**Integrantes:**
-- **Bloco 0 · Nivelamento e Fundamentos:** Álgebra linear, decodificador de notação e Bayes (slides 01–07)
-- **Bloco 1 · Henrique Matheus:** Fundamentos, variáveis latentes e 1-de-K (slides 08–21)
-- **Bloco 2 · Lucas Nogueira:** K-Means, Lloyd, escolha de K e limitações (slides 22–40)
-- **Bloco 3 · Antonio Carlos:** Misturas de Bernoulli, gargalo do log e algoritmo EM (slides 41–58)
-- **Bloco 4 · Bianca Visco:** Gaussian Mixture Models, covariâncias e comparação (slides 59–73)
+**Percurso:**
+- **Bloco 0 · Nivelamento e fundamentos:** álgebra linear, decodificador de notação e Bayes (slides 01–07)
+- **Bloco 1 · Fundamentos:** variáveis latentes e codificação 1-de-K (slides 08–21)
+- **Bloco 2 · K-Means:** algoritmo de Lloyd, escolha de K e limitações (slides 22–40)
+- **Bloco 3 · Misturas de Bernoulli:** gargalo do log e algoritmo EM (slides 41–58)
+- **Bloco 4 · Gaussian Mixture Models:** covariâncias, BIC e comparação (slides 59–73)
 
 ---
 
@@ -50,10 +50,10 @@ node build.js      # lê os fontes e regera apresentacao.html
 
 Para apresentar estritamente no tempo regulamentar de 60 minutos sem os laboratórios extensos:
 - **Capa:** Slide 01
-- **Henrique (Bloco 1):** 08, 10, 13, 15, 17, 21
-- **Lucas (Bloco 2):** 22, 23, 25, 29, 30, 33, 39, 40
-- **Antonio (Bloco 3):** 41, 42, 45, 47, 48, 52, 53, 58
-- **Bianca (Bloco 4):** 59, 60, 65, 68, 70, 72, 73
+- **Bloco 1:** 08, 10, 13, 15, 17, 21
+- **Bloco 2:** 22, 23, 25, 29, 30, 33, 39, 40
+- **Bloco 3:** 41, 42, 45, 47, 48, 52, 53, 58
+- **Bloco 4:** 59, 60, 65, 68, 70, 72, 73
 
 Os 45 slides de aprofundamento e laboratórios trazem a insígnia `[APROFUNDAMENTO]` e servem para fixação individual, estudo autodidático e respostas aprofundadas a perguntas da banca.
 
@@ -67,7 +67,7 @@ Todos os laboratórios rodam no próprio navegador com semente reproduzível, co
 2. **Álgebra Linear 101 (Slide 03):** Vetores 2-D, transposta \(\mathbf{x}^\top\), produto interno \(\mathbf{x}^\top\mathbf{y}\), normas euclidianas e ângulo \(\theta\).
 3. **Revisão Relâmpago (Slide 04):** Média, variância e curva normal reativa com arraste de pontos.
 4. **Probabilidade Condicional & Bayes (Slide 05):** Cálculo visual da probabilidade total e inversão de Bayes.
-5. **Bayes com Números (Slide 06 e 18):** Tabela do cálculo de \(\gamma_{nk}\) com prior e verossimilhança.
+5. **Bayes com Números (Slides 06 e 18):** tabela do cálculo de \(\gamma_{nk}\) com prior e verossimilhança, ao lado do gráfico das duas densidades ponderadas e da barra de normalização.
 6. **Máquina Geradora (Slide 07):** Sorteio generativo acumulando na densidade marginal teórica.
 7. **1-de-K na Prática (Slide 14):** Colapso mecânico do produto \(\prod \pi_k^{z_k}\).
 8. **\(J\) na Mão (Slide 24):** Cálculo da inércia com arraste de centróides.
@@ -92,9 +92,11 @@ Todos os laboratórios rodam no próprio navegador com semente reproduzível, co
 
 ## Implementações em Python (NumPy e scikit-learn)
 
-- **Slide 19:** Cálculo de responsabilidades \(\gamma_{nk}\) e Teorema de Bayes do zero em NumPy.
+Os slides 19, 37 e 57 mostram, ao lado da listagem, a **saída real do console** obtida ao executar o próprio código.
+
+- **Slide 19:** cálculo de responsabilidades \(\gamma_{nk}\) e Teorema de Bayes do zero em NumPy.
 - **Slide 37:** K-Means completo com descida alternada de Lloyd em 25 linhas de NumPy.
-- **Slide 57:** Mistura de Bernoulli com algoritmo EM e estabilidade *Log-Sum-Exp* do zero em NumPy.
+- **Slide 57:** mistura de Bernoulli com algoritmo EM e estabilidade *Log-Sum-Exp* do zero em NumPy.
 - **Slide 70:** GMM e K-Means comparados com `scikit-learn` (`fit`, `predict_proba`, `score_samples`).
 
 ---
@@ -105,11 +107,11 @@ Todos os laboratórios rodam no próprio navegador com semente reproduzível, co
 | :--- | :--- |
 | **`apresentacao.html`** | **Versão de arquivo único independente (gerada por `build.js`).** |
 | `index.html` | Código-fonte dos 73 slides, notas, modais e estrutura semântica. |
-| `styles.css` | Design system: variáveis de cor, tipografia IBM Plex, layouts de labs e temas. |
+| `styles.css` | Design system: tokens do tema claro, tipografia IBM Plex e layouts de labs. |
 | `viz.js` | Motor de machine learning (`MLCore`): K-Means, EM-Bernoulli, EM-GMM, Mahalanobis, Silhueta, BIC. |
 | `figures.js` | Camada de renderização gráfica em Canvas 2D (`FigCore`, `VIZ`). |
 | `labs.js` | Controladores dos 24 laboratórios interativos com ciclo de vida e KaTeX integrado. |
-| `script.js` | Controle de navegação, micro-passos, checagens rápidas, glossário e atalhos. |
+| `script.js` | Controle de navegação, micro-passos reveláveis, glossário e atalhos de teclado. |
 | `build.js` | Compilador que embute estilos e scripts em `apresentacao.html`. |
 
 ---

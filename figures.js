@@ -9,12 +9,29 @@
   'use strict';
   var M = global.MLCore;
 
+  /* Paleta do tema claro. Espelha os tokens de styles.css: quando a folha de
+     estilo está disponível, os valores são lidos dela para que exista uma
+     única fonte de verdade para as cores. */
+  function token(name, fallback) {
+    try {
+      var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+      return v || fallback;
+    } catch (e) { return fallback; }
+  }
   var C = {
-    fg: '#EFE9E6', muted: '#A99FA2', dim: '#7B7276',
-    line: 'rgba(238,232,229,0.13)', lineStrong: 'rgba(238,232,229,0.30)',
-    accent: '#E9B44C', bg: '#131013', deep: '#0D0A0D',
-    d: ['#E9B44C', '#5BC0BE', '#D96C82', '#9BA9E8'],
-    gray: '#6E666A'
+    fg: token('--fg', '#1B1917'),
+    muted: token('--fg-muted', '#45403B'),
+    dim: token('--fg-dim', '#756E68'),
+    line: 'rgba(28,25,23,0.14)', lineStrong: 'rgba(28,25,23,0.30)',
+    accent: token('--accent', '#B4530A'),
+    bg: token('--bg', '#FFFFFF'),
+    deep: '#FFFFFF',
+    d: [token('--d1', '#B4530A'), token('--d2', '#0C7C7A'),
+        token('--d3', '#BC2A53'), token('--d4', '#3B4CA6')],
+    gray: '#8A837D',
+    /* versões translúcidas das séries, para preenchimentos sobre fundo claro */
+    dSoft: ['rgba(180,83,10,0.13)', 'rgba(12,124,122,0.13)',
+            'rgba(188,42,83,0.13)', 'rgba(59,76,166,0.13)']
   };
   var MONO = '"IBM Plex Mono", ui-monospace, Menlo, monospace';
   var SANS = '"IBM Plex Sans", -apple-system, "Segoe UI", Roboto, sans-serif';
@@ -104,7 +121,7 @@
     var g = this.g, i;
     g.save();
     if (o.grid !== false) {
-      g.strokeStyle = 'rgba(238,232,229,0.055)'; g.lineWidth = 1;
+      g.strokeStyle = 'rgba(28,25,23,0.07)'; g.lineWidth = 1;
       var xt = o.xticks || this.ticks(this.xlim, 5);
       var yt = o.yticks || this.ticks(this.ylim, 4);
       for (i = 0; i < xt.length; i++) {
@@ -223,7 +240,7 @@
     var px = this.X(x) + (o.dx || 0), py = this.Y(y) + (o.dy || 0);
     if (o.box) {
       var wpx = g.measureText(txt).width;
-      g.fillStyle = o.box === true ? 'rgba(13,10,13,0.82)' : o.box;
+      g.fillStyle = o.box === true ? 'rgba(255,255,255,0.88)' : o.box;
       var bx = o.align === 'center' ? px - wpx / 2 - 4 : (o.align === 'right' ? px - wpx - 4 : px - 4);
       g.fillRect(bx, py - 8, wpx + 8, 16);
     }
@@ -359,7 +376,7 @@
       });
       p.clip();
       for (var i = 0; i < d.X.length; i++) {
-        p.dot(d.X[i][0], d.X[i][1], 2.6, mode === 'sup' ? C.d[d.y[i]] : '#8C8288', mode === 'sup' ? 0.82 : 0.80);
+        p.dot(d.X[i][0], d.X[i][1], 2.6, mode === 'sup' ? C.d[d.y[i]] : '#8A837D', mode === 'sup' ? 0.82 : 0.80);
       }
       if (mode === 'unsup') {
         // Contornos tracejados = fatores geradores latentes z_k, desconhecidos
@@ -367,7 +384,7 @@
           var pts = d.X.filter(function (_, i) { return d.y[i] === k; });
           var mx = pts.reduce(function (s, q) { return s + q[0]; }, 0) / pts.length;
           var my = pts.reduce(function (s, q) { return s + q[1]; }, 0) / pts.length;
-          p.ellipse(mx, my, 2.9, 2.9, 0, 'rgba(233,180,76,0.75)', null, [5, 4]);
+          p.ellipse(mx, my, 2.9, 2.9, 0, 'rgba(180,83,10,0.75)', null, [5, 4]);
           p.label(mx, my, 'z = ' + (k + 1) + ' ?', C.accent, { align: 'center', size: 10.5, box: true, dy: 0 });
         });
       }
@@ -406,13 +423,13 @@
     var dx = kmC[1][0] - kmC[0][0], dy = kmC[1][1] - kmC[0][1];
     var L2 = Math.hypot(dx, dy) || 1, span = (p1.ylim[1] - p1.ylim[0]) * 1.6;
     p1.line([[mx - (-dy / L2) * span, my - (dx / L2) * span],
-             [mx + (-dy / L2) * span, my + (dx / L2) * span]], '#FFFFFF', 1.8, [7, 5]);
+             [mx + (-dy / L2) * span, my + (dx / L2) * span]], C.fg, 1.8, [7, 5]);
     kmC.forEach(function (c) { p1.cross(c[0], c[1], 6, C.accent); });
     p1.unclip();
     (function () {
       var g1 = p1.g, y = p1.pad.t + p1.oy + p1.ih + 12, x = p1.pad.l + p1.ox;
       g1.save();
-      g1.strokeStyle = '#FFFFFF'; g1.lineWidth = 1.8; g1.setLineDash([6, 4]);
+      g1.strokeStyle = C.fg; g1.lineWidth = 1.8; g1.setLineDash([6, 4]);
       g1.beginPath(); g1.moveTo(x, y); g1.lineTo(x + 26, y); g1.stroke();
       g1.setLineDash([]);
       g1.font = '9.5px ' + MONO; g1.fillStyle = C.muted;
@@ -439,7 +456,7 @@
       var bx = p2.pad.l + p2.ox, by = p2.pad.t + p2.oy + p2.ih + 8;
       for (var i = 0; i <= bw; i++) {
         var c = rampTwo(i / bw);
-        g2.fillStyle = 'rgb(' + [c[0] | 0, c[1] | 0, c[2] | 0].join(',') + ')';
+        g2.fillStyle = 'rgba(' + [c[0] | 0, c[1] | 0, c[2] | 0].join(',') + ',' + (c[3] / 255).toFixed(3) + ')';
         g2.fillRect(bx + i, by, 1.4, bh);
       }
       g2.strokeStyle = C.lineStrong; g2.lineWidth = 1;
@@ -451,12 +468,14 @@
     })();
     return 'Dois campos sobre os mesmos dois grupos parcialmente sobrepostos. À esquerda, o K-Means pinta apenas duas cores chapadas separadas por uma fronteira reta. À direita, a mistura gaussiana pinta um degradê contínuo: perto da fronteira a responsabilidade vale cerca de 0,5 e cresce suavemente até 1 no núcleo de cada componente.';
   };
-  /* Rampa de duas componentes: interpola do teal (t=0) ao dourado (t=1) */
+  /* Rampa de duas componentes: interpola do teal (t=0) ao âmbar (t=1).
+     Sobre fundo claro, o preenchimento entra com alfa baixo — as duas pontas
+     ficam como tintas suaves e o meio, cinza-neutro. */
   function rampTwo(t) {
-    return [40 + t * 193, 62 + t * 118, 60 + t * 16, 82];
+    return [Math.round(12 + t * 168), Math.round(124 - t * 41), Math.round(122 - t * 112), 78];
   }
   /* Paleta categórica em RGB para os campos de rótulo (células de Voronoi) */
-  var CAT_RGB = [[233, 180, 76], [91, 192, 190], [217, 108, 130], [155, 169, 232]];
+  var CAT_RGB = [[180, 83, 10], [12, 124, 122], [188, 42, 83], [59, 76, 166]];
   function catColor(alpha) {
     return function (v) {
       var c = CAT_RGB[Math.round(v) % CAT_RGB.length];
@@ -482,8 +501,8 @@
       g.strokeStyle = C.line; g.lineWidth = 1;
       g.beginPath(); g.moveTo(p.X(-3.9), p.Y(0)); g.lineTo(p.X(3.9), p.Y(0)); g.stroke();
       [0, 1].forEach(function (k) {
-        p.ellipse(mus[k][0], mus[k][1], 0.72, 0.72, 0, k ? C.d[1] : C.d[0], k ? 'rgba(91,192,190,0.10)' : 'rgba(233,180,76,0.10)');
-        p.ellipse(mus[k][0], mus[k][1], 1.42, 1.42, 0, k ? 'rgba(91,192,190,0.35)' : 'rgba(233,180,76,0.35)', null, [4, 4]);
+        p.ellipse(mus[k][0], mus[k][1], 0.72, 0.72, 0, k ? C.d[1] : C.d[0], k ? C.dSoft[1] : C.dSoft[0]);
+        p.ellipse(mus[k][0], mus[k][1], 1.42, 1.42, 0, k ? 'rgba(12,124,122,0.45)' : 'rgba(180,83,10,0.45)', null, [4, 4]);
         p.label(mus[k][0], mus[k][1], 'μ' + (k + 1), k ? C.d[1] : C.d[0], { align: 'center', size: 11 });
       });
       // ponto x_n
@@ -493,7 +512,7 @@
       // barras de responsabilidade
       var by = p.h - 20, bw = 190;
       [[g1, C.d[0], 'γ_n1', 14], [g2, C.d[1], 'γ_n2', 14 + bw + 52]].forEach(function (b) {
-        g.fillStyle = 'rgba(238,232,229,0.10)'; g.fillRect(b[3], by, bw, 9);
+        g.fillStyle = 'rgba(28,25,23,0.09)'; g.fillRect(b[3], by, bw, 9);
         g.fillStyle = b[1]; g.fillRect(b[3], by, bw * b[0], 9);
         g.fillStyle = C.dim; g.font = '10px ' + MONO; g.textBaseline = 'bottom'; g.textAlign = 'left';
         g.fillText(b[2], b[3], by - 3);
@@ -704,7 +723,7 @@
       g.fillStyle = 'rgb(' + t + ',' + t + ',' + t + ')';
       g.fillRect(x + c * cell, y + r * cell, cell + 0.5, cell + 0.5);
     }
-    g.strokeStyle = 'rgba(238,232,229,0.22)'; g.lineWidth = 1;
+    g.strokeStyle = 'rgba(28,25,23,0.22)'; g.lineWidth = 1;
     g.strokeRect(x + 0.5, y + 0.5, 8 * cell, 8 * cell);
   }
 
@@ -735,7 +754,7 @@
       var idx = rc[0] * 8 + rc[1], v = mu[idx], yy = gy + 16 + i * 46;
       g.fillStyle = C.muted; g.font = '10.5px ' + MONO; g.textBaseline = 'alphabetic';
       g.fillText('d = ' + (idx + 1) + '  (lin ' + (rc[0] + 1) + ', col ' + (rc[1] + 1) + ')', bx, yy);
-      g.fillStyle = 'rgba(238,232,229,0.10)'; g.fillRect(bx, yy + 5, bw, 8);
+      g.fillStyle = 'rgba(28,25,23,0.09)'; g.fillRect(bx, yy + 5, bw, 8);
       g.fillStyle = v > 0.5 ? C.accent : C.d[1]; g.fillRect(bx, yy + 5, bw * v, 8);
       g.fillStyle = C.fg; g.font = '10.5px ' + MONO;
       g.fillText(v.toFixed(3), bx + bw + 9, yy + 13);
@@ -819,12 +838,13 @@
       return Math.exp(M.logSumExp(ls));
     }, function (v, mn, mx) {
       var t = Math.pow(v / (mx || 1), 0.42);        // gama < 1 realça as caudas
-      return [19 + t * 214, 16 + t * 164, 19 + t * 57, Math.round(26 + t * 194)];
+      // tinta âmbar sobre papel: a opacidade cresce com a densidade
+      return [180, 83, 10, Math.round(12 + t * 216)];
     });
-    for (var n = 0; n < a.X.length; n++) p.dot(a.X[n][0], a.X[n][1], 1.7, '#0D0A0D', 0.45);
+    for (var n = 0; n < a.X.length; n++) p.dot(a.X[n][0], a.X[n][1], 1.7, C.fg, 0.35);
     gm.mus.forEach(function (m, k) {
       var e = M.ellipseFromCov(gm.sigmas[k], 2);
-      p.ellipse(m[0], m[1], e.rx, e.ry, e.theta, 'rgba(239,233,230,0.85)', null);
+      p.ellipse(m[0], m[1], e.rx, e.ry, e.theta, 'rgba(27,25,23,0.75)', null);
       p.ring(m[0], m[1], 3, C.fg, 2);
     });
     p.unclip();
@@ -849,7 +869,7 @@
       for (var n = 0; n < a.X.length; n++) p.dot(a.X[n][0], a.X[n][1], 1.9, C.gray, 0.5);
       h.mus.forEach(function (m, k) {
         var e = M.ellipseFromCov(h.sigmas[k], 2);
-        p.ellipse(m[0], m[1], e.rx, e.ry, e.theta, C.d[k], 'rgba(233,180,76,0.05)');
+        p.ellipse(m[0], m[1], e.rx, e.ry, e.theta, C.d[k], C.dSoft[k % 4]);
         p.ring(m[0], m[1], 2.6, C.d[k], 2);
       });
       p.unclip();
@@ -882,7 +902,7 @@
       for (var n = 0; n < a.X.length; n++) p.dot(a.X[n][0], a.X[n][1], 1.8, C.gray, 0.45);
       gm.mus.forEach(function (m, k) {
         var e = M.ellipseFromCov(gm.sigmas[k], 2);
-        p.ellipse(m[0], m[1], e.rx, e.ry, e.theta, isBest ? C.accent : C.d[1], isBest ? 'rgba(233,180,76,0.07)' : 'rgba(91,192,190,0.05)');
+        p.ellipse(m[0], m[1], e.rx, e.ry, e.theta, isBest ? C.accent : C.d[1], isBest ? C.dSoft[0] : 'rgba(12,124,122,0.07)');
         p.ring(m[0], m[1], 2.4, C.fg, 1.6);
       });
       p.unclip();
@@ -935,7 +955,7 @@
     }
     gm.mus.forEach(function (m, k) {
       var e = M.ellipseFromCov(gm.sigmas[k], 2);
-      p2.ellipse(m[0], m[1], e.rx, e.ry, e.theta, '#C6A0DA', 'rgba(198,160,218,0.09)');
+      p2.ellipse(m[0], m[1], e.rx, e.ry, e.theta, '#6D3FC4', 'rgba(109,63,196,0.10)');
       p2.ring(m[0], m[1], 3.4, C.fg, 2.2);
     });
     // destaca as amostras de fronteira (baixa confiança)

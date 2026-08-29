@@ -5,11 +5,11 @@
   'use strict';
 
   var MEMBERS = {
-    0: { nome: 'Preparação', bloco: 'Bloco 0 · Nivelamento e fundamentos', janela: 'Introdução' },
-    1: { nome: 'Henrique Matheus', bloco: 'Bloco 1 · Fundamentos e variáveis latentes', janela: '00:00–15:00' },
-    2: { nome: 'Lucas Nogueira', bloco: 'Bloco 2 · K-Means clustering', janela: '15:00–30:00' },
-    3: { nome: 'Antonio Carlos', bloco: 'Bloco 3 · Misturas de Bernoulli e EM', janela: '30:00–45:00' },
-    4: { nome: 'Bianca Visco', bloco: 'Bloco 4 · GMM, demonstração e comparação', janela: '45:00–60:00' }
+    0: { nome: 'Bloco 0', bloco: 'Nivelamento e fundamentos matemáticos', janela: 'Introdução' },
+    1: { nome: 'Bloco 1', bloco: 'Fundamentos e variáveis latentes', janela: '00:00–15:00' },
+    2: { nome: 'Bloco 2', bloco: 'K-Means clustering', janela: '15:00–30:00' },
+    3: { nome: 'Bloco 3', bloco: 'Misturas de Bernoulli e EM', janela: '30:00–45:00' },
+    4: { nome: 'Bloco 4', bloco: 'GMM, demonstração e comparação', janela: '45:00–60:00' }
   };
 
   var slides = [], current = 0, stage, wrap;
@@ -56,7 +56,6 @@
       sl.appendChild(f);
       setupMicroSteps(sl);
     });
-    wireQuickChecks();
   }
   function title(sl) {
     var h = sl.querySelector('.s-title, h1');
@@ -75,21 +74,27 @@
       ctrl = document.createElement('div');
       ctrl.className = 'step-controls';
       ctrl.innerHTML =
-        '<button type="button" class="btn btn-step-next">Passo seguinte (Espaço)</button>' +
-        '<button type="button" class="btn btn-step-all">Revelar todos</button>';
+        '<button type="button" class="btn btn-primary btn-step-next">Passo seguinte (Espaço)</button>' +
+        '<button type="button" class="btn btn-step-all">Revelar todos</button>' +
+        '<span class="step-count"></span>';
       var parent = steps[0].parentNode;
       parent.appendChild(ctrl);
     }
     var btnNext = ctrl.querySelector('.btn-step-next');
     var btnAll = ctrl.querySelector('.btn-step-all');
     if (btnNext) btnNext.addEventListener('click', function () { advanceMicroStep(sl); });
-    if (btnAll) btnAll.addEventListener('click', function () { revealAllSteps(sl); });
+    if (btnAll) btnAll.addEventListener('click', function () {
+      if (btnAll.dataset.mode === 'reset') resetMicroSteps(sl);
+      else revealAllSteps(sl);
+    });
+    updateStepControls(sl);
   }
   function advanceMicroStep(sl) {
     sl = sl || slides[current];
     var locked = sl.querySelectorAll('.micro-step.is-locked');
     if (locked.length > 0) {
       locked[0].classList.remove('is-locked');
+      updateStepControls(sl);
       return true; // consumiu o passo
     }
     return false; // todos já estavam revelados
@@ -98,21 +103,31 @@
     sl = sl || slides[current];
     var locked = sl.querySelectorAll('.micro-step.is-locked');
     for (var i = 0; i < locked.length; i++) locked[i].classList.remove('is-locked');
+    updateStepControls(sl);
   }
-
-  /* ------------------------------------------------ 2c. Checagem Rápida */
-  function wireQuickChecks() {
-    document.querySelectorAll('.qc-btn').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var card = btn.closest('.qc-card');
-        if (!card) return;
-        var ans = card.querySelector('.qc-ans');
-        if (ans) {
-          var open = ans.classList.toggle('is-open');
-          btn.textContent = open ? 'Ocultar resposta' : 'Ver resposta';
-        }
-      });
-    });
+  /* Ao (re)entrar no slide a demonstração recomeça do primeiro passo. Sem isto,
+     voltar a um slide já percorrido deixava tudo revelado e os botões pareciam
+     não fazer nada. */
+  function resetMicroSteps(sl) {
+    var steps = sl.querySelectorAll('.micro-step');
+    for (var i = 1; i < steps.length; i++) steps[i].classList.add('is-locked');
+    if (steps.length) steps[0].classList.remove('is-locked');
+    updateStepControls(sl);
+  }
+  /* Rótulo dos botões e contador "passo n de N": o estado fica visível. */
+  function updateStepControls(sl) {
+    var ctrl = sl.querySelector('.step-controls');
+    if (!ctrl) return;
+    var total = sl.querySelectorAll('.micro-step').length;
+    var locked = sl.querySelectorAll('.micro-step.is-locked').length;
+    var shown = total - locked;
+    var counter = ctrl.querySelector('.step-count');
+    if (counter) counter.textContent = 'passo ' + shown + ' de ' + total;
+    var btnNext = ctrl.querySelector('.btn-step-next');
+    var btnAll = ctrl.querySelector('.btn-step-all');
+    if (btnNext) btnNext.disabled = locked === 0;
+    if (btnAll) btnAll.textContent = locked === 0 ? 'Recomeçar' : 'Revelar todos';
+    if (btnAll) btnAll.dataset.mode = locked === 0 ? 'reset' : 'all';
   }
 
   /* -------------------------------------------------------- 3. Navegação */
@@ -136,6 +151,7 @@
     fillNotes();
     markOverview();
     if (push !== false) history.replaceState(null, '', '#slide-' + String(n).padStart(2, '0'));
+    resetMicroSteps(slides[current]);
     var cv = slides[current].querySelector('canvas[data-viz]');
     if (cv && cv._render) cv._render();
     if (window.LAB) window.LAB.onSlideEnter(slides[current]);
@@ -528,8 +544,9 @@
       if (tb2) {
         tb2.innerHTML = cov._stats.fits.map(function (f) {
           var win = f.type === cov._stats.best;
-          return '<tr><td class="rowlab">' + f.type + '</td><td>' + f.p + '</td><td>' +
-            f.ll.toFixed(1) + '</td><td' + (win ? ' class="one"' : '') + '>' + f.bic.toFixed(0) + '</td></tr>';
+          return '<tr' + (win ? ' class="row-best"' : '') + '><td class="rowlab">' + f.type + '</td><td>' + f.p + '</td><td>' +
+            f.ll.toFixed(1) + '</td><td' + (win ? ' class="one"' : '') + '>' + f.bic.toFixed(0) +
+            (win ? ' <span class="best-tag">menor BIC</span>' : '') + '</td></tr>';
         }).join('');
       }
       var bn = q('[data-out="cov-best"]');
