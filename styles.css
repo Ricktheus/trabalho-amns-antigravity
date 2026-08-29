@@ -175,6 +175,12 @@ html, body {
 p { margin: 0; font-size: 16px; line-height: 1.5; color: var(--fg-muted); }
 strong { color: var(--fg); font-weight: 600; }
 code, .mono { font-family: var(--mono); }
+code {
+  font-size: 0.92em;
+  background: var(--surface-2); color: var(--fg);
+  padding: 1px 5px; border-radius: 3px;
+}
+.n-title code, .s-title code { background: none; padding: 0; }
 
 .lead { font-size: 17.5px; line-height: 1.5; color: var(--fg); }
 
@@ -249,10 +255,10 @@ ul.sub > li::before { content: "·"; position: absolute; left: 2px; color: var(-
 .symbols div { font-size: 13px; color: var(--fg-dim); line-height: 1.35; }
 .symbols .katex { font-size: 0.95em; color: var(--fg-muted); }
 
-/* Fallback quando o KaTeX não carrega (sem rede) */
-body.no-katex .formula .tex { display: none; }
-body.no-katex .formula .plain { display: block; }
-.formula .plain {
+/* Fallback quando o KaTeX não carrega (sem rede).
+   A troca .tex ↔ .plain é feita por script.js (degradeMath), que só esconde
+   um bloco .tex quando existe de fato um .plain irmão para substituí-lo. */
+.plain {
   display: none;
   font-family: var(--mono); font-size: 13.5px; line-height: 1.6;
   color: var(--fg); white-space: pre-wrap;
@@ -341,6 +347,22 @@ figcaption b { color: var(--fg-muted); font-weight: 600; }
    KaTeX e para o texto simples do modo sem rede. */
 .katex, .tex-fallback { text-transform: none; }
 
+/* Faixa compacta de dois enunciados lado a lado */
+.strip { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.strip-item {
+  border: 1px solid var(--line); border-left: 3px solid var(--line-strong);
+  border-radius: 3px; background: var(--surface);
+  padding: 10px 14px 11px;
+  font-size: 13px; line-height: 1.5; color: var(--fg-muted);
+}
+.strip-item.accent { border-left-color: var(--accent); background: var(--accent-soft); }
+.strip-lab {
+  display: block; font-family: var(--mono);
+  font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--fg-dim); margin-bottom: 4px;
+}
+.strip-item.accent .strip-lab { color: var(--accent); }
+
 /* Fluxo de passos numerados (algoritmo de Lloyd, ciclo do EM) */
 .steps-flow .node { border-radius: 3px; }
 .steps-flow .node .n-title { color: var(--accent); }
@@ -368,6 +390,36 @@ figcaption b { color: var(--fg-muted); font-weight: 600; }
 
 .flow-row { display: flex; align-items: stretch; gap: 0; }
 .flow-row > .node { flex: 1 1 0; }
+
+/* Árvore genealógica: um tronco comum que se ramifica em quatro famílias */
+.tree { display: flex; flex-direction: column; }
+.tree-root {
+  align-self: center; max-width: 640px; text-align: center;
+  border: 1px solid var(--accent-line); background: var(--accent-soft);
+  border-radius: 4px; padding: 12px 22px 14px;
+}
+.tree-root-lab {
+  display: block; font-family: var(--mono);
+  font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 2px;
+}
+.tree-root .katex { font-size: 1em; }
+.tree-branch { position: relative; height: 34px; }
+.tree-stem {
+  position: absolute; left: 50%; top: 0; width: 1px; height: 16px;
+  background: var(--line-strong);
+}
+.tree-bar {
+  position: absolute; left: 12.5%; right: 12.5%; top: 16px; height: 1px;
+  background: var(--line-strong);
+}
+.tree-drop {
+  position: absolute; top: 16px; width: 1px; height: 18px;
+  background: var(--line-strong);
+  left: calc(12.5% + var(--i) * 25%);
+}
+.tree-leaves { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.tree-leaves .node p { font-size: 12px; color: var(--fg-muted); line-height: 1.5; }
 
 /* Ciclo de duas etapas (Lloyd / EM) */
 .cycle { display: grid; grid-template-columns: 1fr 44px 1fr; align-items: center; gap: 0; }
@@ -778,6 +830,11 @@ body.notes-open #notes-panel { transform: translateX(0); }
 .slider-row span {
   flex: 0 0 44px; text-align: right; color: var(--accent); font-weight: 600;
 }
+.check-row {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12.5px; color: var(--fg-muted); cursor: pointer;
+}
+.check-row input[type="checkbox"] { accent-color: var(--accent); width: 15px; height: 15px; cursor: pointer; }
 .lab-btn-row {
   display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
 }

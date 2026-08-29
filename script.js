@@ -418,6 +418,14 @@
     document.body.classList.add('no-katex');
     if (mathDegraded) return;
     mathDegraded = true;
+    /* Onde existe uma transcrição .plain escrita à mão, ela substitui o bloco
+       .tex correspondente; onde não existe, o próprio LaTeX é convertido em
+       texto legível por degradeIn — nunca se esconde conteúdo sem reposição. */
+    document.querySelectorAll('.plain').forEach(function (pl) {
+      pl.style.display = 'block';
+      var prev = pl.previousElementSibling;
+      if (prev && prev.classList.contains('tex')) prev.style.display = 'none';
+    });
     var roots = [document.getElementById('stage')];
     document.querySelectorAll('.overlay').forEach(function (o) { roots.push(o); });
     roots.forEach(function (root) { degradeIn(root); });

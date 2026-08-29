@@ -2228,6 +2228,150 @@
   /* =========================================================================
      21. LAB: DETECÇÃO DE ANOMALIA (Slide 48)
      ========================================================================= */
+  /* =========================================================================
+     25. LAB: COLAPSO DA GAUSSIANA E reg_covar (Slide 67)
+     ========================================================================= */
+  LAB.register('lab-singularity', {
+    build: function (inst) {
+      inst.el.innerHTML =
+        '<div class="lab-grid-2" style="grid-template-columns:1fr 470px">' +
+          '<div class="lab-panel">' +
+            '<div class="lab-title">Encolha ' + tex('\\sigma_1') + ' e veja a verossimilhança explodir</div>' +
+            '<div class="slider-row">' +
+              '<label style="flex:0 0 118px">Desvio σ₁:</label>' +
+              '<input type="range" class="s-sing" min="-6" max="0.18" step="0.02" value="0.0">' +
+              '<span class="v-sing" style="flex:0 0 80px">1.000</span>' +
+            '</div>' +
+            '<label class="check-row"><input type="checkbox" class="c-sing-reg"> aplicar <code>reg_covar</code> — piso σ² ≥ 10⁻²</label>' +
+            '<div class="lab-stats-box" style="margin-top:6px">' +
+              '<div>Variância <b>σ₁²</b>: <span class="out-sing-var" style="font-family:var(--mono);color:var(--fg)">—</span></div>' +
+              '<div>Log-verossimilhança <b>ln L</b>: <span class="out-sing-ll" style="font-family:var(--mono);font-weight:600;font-size:15px;color:var(--accent)">—</span></div>' +
+              '<div class="sing-alert" style="margin-top:8px;padding:8px 10px;border-radius:3px;font-family:var(--mono);font-size:12px;text-align:center">—</div>' +
+            '</div>' +
+            '<p class="lab-caption" style="text-align:left;margin-top:8px">' +
+              'O componente 1 está centrado <b>exatamente</b> sobre ' + tex('x_1') + '. Quando σ₁ → 0, ' +
+              'o fator ' + tex('1/\\sigma_1') + ' diverge e leva ' + tex('\\ln L') + ' junto — sem piso, o EM persegue esse máximo espúrio.' +
+            '</p>' +
+          '</div>' +
+          '<div class="lab-panel" style="display:flex;flex-direction:column;align-items:center">' +
+            '<canvas class="sing-cv" width="450" height="298"></canvas>' +
+            '<div class="legend" style="margin-top:6px;justify-content:center;font-size:11px">' +
+              '<span><i class="line" style="background:var(--d1)"></i>comp. 1 (colapsando)</span>' +
+              '<span><i class="line" style="background:var(--d2)"></i>comp. 2 (saudável)</span>' +
+              '<span><i class="line" style="background:var(--fg)"></i>mistura p(x)</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+
+      var sSig = inst.el.querySelector('.s-sing');
+      var vSig = inst.el.querySelector('.v-sing');
+      var cReg = inst.el.querySelector('.c-sing-reg');
+      var outVar = inst.el.querySelector('.out-sing-var');
+      var outLL = inst.el.querySelector('.out-sing-ll');
+      var alertBox = inst.el.querySelector('.sing-alert');
+      var cv = inst.el.querySelector('.sing-cv');
+      var ctx = setupCanvas(cv, 450, 298);
+
+      var X = [0.9, 1.4, 1.9, 2.2, 2.6, 3.0];     // x_1 = 0.9 é o ponto capturado
+      var MU1 = 0.9, MU2 = 2.2, SIG2 = 0.75, PI1 = 0.3, PI2 = 0.7;
+      var REG = 1e-2;                              // piso de variância (ε didático)
+      var LOG_MIN = -6, LOG_MAX = 0.18;
+
+      function normal(x, mu, sg) {
+        return Math.exp(-0.5 * Math.pow((x - mu) / sg, 2)) / (sg * Math.sqrt(2 * Math.PI));
+      }
+      function logLik(sig) {
+        var ll = 0;
+        for (var i = 0; i < X.length; i++) {
+          ll += Math.log(PI1 * normal(X[i], MU1, sig) + PI2 * normal(X[i], MU2, SIG2));
+        }
+        return ll;
+      }
+      var LL_REF = logLik(1.0);                    // referência: o ajuste "honesto"
+
+      function draw(sig, ll) {
+        ctx.clearRect(0, 0, 450, 298);
+
+        /* Painel de cima: as duas componentes ponderadas e a mistura */
+        var peak = PI1 * normal(MU1, MU1, sig);
+        var ymax = Math.max(0.55, Math.min(peak * 1.15, 3.4));
+        var p = F.subPlot(ctx, { x: 0, y: 0, w: 450, h: 182 },
+          { xlim: [-1.2, 5.0], ylim: [0, ymax], pad: { l: 46, r: 12, t: 12, b: 26 } });
+        p.frame({ xlabel: 'x', ylabel: 'densidade' });
+        p.clip();
+        var c1 = [], c2 = [], mix = [];
+        for (var x = -1.2; x <= 5.0; x += 0.008) {
+          var a = PI1 * normal(x, MU1, sig), b = PI2 * normal(x, MU2, SIG2);
+          c1.push([x, a]); c2.push([x, b]); mix.push([x, a + b]);
+        }
+        p.line(c2, C.d[1], 1.6);
+        p.line(c1, C.d[0], 1.6);
+        p.line(mix, C.fg, 2.2);
+        for (var j = 0; j < X.length; j++) {
+          var caught = j === 0;
+          p.dot(X[j], 0, caught ? 5.5 : 3.4, caught ? C.d[0] : C.dim, caught ? 1 : 0.8);
+        }
+        p.label(MU1, ymax * 0.92, 'x₁ capturado', C.d[0], { size: 11, box: true, align: 'left', dx: 8 });
+        p.unclip();
+
+        /* Painel de baixo: ln L em função de σ₁ — a divergência fica explícita */
+        var lo = logLik(Math.pow(10, LOG_MIN)), hi = LL_REF;
+        var q = F.subPlot(ctx, { x: 0, y: 186, w: 450, h: 112 },
+          { xlim: [LOG_MIN, LOG_MAX], ylim: [Math.min(hi, LL_REF) - 2, lo + 2],
+            pad: { l: 46, r: 12, t: 16, b: 30 } });
+        q.frame({ xlabel: 'log₁₀ σ₁', ylabel: 'ln L' });
+        q.clip();
+        var curve = [];
+        for (var t = LOG_MIN; t <= LOG_MAX; t += 0.03) curve.push([t, logLik(Math.pow(10, t))]);
+        q.line(curve, C.accent, 2);
+        q.segment(LOG_MIN, LL_REF, LOG_MAX, LL_REF, C.dim, { width: 1, dash: [4, 3] });
+        q.label(LOG_MIN, LL_REF, 'ln L do ajuste honesto', C.dim, { size: 10, align: 'left', dx: 6, dy: -9, box: true });
+        if (cReg.checked) {
+          var floor = Math.log10(Math.sqrt(REG));
+          q.segment(floor, q.ylim[0], floor, q.ylim[1], C.d[1], { width: 1.4, dash: [5, 3] });
+          q.label(floor, q.ylim[1], 'piso reg_covar ', C.d[1], { size: 10, align: 'right', dx: -5, dy: 9, box: true });
+        }
+        q.dot(Math.log10(sig), ll, 5.5, C.fg);
+        q.unclip();
+      }
+
+      function update() {
+        var sig = Math.pow(10, parseFloat(sSig.value));
+        if (cReg.checked) sig = Math.sqrt(Math.max(sig * sig, REG));
+        vSig.textContent = sig < 0.001 ? sig.toExponential(1) : sig.toFixed(3);
+        outVar.textContent = (sig * sig).toExponential(2);
+
+        var ll = logLik(sig);
+        outLL.textContent = (ll > 0 ? '+' : '') + ll.toFixed(2);
+
+        if (cReg.checked) {
+          alertBox.style.background = 'rgba(12, 124, 122, 0.10)';
+          alertBox.style.color = 'var(--m2)';
+          alertBox.style.border = '1px solid var(--m2)';
+          alertBox.textContent = '✓ reg_covar segura σ² no piso — ln L fica limitado';
+        } else if (ll > LL_REF + 1) {
+          alertBox.style.background = 'rgba(188, 42, 83, 0.10)';
+          alertBox.style.color = 'var(--m3)';
+          alertBox.style.border = '1px solid var(--m3)';
+          alertBox.textContent = '⚠ singularidade: ln L cresce sem limite (→ +∞)';
+        } else {
+          alertBox.style.background = 'transparent';
+          alertBox.style.color = 'var(--fg-dim)';
+          alertBox.style.border = '1px solid var(--line)';
+          alertBox.textContent = 'ajuste saudável — nenhum componente colapsou';
+        }
+        draw(sig, ll);
+      }
+
+      sSig.addEventListener('input', update);
+      cReg.addEventListener('change', update);
+      inst.state.update = update;
+    },
+    start: function (inst) {
+      if (inst.state.update) inst.state.update();
+    }
+  });
+
   LAB.register('lab-anomaly', {
     build: function (inst) {
       inst.el.innerHTML =

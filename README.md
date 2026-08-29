@@ -3,7 +3,7 @@
 Material didático interativo e apresentação acadêmica em **73 slides HTML** sobre modelos de variáveis latentes discretas, K-Means, Misturas de Bernoulli, algoritmo EM e Gaussian Mixture Models.
 
 **Disciplina:** Aprendizado de Máquina Não Supervisionado — Bacharelado em IA  
-**Formato:** Deck único linear com 73 slides (28 de Núcleo + 45 Laboratórios/Aprofundamentos)  
+**Formato:** deck único linear com 73 slides (28 de núcleo + 45 laboratórios/aprofundamentos), em tema claro  
 **Rota de 60 minutos:** Marcada com a insígnia `[NÚCLEO]` para a banca avaliadora  
 **Percurso:**
 - **Bloco 0 · Nivelamento e fundamentos:** álgebra linear, decodificador de notação e Bayes (slides 01–07)
@@ -59,7 +59,7 @@ Os 45 slides de aprofundamento e laboratórios trazem a insígnia `[APROFUNDAMEN
 
 ---
 
-## Os 24 Laboratórios Interativos e Simuladores (`labs.js`)
+## Os 25 Laboratórios Interativos e Simuladores (`labs.js`)
 
 Todos os laboratórios rodam no próprio navegador com semente reproduzível, controles reativos e renderização KaTeX:
 
@@ -86,7 +86,8 @@ Todos os laboratórios rodam no próprio navegador com semente reproduzível, co
 21. **EM-GMM Animado (Slide 66):** Translação e rotação contínua das gaussianas com curva de \(\ln L\).
 22. **Varredura BIC (Slide 69):** Curvas de BIC para os 4 tipos de covariância.
 23. **Demonstração K-Means vs GMM (Slide 70):** Comparação lado a lado sobre dados anisotrópicos.
-24. **Detecção de Anomalias (Slide 71):** Limiar de densidade \(p(\mathbf{x}) < \tau\) com alerta visual.
+24. **Detecção de Anomalias (Slide 71):** limiar de densidade \(p(\mathbf{x}) < \tau\), com a região de anomalia e a curva de nível \(p(\mathbf{x}) = \tau\) desenhadas no plano.
+25. **Colapso da Gaussiana (Slide 67):** \(\sigma_1 \to 0\) sobre um único ponto, a curva de \(\ln L\) divergindo e o efeito do piso `reg_covar`.
 
 ---
 

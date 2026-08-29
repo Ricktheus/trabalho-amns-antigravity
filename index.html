@@ -477,24 +477,40 @@
   <h2 class="s-title">A árvore genealógica completa dos Modelos de Mistura</h2>
   <div class="s-body">
     <div class="c12">
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
-        <div class="node" style="border-top-color:var(--m2);border-top-width:3px">
-          <div class="n-title" style="color:var(--m2)">K-Means</div>
-          <p style="font-size:12px;color:var(--fg-muted)"><b>Domínio:</b> \(\mathbb{R}^D\)<br><b>Condicional:</b> Dirac / Limite Gaussiano com \(\boldsymbol\Sigma \to \epsilon\mathbf{I}\)<br><b>Atribuição:</b> Rígida \(r_{nk} \in \{0,1\}\)<br><b>Custo:</b> Distorção \(J\)</p>
+      <div class="tree" role="img" aria-label="Árvore genealógica: um tronco comum p(x) = soma de pi_k p(x | theta_k) que se ramifica em K-Means, mistura de Bernoulli, mistura gaussiana e outras misturas da família exponencial">
+        <div class="tree-root">
+          <span class="tree-root-lab">Tronco comum · o mesmo arcabouço para todos</span>
+          <span class="tex">\[ p(\mathbf{x}) = \sum_{k=1}^{K} \pi_k\, p(\mathbf{x} \mid \boldsymbol\theta_k) \qquad\text{com}\qquad \mathbf{z} \text{ latente discreta 1-de-}K \]</span>
+          <span class="plain">p(x) = Σ_k π_k p(x | θ_k),  com z latente discreta 1-de-K</span>
         </div>
-        <div class="node" style="border-top-color:var(--m3);border-top-width:3px">
-          <div class="n-title" style="color:var(--m3)">Mistura de Bernoulli</div>
-          <p style="font-size:12px;color:var(--fg-muted)"><b>Domínio:</b> \(\{0,1\}^D\)<br><b>Condicional:</b> \(\prod \mu_{kd}^{x_d}(1-\mu_{kd})^{1-x_d}\)<br><b>Atribuição:</b> Suave \(\gamma_{nk} \in [0,1]\)<br><b>Custo:</b> \(\ln p(X)\)</p>
+        <div class="tree-branch" aria-hidden="true">
+          <span class="tree-stem"></span>
+          <span class="tree-bar"></span>
+          <span class="tree-drop" style="--i:0"></span>
+          <span class="tree-drop" style="--i:1"></span>
+          <span class="tree-drop" style="--i:2"></span>
+          <span class="tree-drop" style="--i:3"></span>
         </div>
-        <div class="node" style="border-top-color:var(--m4);border-top-width:3px">
-          <div class="n-title" style="color:var(--m4)">Mistura Gaussiana (GMM)</div>
-          <p style="font-size:12px;color:var(--fg-muted)"><b>Domínio:</b> \(\mathbb{R}^D\)<br><b>Condicional:</b> \(\mathcal{N}(\mathbf{x}\mid\boldsymbol\mu_k, \boldsymbol\Sigma_k)\)<br><b>Atribuição:</b> Suave \(\gamma_{nk} \in [0,1]\)<br><b>Custo:</b> \(\ln p(X)\)</p>
-        </div>
-        <div class="node" style="border-top-color:var(--accent);border-top-width:3px">
-          <div class="n-title" style="color:var(--accent)">Outras Misturas (Família Exp.)</div>
-          <p style="font-size:12px;color:var(--fg-muted)"><b>Domínio:</b> \(\mathbb{N}^D\) ou \(\mathbb{R}^+\)<br><b>Condicional:</b> Poisson (contagem), Exponencial (tempos)<br><b>Atribuição:</b> Suave \(\gamma_{nk} \in [0,1]\)<br><b>Custo:</b> \(\ln p(X)\)</p>
+        <div class="tree-leaves">
+          <div class="node" style="border-top-color:var(--m2);border-top-width:3px">
+            <div class="n-title" style="color:var(--m2)">K-Means</div>
+            <p><b>Domínio:</b> \(\mathbb{R}^D\)<br><b>Condicional:</b> Dirac / limite gaussiano com \(\boldsymbol\Sigma \to \epsilon\mathbf{I}\)<br><b>Atribuição:</b> rígida \(r_{nk} \in \{0,1\}\)<br><b>Custo:</b> distorção \(J\)</p>
+          </div>
+          <div class="node" style="border-top-color:var(--m3);border-top-width:3px">
+            <div class="n-title" style="color:var(--m3)">Mistura de Bernoulli</div>
+            <p><b>Domínio:</b> \(\{0,1\}^D\)<br><b>Condicional:</b> \(\prod \mu_{kd}^{x_d}(1-\mu_{kd})^{1-x_d}\)<br><b>Atribuição:</b> suave \(\gamma_{nk} \in [0,1]\)<br><b>Custo:</b> \(\ln p(X)\)</p>
+          </div>
+          <div class="node" style="border-top-color:var(--m4);border-top-width:3px">
+            <div class="n-title" style="color:var(--m4)">Mistura Gaussiana (GMM)</div>
+            <p><b>Domínio:</b> \(\mathbb{R}^D\)<br><b>Condicional:</b> \(\mathcal{N}(\mathbf{x}\mid\boldsymbol\mu_k, \boldsymbol\Sigma_k)\)<br><b>Atribuição:</b> suave \(\gamma_{nk} \in [0,1]\)<br><b>Custo:</b> \(\ln p(X)\)</p>
+          </div>
+          <div class="node" style="border-top-color:var(--accent);border-top-width:3px">
+            <div class="n-title" style="color:var(--accent)">Outras misturas (família exp.)</div>
+            <p><b>Domínio:</b> \(\mathbb{N}^D\) ou \(\mathbb{R}^+\)<br><b>Condicional:</b> Poisson (contagens), Exponencial (tempos)<br><b>Atribuição:</b> suave \(\gamma_{nk} \in [0,1]\)<br><b>Custo:</b> \(\ln p(X)\)</p>
+          </div>
         </div>
       </div>
+      <p class="table-note" style="margin-top:14px">O que muda de um ramo para o outro é <b>apenas</b> a escolha de \(p(\mathbf{x}\mid\boldsymbol\theta_k)\). A latente 1-de-\(K\), o Passo E por Bayes e o Passo M por máxima verossimilhança ponderada continuam idênticos.</p>
     </div>
   </div>
   <div class="slide-notes" hidden>
@@ -887,7 +903,7 @@
 <!-- ============================== SLIDE 28 ============================== -->
 <section class="slide" id="slide-28" data-member-id="2" data-time="02:00" data-type="aprofundamento"
          data-ref="Dinâmica do Algoritmo de Lloyd">
-  <h2 class="s-title">Laboratório: Lloyd meio-passo a meio-passo (*Atribuir* vs *Atualizar*)</h2>
+  <h2 class="s-title">Laboratório: Lloyd meio-passo a meio-passo — <em>Atribuir</em> vs <em>Atualizar</em></h2>
   <div class="s-body">
     <div class="c12">
       <div data-lab="lab-lloyd-half"></div>
@@ -1097,7 +1113,7 @@
     </div>
     <div class="c6 stack">
       <div class="node accent">
-        <div class="n-title">A Solução: Z-Score (`StandardScaler`)</div>
+        <div class="n-title">A solução: Z-score (<code>StandardScaler</code>)</div>
         Transforma cada dimensão para ter média zero e variância unitária:
         <div class="formula sm" style="margin:8px 0">
           <span class="tex">\[ z_{nd} = \frac{x_{nd} - \bar{x}_d}{s_d} \]</span>
@@ -1182,7 +1198,7 @@
   </div>
   <div class="slide-notes" hidden>
     <h4>NumPy Broadcasting</h4>
-    <p>Destaque o truque `X[:, np.newaxis, :] - centroids` que calcula as distâncias de todas as \(N\) amostras para todos os \(K\) centróides em uma única instrução vetorial veloz em C. A saída ao lado é o resultado real da execução deste código.</p>
+    <p>Destaque o truque <code>X[:, np.newaxis, :] - centroids</code> que calcula as distâncias de todas as \(N\) amostras para todos os \(K\) centróides em uma única instrução vetorial veloz em C. A saída ao lado é o resultado real da execução deste código.</p>
   </div>
 </section>
 
@@ -1708,7 +1724,7 @@
   </div>
   <div class="slide-notes" hidden>
     <h4>Estabilidade Numérica</h4>
-    <p>O truque Log-Sum-Exp é o padrão ouro absoluto em todas as bibliotecas de deep learning e ML (PyTorch `torch.logsumexp`, SciPy `scipy.special.logsumexp`).</p>
+    <p>O truque Log-Sum-Exp é o padrão ouro absoluto em todas as bibliotecas de deep learning e ML (PyTorch <code>torch.logsumexp</code>, SciPy <code>scipy.special.logsumexp</code>).</p>
   </div>
 </section>
 
@@ -1795,7 +1811,7 @@
   </div>
   <div class="slide-notes" hidden>
     <h4>Código Didático</h4>
-    <p>Destaque a multiplicação matricial `X @ np.log(mu)` que avalia a verossimilhança de todos os bits simultaneamente e o uso de `logsumexp` para computar a evidência sem risco de underflow. A saída ao lado é o resultado real da execução deste código.</p>
+    <p>Destaque a multiplicação matricial <code>X @ np.log(mu)</code> que avalia a verossimilhança de todos os bits simultaneamente e o uso de <code>logsumexp</code> para computar a evidência sem risco de underflow. A saída ao lado é o resultado real da execução deste código.</p>
   </div>
 </section>
 
@@ -2050,29 +2066,27 @@
 <!-- ============================== SLIDE 67 ============================== -->
 <section class="slide" id="slide-67" data-member-id="4" data-time="02:00" data-type="aprofundamento"
          data-ref="Bishop, PRML (Cap. 15.1) · Singularidades de Verossimilhança">
-  <h2 class="s-title">Singularidades da Gaussiana e a regularização `reg_covar`</h2>
+  <h2 class="s-title">Singularidades da Gaussiana e a regularização <code>reg_covar</code></h2>
   <div class="s-body">
-    <div class="c6 stack">
-      <div class="eyebrow accent">A Patologia da Singularidade Espúria</div>
-      <p style="font-size:13px;line-height:1.45;color:var(--fg-muted)">
-        Se durante as iterações um componente gaussiano colapsar exatamente sobre um único ponto de dados (\(\boldsymbol\mu_k = \mathbf{x}_n\)), sua variância colapsa: \(\sigma_k^2 \to 0\).<br>
-        O determinante \(|\boldsymbol\Sigma_k| \to 0\) faz com que o termo \(\frac{1}{|\boldsymbol\Sigma_k|^{1/2}} \to +\infty\), explodindo a verossimilhança para <b>infinito</b> (\(\ln L \to +\infty\)).
-      </p>
-    </div>
-    <div class="c6 stack">
-      <div class="node accent">
-        <div class="n-title">A Solução Prática: `reg_covar` (\(\epsilon\mathbf{I}\))</div>
-        Adicionamos uma constante positiva mínima à diagonal da matriz de covariância:
-        <div class="formula sm" style="margin:8px 0">
-          <span class="tex">\[ \boldsymbol\Sigma_k^{\mathrm{reg}} = \boldsymbol\Sigma_k + \epsilon\mathbf{I} \qquad (\epsilon = 10^{-6}) \]</span>
+    <div class="c12">
+      <div class="strip">
+        <div class="strip-item">
+          <span class="strip-lab">A patologia</span>
+          Se um componente colapsar exatamente sobre um ponto (\(\boldsymbol\mu_k = \mathbf{x}_n\)), então \(\sigma_k^2 \to 0\), o fator \(1/|\boldsymbol\Sigma_k|^{1/2} \to +\infty\) e a verossimilhança explode: \(\ln L \to +\infty\) num máximo que não descreve dado algum.
         </div>
-        <p style="font-size:12px;color:var(--fg-muted)">Garante que \(\boldsymbol\Sigma_k\) seja estritamente positiva definida e inversível em todas as iterações.</p>
+        <div class="strip-item accent">
+          <span class="strip-lab">A solução: <code>reg_covar</code></span>
+          Um piso positivo na diagonal, \(\boldsymbol\Sigma_k^{\mathrm{reg}} = \boldsymbol\Sigma_k + \epsilon\mathbf{I}\) com \(\epsilon = 10^{-6}\), mantém \(\boldsymbol\Sigma_k\) positiva definida e \(\ln L\) limitada em todas as iterações.
+        </div>
       </div>
+    </div>
+    <div class="c12">
+      <div data-lab="lab-singularity"></div>
     </div>
   </div>
   <div class="slide-notes" hidden>
     <h4>Regularização</h4>
-    <p>No scikit-learn, o parâmetro `reg_covar=1e-6` vem ativo por padrão exatamente para evitar essa quebra numérica.</p>
+    <p>No scikit-learn, o parâmetro <code>reg_covar=1e-6</code> vem ativo por padrão exatamente para evitar essa quebra numérica. No laboratório, arraste \(\sigma_1\) para a esquerda e observe \(\ln L\) subir sem limite; ative <code>reg_covar</code> e veja a curva parar no piso.</p>
   </div>
 </section>
 
