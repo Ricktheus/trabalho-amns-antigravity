@@ -59,35 +59,36 @@ Os 45 slides de aprofundamento e laboratórios trazem a insígnia `[APROFUNDAMEN
 
 ---
 
-## Os 25 Laboratórios Interativos e Simuladores (`labs.js`)
+## Os 24 Laboratórios Interativos e Simuladores (`labs.js`)
 
 Todos os laboratórios rodam no próprio navegador com semente reproduzível, controles reativos e renderização KaTeX:
 
-1. **Decodificador de Notação (Slide 02):** Tradução interativa em KaTeX de \(\Sigma, \Pi, \mathbf{z}, \gamma, \boldsymbol\Sigma, \ln, \arg\min, \mathbf{x}^\top\).
-2. **Álgebra Linear 101 (Slide 03):** Vetores 2-D, transposta \(\mathbf{x}^\top\), produto interno \(\mathbf{x}^\top\mathbf{y}\), normas euclidianas e ângulo \(\theta\).
-3. **Revisão Relâmpago (Slide 04):** Média, variância e curva normal reativa com arraste de pontos.
-4. **Probabilidade Condicional & Bayes (Slide 05):** Cálculo visual da probabilidade total e inversão de Bayes.
+1. **Decodificador de Notação (Slide 02):** tradução interativa em KaTeX de \(\Sigma, \Pi, \mathbf{z}, \gamma, \boldsymbol\Sigma, \ln, \arg\min, \mathbf{x}^\top\).
+2. **Álgebra Linear 101 (Slide 03):** vetores 2-D, transposta \(\mathbf{x}^\top\), produto interno \(\mathbf{x}^\top\mathbf{y}\), normas euclidianas e ângulo \(\theta\).
+3. **Revisão Relâmpago (Slide 04):** média, variância e curva normal reativa com arraste de pontos.
+4. **Probabilidade Condicional & Bayes (Slide 05):** cálculo visual da probabilidade total e inversão de Bayes.
 5. **Bayes com Números (Slides 06 e 18):** tabela do cálculo de \(\gamma_{nk}\) com prior e verossimilhança, ao lado do gráfico das duas densidades ponderadas e da barra de normalização.
-6. **Máquina Geradora (Slide 07):** Sorteio generativo acumulando na densidade marginal teórica.
-7. **1-de-K na Prática (Slide 14):** Colapso mecânico do produto \(\prod \pi_k^{z_k}\).
-8. **\(J\) na Mão (Slide 24):** Cálculo da inércia com arraste de centróides.
-9. **Por que a Média? (Slide 27):** Parábola do erro quadrático e derivada nula no vértice.
-10. **Lloyd Meio-Passo (Slide 28):** Execução isolada dos botões *Atribuir* e *Atualizar*.
-11. **Laboratório do \(K\) (Slide 32):** Varredura de \(K=1\ldots8\) com silhueta e inércia simultâneas.
-12. **Roleta do k-means++ (Slide 35):** Semeadura probabilística com peso proporcional a \(D^2\).
-13. **Quantização de Imagens (Slide 38):** Compressão de cores 24-bits em RGB com K-Means para paleta de \(K\) cores.
-14. **Pinte um Dígito (Slide 44):** Grade 8×8 desenhável com classificação instantânea por Bernoulli.
-15. **Por que o Log Atrapalha (Slide 46):** Comparação numérica entre \(\ln(a+b)\) e \(\ln a + \ln b\).
-16. **EM em 6 Amostras (Slide 49):** Ciclo de matrizes \(\gamma\) e protótipos \(\boldsymbol\mu\).
-17. **Decomposição ELBO + KL (Slide 51):** Visualização de por que \(\ln p(X)\) nunca diminui.
-18. **Underflow ao Vivo (Slide 56):** Subfluxo de float64 colapsando a zero vs espaço logarítmico.
-19. **Laboratório da Covariância (Slide 62):** Sliders de \(\sigma_1, \sigma_2, \rho\) girando elipses 2-D ao vivo.
-20. **Mahalanobis vs Euclidiana (Slide 64):** Comparação de distâncias considerando a dispersão estatística.
-21. **EM-GMM Animado (Slide 66):** Translação e rotação contínua das gaussianas com curva de \(\ln L\).
-22. **Varredura BIC (Slide 69):** Curvas de BIC para os 4 tipos de covariância.
-23. **Demonstração K-Means vs GMM (Slide 70):** Comparação lado a lado sobre dados anisotrópicos.
+6. **Máquina Geradora (Slide 07):** sorteio generativo acumulando na densidade marginal teórica.
+7. **1-de-K na Prática (Slide 14):** colapso mecânico do produto \(\prod \pi_k^{z_k}\).
+8. **\(J\) na Mão (Slide 24):** cálculo da inércia com arraste de centróides.
+9. **Por que a Média? (Slide 27):** parábola do erro quadrático e derivada nula no vértice.
+10. **Lloyd Meio-Passo (Slide 28):** execução isolada dos botões *Atribuir* e *Atualizar*.
+11. **Laboratório do \(K\) (Slide 32):** varredura de \(K=1\ldots8\) com silhueta e inércia simultâneas.
+12. **Roleta do k-means++ (Slide 35):** semeadura probabilística com peso proporcional a \(D^2\).
+13. **Quantização de Imagens (Slide 38):** compressão de cores 24-bits em RGB com K-Means para paleta de \(K\) cores.
+14. **Pinte um Dígito (Slide 44):** grade 8×8 desenhável com classificação instantânea por Bernoulli.
+15. **Por que o Log Atrapalha (Slide 46):** comparação numérica entre \(\ln(a+b)\) e \(\ln a + \ln b\).
+16. **EM em 6 Amostras (Slide 49):** ciclo de matrizes \(\gamma\) e protótipos \(\boldsymbol\mu\).
+17. **Decomposição ELBO + KL (Slide 51):** visualização de por que \(\ln p(X)\) nunca diminui.
+18. **Underflow ao Vivo (Slide 56):** subfluxo de float64 colapsando a zero vs espaço logarítmico.
+19. **Laboratório da Covariância (Slide 62):** sliders de \(\sigma_1, \sigma_2, \rho\) girando elipses 2-D ao vivo.
+20. **Mahalanobis vs Euclidiana (Slide 64):** comparação de distâncias considerando a dispersão estatística.
+21. **EM-GMM Animado (Slide 66):** translação e rotação contínua das gaussianas com curva de \(\ln L\).
+22. **Colapso da Gaussiana (Slide 67):** \(\sigma_1 \to 0\) sobre um único ponto, a curva de \(\ln L\) divergindo e o efeito do piso `reg_covar`.
+23. **Varredura BIC (Slide 69):** curvas de BIC para os 4 tipos de covariância.
 24. **Detecção de Anomalias (Slide 71):** limiar de densidade \(p(\mathbf{x}) < \tau\), com a região de anomalia e a curva de nível \(p(\mathbf{x}) = \tau\) desenhadas no plano.
-25. **Colapso da Gaussiana (Slide 67):** \(\sigma_1 \to 0\) sobre um único ponto, a curva de \(\ln L\) divergindo e o efeito do piso `reg_covar`.
+
+O **slide 70** traz a demonstração lado a lado de K-Means e GMM sobre os mesmos dados anisotrópicos, em abas com o gráfico e o script `scikit-learn` correspondente.
 
 ---
 
