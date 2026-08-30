@@ -1,0 +1,1061 @@
+<!--
+  FONTE do guia-de-estudo.pdf
+  =========================================================================
+  Convencao de matematica neste arquivo:
+    <m>...LaTeX...</m>   -> formula inline
+    <M>...LaTeX...</M>   -> formula em bloco (display)
+
+  Para regerar o PDF:
+    npm install katex playwright-core
+    node render.js guia-de-estudo.html guia.out.html   # troca <m>/<M> por KaTeX
+    node topdf.js  guia.out.html  guia-de-estudo.pdf   # imprime em A4
+
+  O render.js precisa de katex.min.css e da pasta fonts/ ao lado do HTML
+  de saida (copie de node_modules/katex/dist/).
+  =========================================================================
+-->
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<title>Guia de Estudo — Variáveis Latentes Discretas, K-Means e Modelos de Mistura</title>
+<link rel="stylesheet" href="katex.min.css">
+<style>
+  :root{
+    --ink:#16191d; --ink2:#3a4048; --muted:#6d747d; --line:#d3d8de; --soft:#eef1f4;
+    --bishop:#2c3e9e; --murphy:#0a6b57; --skmix:#8a5209; --skclu:#94285a;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-print-color-adjust:exact; print-color-adjust:exact}
+  body{
+    font-family:"Charter","Bitstream Charter","DejaVu Serif",Georgia,serif;
+    font-size:10.4pt; line-height:1.52; color:var(--ink); margin:0;
+    background:#fff;
+  }
+  .katex{font-size:1.02em}
+  h1,h2,h3,h4{line-height:1.25;margin:0;font-weight:700}
+  p{margin:0 0 .62em}
+  a{color:var(--bishop);text-decoration:none}
+  code,.mono{font-family:"DejaVu Sans Mono","Liberation Mono",monospace;font-size:.86em}
+  code{background:var(--soft);padding:.5pt 3pt;border-radius:2px}
+
+  /* ---------- capa ---------- */
+  .cover{height:247mm;display:flex;flex-direction:column;justify-content:space-between;page-break-after:always}
+  .cover-top{padding-top:26mm}
+  .cover .kicker{font-family:"DejaVu Sans Mono",monospace;font-size:8pt;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:10mm}
+  .cover h1{font-size:27pt;line-height:1.14;letter-spacing:-.01em;margin-bottom:6mm}
+  .cover .sub{font-size:12pt;color:var(--ink2);font-style:italic;max-width:135mm}
+  .cover-rule{height:2.2pt;background:var(--ink);margin:9mm 0 7mm;width:100%}
+  .refs-cover{display:flex;flex-direction:column;gap:3.6mm;margin-top:2mm}
+  .refc{display:grid;grid-template-columns:5mm 1fr;gap:3mm;align-items:start}
+  .refc .bar{width:2.6pt;height:100%;min-height:9mm;background:var(--c)}
+  .refc .t{font-size:9.6pt;line-height:1.42}
+  .refc .t b{display:block;font-size:10pt}
+  .refc .t span{color:var(--muted);font-size:8.8pt;font-family:"DejaVu Sans Mono",monospace}
+  .cover-foot{font-size:9pt;color:var(--muted);border-top:1px solid var(--line);padding-top:4mm}
+
+  /* ---------- estrutura ---------- */
+  .part{page-break-before:always}
+  .part-head{border-top:2.2pt solid var(--c);padding-top:5mm;margin-bottom:8mm}
+  .part-head .lbl{font-family:"DejaVu Sans Mono",monospace;font-size:8pt;letter-spacing:.16em;text-transform:uppercase;color:var(--c);font-weight:700}
+  .part-head h2{font-size:19pt;margin:2.5mm 0 3mm;letter-spacing:-.008em}
+  .part-head .cite{font-size:9pt;color:var(--muted);font-style:italic}
+
+  h3.sec{font-size:12.6pt;margin:9mm 0 3mm;padding-bottom:1.6mm;border-bottom:1px solid var(--line);page-break-after:avoid}
+  h3.sec .num{font-family:"DejaVu Sans Mono",monospace;font-size:9.4pt;color:var(--c);margin-right:3mm;font-weight:700}
+  h4.sub{font-size:10.8pt;margin:6mm 0 2mm;color:var(--ink);page-break-after:avoid}
+  h4.sub .num{font-family:"DejaVu Sans Mono",monospace;font-size:8.8pt;color:var(--muted);margin-right:2.5mm;font-weight:700}
+
+  ul,ol{margin:.3em 0 .75em;padding-left:5.5mm}
+  li{margin-bottom:.28em}
+  ul.tight li{margin-bottom:.12em}
+
+  /* ---------- caixas ---------- */
+  .box{border:1px solid var(--line);border-left:2.4pt solid var(--c);padding:3.4mm 4.5mm;margin:3.5mm 0;background:#fcfcfd;page-break-inside:avoid}
+  .box .bt{font-family:"DejaVu Sans Mono",monospace;font-size:7.6pt;letter-spacing:.13em;text-transform:uppercase;color:var(--c);font-weight:700;margin-bottom:1.8mm}
+  .box p:last-child{margin-bottom:0}
+  .key{background:#f7f8fa;border:1px solid var(--line);border-left:2.4pt solid var(--ink);padding:3mm 4.5mm;margin:3.5mm 0;page-break-inside:avoid}
+  .key .bt{color:var(--ink)}
+
+  /* ---------- Q&A ---------- */
+  .qa{page-break-inside:avoid;margin:0 0 4.2mm;padding-left:9mm;position:relative}
+  .qa .q{font-weight:700;margin-bottom:1.4mm}
+  .qa .qn{position:absolute;left:0;top:.1em;font-family:"DejaVu Sans Mono",monospace;font-size:8pt;font-weight:700;color:var(--c)}
+  .qa .a{color:var(--ink2)}
+  .qa .a p:last-child{margin-bottom:0}
+  .qa-head{margin:8mm 0 4mm;display:flex;align-items:baseline;gap:3mm;page-break-after:avoid}
+  .qa-head .t{font-family:"DejaVu Sans Mono",monospace;font-size:8.4pt;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:#fff;background:var(--c);padding:1mm 2.6mm}
+  .qa-head .r{flex:1;height:1px;background:var(--line)}
+
+  /* ---------- tabelas ---------- */
+  table{border-collapse:collapse;width:100%;font-size:9pt;margin:3mm 0 4mm}
+  tr{page-break-inside:avoid}
+  th{page-break-after:avoid}
+  th{text-align:left;font-family:"DejaVu Sans Mono",monospace;font-size:7.6pt;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700;padding:2mm 2.5mm;border-bottom:1.2pt solid var(--ink)}
+  td{padding:1.8mm 2.5mm;border-bottom:.5pt solid var(--line);vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  td.c{text-align:center}
+  .tnum{font-family:"DejaVu Sans Mono",monospace;font-size:8.6pt}
+
+  /* ---------- sumário ---------- */
+  .toc{page-break-after:always}
+  .toc h2{font-size:16pt;margin-bottom:6mm;padding-bottom:2mm;border-bottom:1.6pt solid var(--ink)}
+  .toc ol{list-style:none;padding:0;margin:0}
+  .toc>ol>li{margin-bottom:4.5mm}
+  .toc .p-t{font-weight:700;font-size:10.6pt;display:flex;gap:3mm;align-items:baseline}
+  .toc .p-t .m{font-family:"DejaVu Sans Mono",monospace;font-size:8.2pt;color:var(--c);letter-spacing:.1em}
+  .toc .p-s{color:var(--muted);font-size:9pt;margin-left:0;margin-top:.6mm;line-height:1.45}
+
+  .lead{font-size:11pt;color:var(--ink2);margin-bottom:4mm}
+  .note{font-size:8.8pt;color:var(--muted);font-style:italic}
+  .center{text-align:center}
+  .nobreak{page-break-inside:avoid}
+
+  .c-bishop{--c:var(--bishop)} .c-murphy{--c:var(--murphy)}
+  .c-skmix{--c:var(--skmix)} .c-skclu{--c:var(--skclu)} .c-ink{--c:var(--ink)}
+</style></head><body>
+
+<!-- ============ CAPA ============ -->
+<div class="cover c-ink">
+  <div class="cover-top">
+    <div class="kicker">Bacharelado em IA &#183; Aprendizado de Máquina Não Supervisionado</div>
+    <h1>Variáveis Latentes Discretas,<br>K-Means e Modelos de Mistura</h1>
+    <div class="cover-rule"></div>
+    <p class="sub">Guia de estudo: conteúdo consolidado das quatro referências indicadas, com 116 perguntas e respostas comentadas.</p>
+  </div>
+
+  <div class="refs-cover">
+    <div class="refc c-bishop"><div class="bar"></div><div class="t"><b>Bishop &amp; Bishop — <i>Deep Learning: Foundations and Concepts</i> (2024)</b><span>Capítulo 15 — Discrete Latent Variables (15.1 a 15.4.5) &#183; bishopbook.com</span></div></div>
+    <div class="refc c-murphy"><div class="bar"></div><div class="t"><b>Murphy — <i>Probabilistic Machine Learning: An Introduction</i> (2022)</b><span>Seções 21.3 (K-means clustering) a 21.4.2 (Mixtures of Bernoullis)</span></div></div>
+    <div class="refc c-skmix"><div class="bar"></div><div class="t"><b>scikit-learn — <i>Gaussian mixture models</i></b><span>Seções 2.1 a 2.1.1 &#183; scikit-learn.org/stable/modules/mixture.html</span></div></div>
+    <div class="refc c-skclu"><div class="bar"></div><div class="t"><b>scikit-learn — <i>Clustering</i></b><span>Seções 2.3 a 2.3.2 &#183; scikit-learn.org/stable/modules/clustering.html</span></div></div>
+  </div>
+
+  <div class="cover-foot">
+    <p style="margin:0"><b>Aviso sobre as fontes.</b> Este guia foi redigido a partir do conteúdo canônico das quatro referências e do material da apresentação do grupo. Os textos originais não puderam ser consultados diretamente durante a redação (o proxy de rede bloqueia os quatro domínios), portanto <b>confira a numeração exata das subseções</b> ao citar. As definições, equações e resultados são padrão da literatura e podem ser verificados nos próprios livros.</p>
+  </div>
+</div>
+
+<!-- ============ SUMÁRIO ============ -->
+<div class="toc">
+  <h2>Sumário</h2>
+  <ol>
+    <li class="c-ink"><div class="p-t"><span class="m">PARTE 0</span><span>Como usar este guia &#183; Notação</span></div>
+      <div class="p-s">Convenções de símbolos, o mapa dos três modelos e a régua de leitura.</div></li>
+    <li class="c-bishop"><div class="p-t"><span class="m">PARTE I</span><span>Bishop, cap. 15 — Discrete Latent Variables</span></div>
+      <div class="p-s">15.1 K-means Clustering &#183; 15.1.1 Segmentação de imagem &#183; 15.2 Mixtures of Gaussians &#183; 15.2.1 Função de verossimilhança &#183; 15.2.2 Máxima verossimilhança &#183; 15.3 O algoritmo EM &#183; 15.3.1 Misturas gaussianas &#183; 15.3.2 Relação com K-means &#183; 15.3.3 Misturas de Bernoulli &#183; 15.4 Evidence Lower Bound &#183; 15.4.1 a 15.4.5 &#8212; <b>46 perguntas</b></div></li>
+    <li class="c-murphy"><div class="p-t"><span class="m">PARTE II</span><span>Murphy, 21.3 a 21.4.2</span></div>
+      <div class="p-s">O algoritmo &#183; Quantização vetorial &#183; k-means++ &#183; K-medoids &#183; Truques de aceleração &#183; Escolha de <i>K</i> &#183; Misturas gaussianas &#183; Misturas de Bernoulli &#8212; <b>28 perguntas</b></div></li>
+    <li class="c-skmix"><div class="p-t"><span class="m">PARTE III</span><span>scikit-learn §2.1 a §2.1.1 — Gaussian mixture models</span></div>
+      <div class="p-s">A classe <code>GaussianMixture</code> &#183; prós e contras &#183; <code>covariance_type</code> &#183; seleção por BIC &#183; o algoritmo EM na biblioteca &#8212; <b>14 perguntas</b></div></li>
+    <li class="c-skclu"><div class="p-t"><span class="m">PARTE IV</span><span>scikit-learn §2.3 a §2.3.2 — Clustering</span></div>
+      <div class="p-s">Panorama dos métodos &#183; a classe <code>KMeans</code> &#183; inércia &#183; limitações documentadas &#183; inicialização &#183; MiniBatch &#8212; <b>16 perguntas</b></div></li>
+    <li class="c-ink"><div class="p-t"><span class="m">PARTE V</span><span>Simulado integrador</span></div>
+      <div class="p-s">Questões que cruzam as quatro referências, no formato de arguição de banca <div class="p-s">Questões que cruzam as quatro referências, no formato de arguição de banca.</div>#8212; <b>12 perguntas</b></div></li>
+    <li class="c-ink"><div class="p-t"><span class="m">APÊNDICE</span><span>Formulário de uma página</span></div>
+      <div class="p-s">Todas as equações essenciais reunidas para revisão de véspera.</div></li>
+  </ol>
+</div>
+
+<!-- ============ PARTE 0 ============ -->
+<div class="part c-ink">
+  <div class="part-head">
+    <div class="lbl">Parte 0</div>
+    <h2>Como usar este guia &#183; Notação</h2>
+    <div class="cite">Convenções válidas para todas as partes seguintes.</div>
+  </div>
+
+  <p class="lead">Cada parte cobre uma referência do professor, na ordem em que ele as listou. A estrutura é sempre a mesma: primeiro o <b>conteúdo</b> da seção, com as definições e equações; depois um bloco de <b>perguntas e respostas</b> sobre aquele trecho.</p>
+
+  <p>As quatro referências se sobrepõem bastante — Bishop cap. 15 sozinho cobre quase tudo que as outras três discutem. Isso é uma vantagem para estudar: quando um conceito aparece pela segunda vez, ele vem com uma ênfase diferente. O guia sinaliza essas repetições em vez de escondê-las, porque é exatamente onde as bancas costumam perguntar (&#8220;o Bishop trata isso como derivação; o Murphy, como decisão de projeto; o scikit-learn, como parâmetro&#8221;).</p>
+
+  <div class="key">
+    <div class="bt">Os três modelos deste conteúdo, em uma frase cada</div>
+    <ul class="tight" style="margin-bottom:0">
+      <li><b>K-Means</b> — particiona <m>\mathbb{R}^D</m> em <m>K</m> regiões esféricas, atribuição rígida, minimiza a distorção <m>J</m>. Não é probabilístico.</li>
+      <li><b>Mistura de Bernoulli</b> — modela vetores binários <m>\{0,1\}^D</m> como <m>D</m> moedas independentes por componente, atribuição suave, maximiza <m>\ln p(\mathbf{X})</m> via EM.</li>
+      <li><b>Mistura Gaussiana (GMM)</b> — modela <m>\mathbb{R}^D</m> como combinação convexa de elipsóides, atribuição suave, maximiza <m>\ln p(\mathbf{X})</m> via EM. Generaliza o K-Means.</li>
+    </ul>
+  </div>
+
+  <h3 class="sec"><span class="num">§0.1</span>Tabela de símbolos</h3>
+  <table>
+    <tr><th style="width:22mm">Símbolo</th><th>Significado</th><th style="width:52mm">Onde aparece</th></tr>
+    <tr><td class="tnum"><m>N</m>, <m>D</m>, <m>K</m></td><td>Número de amostras, de atributos (dimensões) e de componentes/clusters.</td><td>Todas as referências</td></tr>
+    <tr><td class="tnum"><m>\mathbf{x}_n</m></td><td>A <m>n</m>-ésima observação. Vetor coluna em <m>\mathbb{R}^D</m> (Gauss) ou em <m>\{0,1\}^D</m> (Bernoulli).</td><td>Variável <b>observada</b></td></tr>
+    <tr><td class="tnum"><m>\mathbf{z}_n</m></td><td>Vetor latente 1-de-<m>K</m>: exatamente uma coordenada vale 1, as outras 0. Diz de qual componente <m>\mathbf{x}_n</m> veio.</td><td>Variável <b>latente</b> (nunca observada)</td></tr>
+    <tr><td class="tnum"><m>z_{nk}</m></td><td>A <m>k</m>-ésima coordenada de <m>\mathbf{z}_n</m>. Vale 1 se a amostra <m>n</m> pertence ao componente <m>k</m>.</td><td>Bishop 15.2</td></tr>
+    <tr><td class="tnum"><m>r_{nk}</m></td><td>Atribuição <b>rígida</b> do K-Means: 1 ou 0, sem meio-termo.</td><td>Bishop 15.1, Murphy 21.3</td></tr>
+    <tr><td class="tnum"><m>\gamma(z_{nk})</m>, <m>\gamma_{nk}</m></td><td><b>Responsabilidade</b>: o posterior <m>p(z_{nk}=1\mid\mathbf{x}_n)</m>. Um número real em <m>[0,1]</m>.</td><td>Bishop 15.2.1, o conceito central</td></tr>
+    <tr><td class="tnum"><m>\pi_k</m></td><td>Coeficiente de mistura (prior do componente <m>k</m>). <m>\sum_k \pi_k = 1</m>, <m>\pi_k \ge 0</m>.</td><td>Todas</td></tr>
+    <tr><td class="tnum"><m>\boldsymbol\mu_k</m></td><td>Centróide (K-Means), vetor de probabilidades por dimensão (Bernoulli) ou média do componente (GMM).</td><td>Todas</td></tr>
+    <tr><td class="tnum"><m>\boldsymbol\Sigma_k</m></td><td>Matriz de covariância <m>D\times D</m> do componente <m>k</m>. Controla forma, tamanho e orientação.</td><td>GMM apenas</td></tr>
+    <tr><td class="tnum"><m>N_k</m></td><td>Massa efetiva do componente <m>k</m>: <m>N_k = \sum_n \gamma(z_{nk})</m>. Um &#8220;número fracionário de pontos&#8221;.</td><td>Passo M do EM</td></tr>
+    <tr><td class="tnum"><m>\boldsymbol\theta</m></td><td>Conjunto de todos os parâmetros: <m>\{\pi_k,\boldsymbol\mu_k,\boldsymbol\Sigma_k\}</m>.</td><td>Bishop 15.4</td></tr>
+    <tr><td class="tnum"><m>\mathcal{L}(q,\boldsymbol\theta)</m></td><td>A cota inferior (ELBO). Sempre <m>\le \ln p(\mathbf{X}\mid\boldsymbol\theta)</m>.</td><td>Bishop 15.4</td></tr>
+    <tr><td class="tnum"><m>\mathbf{x}^\top</m></td><td>Transposta. <m>\mathbf{x}^\top\mathbf{y}</m> é um escalar (produto interno); <m>\mathbf{x}\mathbf{y}^\top</m> é uma matriz.</td><td>Todas</td></tr>
+    <tr><td class="tnum"><m>\lVert \mathbf{x} \rVert^2</m></td><td>Norma euclidiana ao quadrado: <m>\sum_{i} x_i^2</m>. É <m>\mathbf{x}^\top\mathbf{x}</m>.</td><td>K-Means</td></tr>
+  </table>
+
+  <div class="box c-ink">
+    <div class="bt">Uma armadilha de notação que derruba muita gente</div>
+    <p><m>\boldsymbol\mu_k</m> quer dizer três coisas diferentes conforme o modelo, e as três são vetores de tamanho <m>D</m>:</p>
+    <ul class="tight" style="margin-bottom:0">
+      <li>No <b>K-Means</b>, é um ponto no espaço — o centróide, a média aritmética dos pontos atribuídos.</li>
+      <li>Na <b>mistura de Bernoulli</b>, cada coordenada <m>\mu_{ki}\in[0,1]</m> é a <i>probabilidade</i> de o bit <m>i</m> valer 1 no componente <m>k</m>. Não é um ponto do hipercubo: é o parâmetro de <m>D</m> moedas.</li>
+      <li>No <b>GMM</b>, é a média da gaussiana — e, ao contrário dos outros dois, ela vem acompanhada de <m>\boldsymbol\Sigma_k</m>.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============ PARTE I ============ -->
+<div class="part c-bishop">
+  <div class="part-head">
+    <div class="lbl">Parte I</div>
+    <h2>Bishop, cap. 15 — Discrete Latent Variables</h2>
+    <div class="cite">Bishop, C. M.; Bishop, H. <i>Deep Learning: Foundations and Concepts</i>. Springer, 2024. Capítulo 15, seções 15.1 a 15.4.5.</div>
+  </div>
+
+  <p class="lead">O capítulo constrói um arco único: começa com o K-Means como algoritmo intuitivo e sem probabilidade, revela que ele é o caso-limite de um modelo generativo (a mistura gaussiana), generaliza o procedimento de ajuste para o algoritmo EM, aplica-o também a dados binários e, por fim, prova que o EM funciona usando a decomposição da cota inferior.</p>
+
+  <h3 class="sec"><span class="num">15.1</span>K-means Clustering</h3>
+
+  <p>O problema: dado <m>\{\mathbf{x}_1,\dots,\mathbf{x}_N\}</m> em <m>\mathbb{R}^D</m>, particionar as amostras em <m>K</m> grupos. A intuição que o capítulo formaliza é que um bom agrupamento tem distâncias intra-cluster pequenas comparadas às distâncias entre clusters.</p>
+
+  <p>Introduzem-se dois conjuntos de incógnitas. Os <b>protótipos</b> <m>\boldsymbol\mu_k \in \mathbb{R}^D</m>, um por cluster, e as <b>variáveis de atribuição</b> <m>r_{nk}\in\{0,1\}</m>, que formam uma codificação 1-de-<m>K</m>: para cada <m>n</m>, exatamente um <m>r_{nk}</m> vale 1.</p>
+
+  <div class="key">
+    <div class="bt">A função objetivo — distorção (ou inércia)</div>
+    <M>J = \sum_{n=1}^{N}\sum_{k=1}^{K} r_{nk}\,\lVert \mathbf{x}_n - \boldsymbol\mu_k \rVert^2</M>
+    <p style="margin-bottom:0"><m>J</m> é a soma dos quadrados das distâncias de cada ponto ao protótipo do seu cluster. Objetivo: encontrar <m>\{r_{nk}\}</m> e <m>\{\boldsymbol\mu_k\}</m> que minimizem <m>J</m>.</p>
+  </div>
+
+  <h4 class="sub"><span class="num">&#8226;</span>O algoritmo de Lloyd: descida alternada</h4>
+
+  <p>Minimizar <m>J</m> simultaneamente nas duas famílias de variáveis é difícil (é NP-difícil no caso geral). A saída é uma <b>otimização alternada</b>: fixa-se uma família e minimiza-se exatamente na outra, alternadamente. Cada uma das duas subminimizações tem solução fechada.</p>
+
+  <p><b>Passo E (atribuição).</b> Com os <m>\boldsymbol\mu_k</m> fixos, <m>J</m> é linear em <m>r_{nk}</m> e os termos de diferentes <m>n</m> são independentes. Então basta, para cada ponto, escolher o protótipo mais próximo:</p>
+  <M>r_{nk} = \begin{cases} 1, & \text{se } k = \arg\min_j \lVert \mathbf{x}_n - \boldsymbol\mu_j \rVert^2 \\ 0, & \text{caso contrário.}\end{cases}</M>
+
+  <p><b>Passo M (atualização).</b> Com os <m>r_{nk}</m> fixos, <m>J</m> é quadrática em <m>\boldsymbol\mu_k</m>. Derivando e igualando a zero:</p>
+  <M>2\sum_{n=1}^{N} r_{nk}\,(\mathbf{x}_n - \boldsymbol\mu_k) = \mathbf{0} \quad\Longrightarrow\quad \boldsymbol\mu_k = \frac{\sum_n r_{nk}\,\mathbf{x}_n}{\sum_n r_{nk}}</M>
+
+  <p>Ou seja, o novo protótipo é a <b>média</b> dos pontos atribuídos ao cluster <m>k</m> — daí o nome do método. O denominador <m>\sum_n r_{nk}</m> é simplesmente quantos pontos caíram naquele cluster.</p>
+
+  <div class="box c-bishop">
+    <div class="bt">Por que converge</div>
+    <p style="margin-bottom:0">Cada um dos dois passos <b>reduz ou mantém</b> <m>J</m>, nunca aumenta — porque cada um resolve exatamente o seu subproblema. Como <m>J\ge 0</m> é limitada inferiormente e o número de atribuições possíveis é finito (<m>K^N</m>), a sequência de valores de <m>J</m> é monótona não-crescente e a convergência ocorre em um número finito de passos. O que <b>não</b> se garante é que o ponto de chegada seja o mínimo global: ele é um mínimo local, e depende da inicialização.</p>
+  </div>
+
+  <p>Geometricamente, a regra de atribuição do vizinho mais próximo particiona o espaço em um <b>diagrama de Voronoi</b>: as fronteiras entre clusters são hiperplanos, perpendiculares e equidistantes aos segmentos que ligam pares de protótipos. Isso já antecipa a limitação do método — as fronteiras são sempre retas, o que só faz sentido se os grupos forem aproximadamente esféricos e de tamanho semelhante.</p>
+
+  <h4 class="sub"><span class="num">15.1.1</span>Segmentação de imagem</h4>
+
+  <p>A aplicação que o capítulo usa para ilustrar: cada pixel de uma imagem colorida é um ponto em <m>\mathbb{R}^3</m> (as intensidades R, G, B). Rodando K-Means sobre esses <m>N</m> pontos com <m>K</m> pequeno e substituindo cada pixel pelo <m>\boldsymbol\mu_k</m> do seu cluster, obtém-se uma imagem com apenas <m>K</m> cores.</p>
+
+  <p>Isso serve a dois propósitos distintos que vale não confundir:</p>
+  <ul>
+    <li><b>Segmentação</b> — dividir a imagem em regiões homogêneas. Note que é uma segmentação ingênua: o K-Means sobre cores ignora completamente a posição espacial dos pixels, então regiões desconexas com a mesma cor caem no mesmo segmento.</li>
+    <li><b>Compressão com perdas</b> — em vez de guardar <m>D</m> bytes por pixel, guarda-se o índice do cluster (<m>\log_2 K</m> bits) mais a tabela dos <m>K</m> protótipos. Para uma imagem de <m>N</m> pixels e 24 bits por pixel, passa-se de <m>24N</m> bits para <m>N\log_2 K + 24K</m> bits. Com <m>K=8</m> e uma imagem grande, isso é uma taxa próxima de 8:1.</li>
+  </ul>
+  <p>Essa é exatamente a <b>quantização vetorial</b> que o Murphy trata em 21.3.3, com outro vocabulário: os <m>\boldsymbol\mu_k</m> passam a se chamar <i>codewords</i> e o conjunto deles, <i>codebook</i>.</p>
+
+  <div class="qa-head"><span class="t">Perguntas 1&#8211;12 &#183; K-means</span><span class="r"></span></div>
+
+  <div class="qa"><div class="qn">01</div><div class="q">O que exatamente a função <m>J</m> mede, e por que ela usa a distância <i>ao quadrado</i> em vez da distância simples?</div>
+  <div class="a"><p><m>J</m> mede a soma das distâncias quadradas de cada ponto ao protótipo do cluster ao qual ele foi atribuído — é a &#8220;energia&#8221; total de dispersão interna. O quadrado não é decorativo: ele é o que torna o passo M analiticamente solúvel. Derivando uma soma de quadrados em relação a <m>\boldsymbol\mu_k</m> obtém-se uma equação <i>linear</i>, cuja solução é a média. Se usássemos a distância euclidiana simples (norma <m>L_2</m> sem quadrado), o minimizador seria a <b>mediana geométrica</b>, que não tem forma fechada e exige um procedimento iterativo próprio. O quadrado é o que compra a solução em uma linha.</p></div></div>
+
+  <div class="qa"><div class="qn">02</div><div class="q">Prove que a média minimiza <m>J</m> em relação a <m>\boldsymbol\mu_k</m>.</div>
+  <div class="a"><p>Com os <m>r_{nk}</m> fixos, isole os termos que dependem de <m>\boldsymbol\mu_k</m>: <m>J_k = \sum_n r_{nk}\lVert\mathbf{x}_n-\boldsymbol\mu_k\rVert^2</m>. O gradiente em relação a <m>\boldsymbol\mu_k</m> é <m>\nabla J_k = -2\sum_n r_{nk}(\mathbf{x}_n-\boldsymbol\mu_k)</m>. Igualando a zero: <m>\sum_n r_{nk}\mathbf{x}_n = \boldsymbol\mu_k \sum_n r_{nk}</m>, logo <m>\boldsymbol\mu_k = \frac{\sum_n r_{nk}\mathbf{x}_n}{\sum_n r_{nk}}</m>, a média. É um <i>mínimo</i> (e não máximo ou sela) porque a segunda derivada é <m>2\sum_n r_{nk} \gt 0</m> sempre que o cluster for não vazio — a função é uma parábola com concavidade para cima em cada coordenada.</p></div></div>
+
+  <div class="qa"><div class="qn">03</div><div class="q">Por que se garante que o K-Means converge, mas não que ele encontre o melhor agrupamento?</div>
+  <div class="a"><p>São duas afirmações distintas. <b>Convergência</b>: cada passo minimiza exatamente o seu subproblema, então <m>J</m> nunca aumenta; como <m>J\ge0</m> e só existem <m>K^N</m> atribuições possíveis, a sequência estabiliza em número finito de iterações. <b>Otimalidade</b>: a descida alternada só garante que não há melhora movendo <i>uma</i> família de variáveis por vez. Isso caracteriza um mínimo local, não global — existem configurações em que trocar simultaneamente vários pontos <i>e</i> vários centróides reduziria <m>J</m>, mas nenhum passo isolado consegue. Encontrar o mínimo global é NP-difícil, e por isso a prática é rodar várias vezes com inicializações diferentes e ficar com o menor <m>J</m> (o parâmetro <code>n_init</code> do scikit-learn).</p></div></div>
+
+  <div class="qa"><div class="qn">04</div><div class="q">O que é um diagrama de Voronoi e por que ele descreve as fronteiras do K-Means?</div>
+  <div class="a"><p>Dado um conjunto de pontos-semente, a célula de Voronoi de uma semente é o conjunto de todos os pontos do espaço mais próximos dela do que de qualquer outra. Como a regra de atribuição do K-Means é literalmente &#8220;pertence ao protótipo mais próximo&#8221;, a partição induzida é, por definição, o diagrama de Voronoi dos <m>\boldsymbol\mu_k</m>. A fronteira entre dois clusters <m>j</m> e <m>k</m> é o conjunto onde <m>\lVert\mathbf{x}-\boldsymbol\mu_j\rVert = \lVert\mathbf{x}-\boldsymbol\mu_k\rVert</m>, que é o hiperplano mediador do segmento <m>\boldsymbol\mu_j\boldsymbol\mu_k</m>. Consequência prática: <b>as fronteiras são sempre lineares</b>, o que condena o K-Means em dados com separação curva.</p></div></div>
+
+  <div class="qa"><div class="qn">05</div><div class="q">Por que a atribuição do passo E pode ser feita ponto a ponto, independentemente?</div>
+  <div class="a"><p>Porque, com os protótipos fixos, <m>J = \sum_n \left(\sum_k r_{nk}\lVert\mathbf{x}_n-\boldsymbol\mu_k\rVert^2\right)</m> é uma <b>soma de termos que não interagem</b>: a escolha de <m>r_{nk}</m> para a amostra <m>n</m> não aparece em nenhum outro termo da soma. Minimizar uma soma de parcelas independentes é minimizar cada parcela separadamente. E cada parcela é apenas &#8220;escolha um <m>k</m>&#8221;, cujo mínimo é o <m>k</m> de menor distância. Essa separabilidade é o que faz o passo E custar <m>O(NKD)</m> e ser trivialmente paralelizável.</p></div></div>
+
+  <div class="qa"><div class="qn">06</div><div class="q">O que acontece se um cluster ficar vazio durante a execução?</div>
+  <div class="a"><p>O denominador <m>\sum_n r_{nk}</m> vira zero e a atualização <m>\boldsymbol\mu_k = 0/0</m> fica indefinida. Implementações reais tratam isso de alguma forma: reposicionar o protótipo órfão sobre o ponto mais distante do seu centróide atual, sobre um ponto sorteado, ou dividir o cluster de maior distorção. O scikit-learn relocaliza. Vale notar que clusters vazios são um sintoma de má inicialização — com k-means++ eles são muito mais raros, porque as sementes já nascem espalhadas.</p></div></div>
+
+  <div class="qa"><div class="qn">07</div><div class="q">Qual o custo computacional de uma iteração?</div>
+  <div class="a"><p><m>O(NKD)</m>. O passo E calcula <m>N\times K</m> distâncias, cada uma custando <m>O(D)</m> operações. O passo M percorre os <m>N</m> pontos uma vez, somando vetores de tamanho <m>D</m>, o que é <m>O(ND)</m> e portanto dominado pelo passo E. O custo total é <m>O(NKD)</m> por iteração, vezes o número de iterações até a convergência. É por isso que o K-Means escala bem: é linear em cada uma das três grandezas.</p></div></div>
+
+  <div class="qa"><div class="qn">08</div><div class="q">Por que a codificação 1-de-<m>K</m> é usada para <m>r_{nk}</m> em vez de um único inteiro <m>c_n \in \{1,\dots,K\}</m>?</div>
+  <div class="a"><p>Nada impede guardar um inteiro na implementação — e é o que se faz na prática. A codificação 1-de-<m>K</m> existe pela <b>álgebra</b>: ela transforma um &#8220;escolha um caso&#8221; em uma soma ponderada, <m>\sum_k r_{nk}(\cdot)</m>, que pode ser derivada, somada e manipulada como qualquer expressão contínua. Um índice inteiro não se deriva. É a mesma razão pela qual o vetor latente <m>\mathbf{z}_n</m> aparece codificado assim em 15.2: permite escrever <m>p(\mathbf{z}) = \prod_k \pi_k^{z_k}</m>, que colapsa exatamente em <m>\pi_j</m> quando <m>z_j=1</m>, porque todos os outros fatores viram <m>\pi_k^0=1</m>.</p></div></div>
+
+  <div class="qa"><div class="qn">09</div><div class="q">O K-Means é um modelo generativo? Ele consegue calcular <m>p(\mathbf{x})</m> ou gerar dados novos?</div>
+  <div class="a"><p>Não, em nenhum dos dois casos. O K-Means é um <b>procedimento de otimização</b>, não um modelo probabilístico: ele não define nenhuma distribuição sobre <m>\mathbf{x}</m>. Não há como perguntar &#8220;qual a probabilidade desta observação?&#8221;, nem como amostrar um ponto novo, nem como comparar dois valores de <m>K</m> por verossimilhança. Tudo o que ele entrega é uma partição e os centróides. Essa ausência é a motivação para os modelos de mistura: eles fazem o agrupamento <i>e</i> entregam <m>p(\mathbf{x})</m>, o que abre detecção de anomalias, geração de amostras e seleção de modelo por critérios como o BIC.</p></div></div>
+
+  <div class="qa"><div class="qn">10</div><div class="q">Na segmentação de imagem, qual é a taxa de compressão obtida e de onde ela vem?</div>
+  <div class="a"><p>Uma imagem RGB de <m>N</m> pixels ocupa <m>24N</m> bits (8 bits por canal). Após a quantização com <m>K</m> cores, guarda-se: (i) para cada pixel, o índice do seu cluster, <m>\lceil\log_2 K\rceil</m> bits; (ii) a tabela dos <m>K</m> protótipos, <m>24K</m> bits. Total: <m>N\lceil\log_2 K\rceil + 24K</m> bits. Com <m>K=8</m>, isso é <m>3N + 192</m> contra <m>24N</m> — cerca de 8&#215;. A compressão vem de trocar a cor exata de cada pixel pelo índice de uma cor aproximada; é <b>com perdas</b>, e o erro total introduzido é exatamente a distorção <m>J</m>.</p></div></div>
+
+  <div class="qa"><div class="qn">11</div><div class="q">Por que padronizar os atributos antes de rodar K-Means, e o que acontece se você não fizer isso?</div>
+  <div class="a"><p>Porque a distância euclidiana soma as diferenças de todas as dimensões com peso igual, mas as dimensões têm unidades arbitrárias. Se um atributo é &#8220;renda em reais&#8221; (escala de <m>10^4</m>) e outro é &#8220;anos de estudo&#8221; (escala de <m>10^1</m>), a diferença ao quadrado do primeiro domina a soma por seis ordens de grandeza: na prática o algoritmo agrupa <i>apenas</i> por renda, e os anos de estudo não influenciam nada. Padronizar (subtrair a média e dividir pelo desvio, o <code>StandardScaler</code>) coloca todos os atributos na mesma escala e devolve a eles voz igual. A decisão de padronizar ou não é uma escolha de modelagem, não uma formalidade: você está declarando quais atributos importam igualmente.</p></div></div>
+
+  <div class="qa"><div class="qn">12</div><div class="q">Como o K-Means se comporta em dimensão muito alta?</div>
+  <div class="a"><p>Mal, por causa da concentração de distâncias — um dos rostos da maldição da dimensionalidade. À medida que <m>D</m> cresce, as distâncias euclidianas entre pares de pontos tendem a se igualar: a razão entre a maior e a menor distância de um ponto aos demais converge para 1. Quando todo mundo está aproximadamente à mesma distância de todo mundo, &#8220;o protótipo mais próximo&#8221; deixa de ser uma informação discriminante e as atribuições ficam quase arbitrárias. A recomendação prática (que a própria documentação do scikit-learn faz) é reduzir a dimensionalidade antes — tipicamente com PCA —, o que além de mitigar o problema acelera bastante a execução.</p></div></div>
+</div>
+
+<div class="c-bishop">
+  <h3 class="sec"><span class="num">15.2</span>Mixtures of Gaussians</h3>
+
+  <p>Aqui o capítulo muda de registro: em vez de um algoritmo, define-se um <b>modelo generativo</b> — uma história de como os dados teriam sido produzidos. A mistura gaussiana escreve a densidade como uma combinação convexa de <m>K</m> gaussianas:</p>
+
+  <div class="key">
+    <div class="bt">A densidade da mistura</div>
+    <M>p(\mathbf{x}) = \sum_{k=1}^{K} \pi_k\,\mathcal{N}(\mathbf{x}\mid\boldsymbol\mu_k,\boldsymbol\Sigma_k), \qquad \sum_{k=1}^{K}\pi_k = 1,\quad 0 \le \pi_k \le 1</M>
+    <p style="margin-bottom:0">As duas restrições sobre os <m>\pi_k</m> não são arbitrárias: elas são exatamente o que garante que <m>p(\mathbf{x})\ge 0</m> e que <m>\int p(\mathbf{x})\,d\mathbf{x} = 1</m>, isto é, que a mistura seja de fato uma densidade.</p>
+  </div>
+
+  <p>A gaussiana multivariada que aparece em cada componente é</p>
+  <M>\mathcal{N}(\mathbf{x}\mid\boldsymbol\mu,\boldsymbol\Sigma) = \frac{1}{(2\pi)^{D/2}}\,\frac{1}{|\boldsymbol\Sigma|^{1/2}}\,\exp\!\left\{-\tfrac{1}{2}(\mathbf{x}-\boldsymbol\mu)^\top\boldsymbol\Sigma^{-1}(\mathbf{x}-\boldsymbol\mu)\right\}</M>
+
+  <p>O expoente <m>\Delta^2 = (\mathbf{x}-\boldsymbol\mu)^\top\boldsymbol\Sigma^{-1}(\mathbf{x}-\boldsymbol\mu)</m> é a <b>distância de Mahalanobis</b> ao quadrado. Ela generaliza a distância euclidiana levando em conta a dispersão e a correlação dos dados: quando <m>\boldsymbol\Sigma = \mathbf{I}</m>, ela se reduz a <m>\lVert\mathbf{x}-\boldsymbol\mu\rVert^2</m>. As superfícies de densidade constante são elipsóides cujos eixos são os autovetores de <m>\boldsymbol\Sigma</m>, com semi-eixos proporcionais às raízes dos autovalores.</p>
+
+  <h4 class="sub"><span class="num">&#8226;</span>A variável latente e a formulação equivalente</h4>
+
+  <p>A construção decisiva do capítulo é reescrever a mesma densidade <b>introduzindo uma variável latente</b> <m>\mathbf{z}</m> de <m>K</m> dimensões, com codificação 1-de-<m>K</m>. Define-se:</p>
+  <M>p(\mathbf{z}) = \prod_{k=1}^{K}\pi_k^{\,z_k}, \qquad\qquad p(\mathbf{x}\mid\mathbf{z}) = \prod_{k=1}^{K}\mathcal{N}(\mathbf{x}\mid\boldsymbol\mu_k,\boldsymbol\Sigma_k)^{z_k}</M>
+
+  <p>Como exatamente um <m>z_k</m> vale 1, cada produto colapsa em um único fator. Marginalizando a variável latente recupera-se a mistura:</p>
+  <M>p(\mathbf{x}) = \sum_{\mathbf{z}} p(\mathbf{z})\,p(\mathbf{x}\mid\mathbf{z}) = \sum_{k=1}^{K}\pi_k\,\mathcal{N}(\mathbf{x}\mid\boldsymbol\mu_k,\boldsymbol\Sigma_k)</M>
+
+  <p>Por que dar essa volta se o resultado é o mesmo? Porque a formulação com <m>\mathbf{z}</m> abre duas portas que a forma marginal fecha: ela dá uma <b>história generativa</b> (sorteie o componente, depois sorteie o ponto dentro dele) e, sobretudo, ela permite perguntar pelo <b>posterior</b> de <m>\mathbf{z}</m> dado <m>\mathbf{x}</m> — que é o motor de todo o algoritmo EM.</p>
+
+  <h4 class="sub"><span class="num">15.2.1</span>Função de verossimilhança e responsabilidades</h4>
+
+  <div class="key">
+    <div class="bt">Responsabilidade — a quantidade central do capítulo</div>
+    <M>\gamma(z_{k}) \equiv p(z_k = 1\mid\mathbf{x}) = \frac{p(z_k=1)\,p(\mathbf{x}\mid z_k=1)}{\sum_{j=1}^{K}p(z_j=1)\,p(\mathbf{x}\mid z_j=1)} = \frac{\pi_k\,\mathcal{N}(\mathbf{x}\mid\boldsymbol\mu_k,\boldsymbol\Sigma_k)}{\sum_{j=1}^{K}\pi_j\,\mathcal{N}(\mathbf{x}\mid\boldsymbol\mu_j,\boldsymbol\Sigma_j)}</M>
+    <p style="margin-bottom:0">É o teorema de Bayes aplicado ao vetor latente: <m>\pi_k</m> é o <b>prior</b> (o quanto o componente <m>k</m> é comum), a densidade <m>\mathcal{N}(\cdot)</m> é a <b>verossimilhança</b> (o quanto o componente <m>k</m> explica <i>esta</i> observação), e o denominador é a evidência que normaliza. O resultado é a fração da amostra <m>\mathbf{x}</m> pela qual o componente <m>k</m> se responsabiliza.</p>
+  </div>
+
+  <p>Duas propriedades a memorizar: <m>\gamma(z_k) \in [0,1]</m> e, para toda amostra, <m>\sum_{k=1}^{K}\gamma(z_{nk}) = 1</m>. A responsabilidade é uma <b>distribuição de probabilidade sobre os componentes</b> — é isso que caracteriza a atribuição <i>suave</i>, em contraste com o <m>r_{nk}\in\{0,1\}</m> do K-Means.</p>
+
+  <p>Para o conjunto completo <m>\mathbf{X}</m>, supondo amostras i.i.d., a log-verossimilhança é</p>
+  <M>\ln p(\mathbf{X}\mid\boldsymbol\pi,\boldsymbol\mu,\boldsymbol\Sigma) = \sum_{n=1}^{N}\ln\left\{\sum_{k=1}^{K}\pi_k\,\mathcal{N}(\mathbf{x}_n\mid\boldsymbol\mu_k,\boldsymbol\Sigma_k)\right\}</M>
+
+  <h4 class="sub"><span class="num">15.2.2</span>Máxima verossimilhança: os dois obstáculos</h4>
+
+  <p><b>Obstáculo 1 — o somatório preso dentro do logaritmo.</b> Na expressão acima, o <m>\ln</m> está aplicado a uma <i>soma</i>. Como <m>\ln(a+b) \neq \ln a + \ln b</m>, o logaritmo não consegue atravessar a soma e quebrar o produto das densidades em termos separados. Se houvesse um único componente, o <m>\ln</m> cancelaria a exponencial da gaussiana e sobraria uma quadrática com solução fechada. Com a soma no meio, derivar e igualar a zero produz um sistema de equações acopladas sem solução analítica: os <m>\boldsymbol\mu_k</m> ótimos dependem das responsabilidades, que dependem dos <m>\boldsymbol\mu_k</m>. É a razão de existir do EM.</p>
+
+  <p><b>Obstáculo 2 — singularidades.</b> A função de verossimilhança de uma mistura gaussiana é <b>ilimitada superiormente</b>. Suponha que um componente <m>k</m> colapse exatamente sobre uma única observação, <m>\boldsymbol\mu_k = \mathbf{x}_n</m>, e que sua covariância encolha, <m>\boldsymbol\Sigma_k = \sigma_k^2\mathbf{I}</m> com <m>\sigma_k\to 0</m>. A contribuição daquele ponto é</p>
+  <M>\mathcal{N}(\mathbf{x}_n\mid\mathbf{x}_n,\sigma_k^2\mathbf{I}) = \frac{1}{(2\pi)^{D/2}\,\sigma_k^{D}} \;\longrightarrow\; +\infty</M>
+  <p>e portanto <m>\ln p(\mathbf{X}) \to +\infty</m>. Essa singularidade é um artefato patológico, não uma solução útil: o modelo &#8220;explicou&#8221; um ponto perfeitamente e ignorou todos os outros. Ela é uma consequência estrutural da máxima verossimilhança em misturas — em um modelo de <b>uma única</b> gaussiana ela não ocorre, porque o componente único precisa dar conta de todos os pontos ao mesmo tempo. As defesas práticas são regularizar a covariância (somar <m>\epsilon\mathbf{I}</m>, o <code>reg_covar</code> do scikit-learn), reinicializar o componente colapsado, ou adotar uma abordagem bayesiana com prior sobre <m>\boldsymbol\Sigma</m>.</p>
+
+  <p><b>Um terceiro detalhe: identificabilidade.</b> Uma mistura de <m>K</m> componentes tem <m>K!</m> soluções equivalentes, obtidas permutando os rótulos dos componentes. Isso não atrapalha a densidade ajustada (ela é idêntica), mas significa que &#8220;o componente 1&#8221; não tem significado estável entre execuções — importante quando se quer interpretar os componentes.</p>
+
+  <div class="qa-head"><span class="t">Perguntas 13&#8211;24 &#183; Misturas gaussianas</span><span class="r"></span></div>
+
+  <div class="qa"><div class="qn">13</div><div class="q">Qual a diferença entre <m>\mathbf{x}</m> e <m>\mathbf{z}</m>, e por que <m>\mathbf{z}</m> é chamada de latente?</div>
+  <div class="a"><p><m>\mathbf{x}</m> é <b>observada</b>: está no arquivo de dados, foi medida. <m>\mathbf{z}</m> é <b>latente</b>: nunca foi medida e nunca estará no arquivo — ela representa o fator gerador escondido (de qual componente aquela amostra veio). Latente significa exatamente isso: existe no modelo, tem papel causal na história generativa, mas não é acessível. Todo o aparato do capítulo — responsabilidades, EM, ELBO — existe para inferir <m>\mathbf{z}</m> a partir de <m>\mathbf{x}</m>. Se <m>\mathbf{z}</m> fosse observada, o problema viraria classificação supervisionada e teria solução fechada trivial.</p></div></div>
+
+  <div class="qa"><div class="qn">14</div><div class="q">Por que <m>\sum_k \gamma(z_{nk}) = 1</m> para toda amostra <m>n</m>?</div>
+  <div class="a"><p>Porque <m>\gamma(z_{nk})</m> é o posterior <m>p(z_{nk}=1\mid\mathbf{x}_n)</m>, e os eventos <m>\{z_{n1}=1\},\dots,\{z_{nK}=1\}</m> são mutuamente exclusivos e exaustivos: a amostra veio de <i>exatamente um</i> componente, e necessariamente de algum deles. Uma distribuição de probabilidade sobre um conjunto exaustivo de eventos disjuntos soma 1. Algebricamente, isso se vê direto na fórmula: o denominador é a soma de todos os numeradores possíveis, então somar em <m>k</m> dá <m>\frac{\sum_k \text{num}_k}{\sum_j \text{num}_j}=1</m>. É a checagem número um ao depurar uma implementação de EM.</p></div></div>
+
+  <div class="qa"><div class="qn">15</div><div class="q">Interprete <m>\pi_k</m> e explique por que ele é diferente de <m>\gamma(z_{nk})</m>.</div>
+  <div class="a"><p><m>\pi_k</m> é o <b>prior</b>: a probabilidade de uma amostra qualquer, escolhida antes de você olhar para ela, ter vindo do componente <m>k</m>. É uma propriedade global do modelo, um número só, igual para todas as amostras. <m>\gamma(z_{nk})</m> é o <b>posterior</b>: a probabilidade de <i>aquela</i> amostra específica ter vindo do componente <m>k</m>, depois de ver o seu valor. É uma propriedade local, um número por par (amostra, componente) — uma matriz <m>N\times K</m>. A relação entre os dois é o teorema de Bayes, e a ponte é a verossimilhança <m>\mathcal{N}(\mathbf{x}_n\mid\boldsymbol\mu_k,\boldsymbol\Sigma_k)</m>. Detalhe que fecha o círculo: no passo M, o novo <m>\pi_k</m> é a média das responsabilidades, <m>\pi_k = N_k/N</m> — o prior é reestimado como a média dos posteriores.</p></div></div>
+
+  <div class="qa"><div class="qn">16</div><div class="q">Por que introduzir a variável latente se <m>p(\mathbf{x}) = \sum_k \pi_k\mathcal{N}(\cdot)</m> já descreve a mesma densidade?</div>
+  <div class="a"><p>Porque a forma marginal esconde a estrutura que torna o problema tratável. Com <m>\mathbf{z}</m> explícita, a verossimilhança <b>completa</b> <m>p(\mathbf{X},\mathbf{Z}\mid\boldsymbol\theta)</m> tem uma propriedade que a marginal não tem: o logaritmo entra e separa tudo, porque <m>\ln p(\mathbf{X},\mathbf{Z}) = \sum_n\sum_k z_{nk}\{\ln\pi_k + \ln\mathcal{N}(\mathbf{x}_n\mid\boldsymbol\mu_k,\boldsymbol\Sigma_k)\}</m> — os <m>z_{nk}</m> ficam <i>fora</i> do logaritmo, e a expressão vira uma soma de termos independentes com solução fechada. O EM explora exatamente isso: como não conhecemos <m>\mathbf{Z}</m>, substituímos <m>z_{nk}</m> pelo seu valor esperado <m>\gamma(z_{nk})</m> e maximizamos. Além disso, a formulação latente dá a história generativa e o posterior, que a marginal não oferece.</p></div></div>
+
+  <div class="qa"><div class="qn">17</div><div class="q">Explique a distância de Mahalanobis e por que ela é mais adequada que a euclidiana em um GMM.</div>
+  <div class="a"><p><m>\Delta^2 = (\mathbf{x}-\boldsymbol\mu)^\top\boldsymbol\Sigma^{-1}(\mathbf{x}-\boldsymbol\mu)</m>. A inversa da covariância age como um mudança de métrica: ela normaliza cada direção pela dispersão dos dados naquela direção e descorrelaciona os eixos. Na prática, ela responde &#8220;a quantos desvios-padrão deste componente o ponto está?&#8221;, em vez de &#8220;a quantas unidades?&#8221;. Isso importa porque um ponto a 3 unidades de distância ao longo de uma direção onde os dados variam muito é <i>típico</i>, enquanto o mesmo deslocamento numa direção de pouca variação é <i>anômalo</i>. A euclidiana trata as duas situações igual; a Mahalanobis não. Quando <m>\boldsymbol\Sigma=\mathbf{I}</m> as duas coincidem — a euclidiana é o caso particular em que se assume variância unitária e correlação zero, que é exatamente a hipótese implícita do K-Means.</p></div></div>
+
+  <div class="qa"><div class="qn">18</div><div class="q">O que cada parte da matriz de covariância <m>\boldsymbol\Sigma</m> controla, geometricamente?</div>
+  <div class="a"><p>Em 2-D, <m>\boldsymbol\Sigma=\begin{pmatrix}\sigma_1^2 & \rho\sigma_1\sigma_2\\ \rho\sigma_1\sigma_2 & \sigma_2^2\end{pmatrix}</m>. As entradas da diagonal, <m>\sigma_1^2</m> e <m>\sigma_2^2</m>, controlam a <b>largura</b> da elipse ao longo de cada eixo. A entrada fora da diagonal, via a correlação <m>\rho</m>, controla a <b>inclinação</b>: com <m>\rho=0</m> a elipse fica alinhada aos eixos; com <m>\rho\to\pm1</m> ela se estreita e gira para <m>\pm45^\circ</m>. Formalmente, os autovetores de <m>\boldsymbol\Sigma</m> dão as direções dos eixos principais da elipse e os autovalores dão o quadrado dos semi-eixos. Uma <m>\boldsymbol\Sigma</m> precisa ser simétrica e positiva definida — todos os autovalores estritamente positivos — para que a elipse exista e a densidade seja bem definida.</p></div></div>
+
+  <div class="qa"><div class="qn">19</div><div class="q">Por que não existe solução fechada para os parâmetros de máxima verossimilhança de um GMM?</div>
+  <div class="a"><p>Por causa do somatório dentro do logaritmo em <m>\ln p(\mathbf{X}) = \sum_n\ln\{\sum_k\pi_k\mathcal{N}(\mathbf{x}_n\mid\boldsymbol\mu_k,\boldsymbol\Sigma_k)\}</m>. Como o <m>\ln</m> não distribui sobre a soma, ele não cancela a exponencial das gaussianas. Derivando em relação a <m>\boldsymbol\mu_k</m> e igualando a zero, chega-se a <m>\boldsymbol\mu_k = \frac{1}{N_k}\sum_n\gamma(z_{nk})\mathbf{x}_n</m> — que <i>parece</i> uma solução, mas não é: <m>\gamma(z_{nk})</m> depende de <m>\boldsymbol\mu_k</m>, <m>\boldsymbol\Sigma_k</m> e <m>\pi_k</m>. O sistema é implícito e acoplado. O EM transforma esse impasse em um procedimento: congele as responsabilidades, resolva para os parâmetros, recalcule as responsabilidades, repita.</p></div></div>
+
+  <div class="qa"><div class="qn">20</div><div class="q">Descreva a singularidade da verossimilhança e por que ela não aparece em uma gaussiana única.</div>
+  <div class="a"><p>Se um componente centra em um único ponto (<m>\boldsymbol\mu_k=\mathbf{x}_n</m>) e sua covariância encolhe (<m>\sigma_k\to0</m>), a densidade naquele ponto diverge como <m>1/\sigma_k^D \to \infty</m>, e com ela a log-verossimilhança total. O ótimo global da verossimilhança é, portanto, uma configuração degenerada e inútil. Em um modelo de <b>uma única</b> gaussiana isso não acontece porque o componente é obrigado a explicar <i>todos</i> os <m>N</m> pontos: encolher a variância sobre um deles despenca a densidade de todos os outros, e o produto total vai a zero, não a infinito. A patologia é específica de misturas, onde os demais componentes &#8220;cobrem&#8221; o resto dos dados e liberam um componente para colapsar impunemente.</p></div></div>
+
+  <div class="qa"><div class="qn">21</div><div class="q">Como se defende na prática contra as singularidades?</div>
+  <div class="a"><p>Três caminhas, em ordem de sofisticação. (i) <b>Regularizar a covariância</b>: somar <m>\epsilon\mathbf{I}</m> à diagonal a cada passo M, garantindo <m>|\boldsymbol\Sigma_k| \gt 0</m> e invertibilidade. É o <code>reg_covar</code> do scikit-learn, ativo por padrão em <m>10^{-6}</m>. (ii) <b>Detectar e reinicializar</b>: monitorar componentes cuja covariância ou massa <m>N_k</m> desabam e reposicioná-los aleatoriamente. (iii) <b>Abordagem bayesiana</b>: colocar um prior sobre <m>\boldsymbol\Sigma_k</m> (tipicamente Wishart inversa) e maximizar o posterior em vez da verossimilhança — o prior penaliza covariâncias degeneradas e a singularidade desaparece. É o que faz a <code>BayesianGaussianMixture</code>.</p></div></div>
+
+  <div class="qa"><div class="qn">22</div><div class="q">O que é o problema de identificabilidade em misturas?</div>
+  <div class="a"><p>Permutar os rótulos dos <m>K</m> componentes produz um conjunto de parâmetros diferente mas uma densidade <m>p(\mathbf{x})</m> <b>idêntica</b>. Existem, portanto, <m>K!</m> soluções equivalentes, e o ótimo não é único como ponto no espaço de parâmetros. Isso é inofensivo se você só quer a densidade ou a partição, mas tem duas consequências reais: (i) &#8220;o componente 2&#8221; não significa a mesma coisa entre duas execuções, então interpretar componentes exige alinhá-los antes; (ii) tomar médias de parâmetros entre execuções ou entre amostras de um MCMC é sem sentido sem resolver a permutação (o &#8220;label switching&#8221;).</p></div></div>
+
+  <div class="qa"><div class="qn">23</div><div class="q">Quantos parâmetros livres tem um GMM com <m>K</m> componentes em <m>D</m> dimensões, com covariâncias completas?</div>
+  <div class="a"><p>Três blocos. As médias: <m>KD</m>. As covariâncias: cada <m>\boldsymbol\Sigma_k</m> é simétrica <m>D\times D</m>, logo tem <m>D(D+1)/2</m> entradas livres, totalizando <m>K\,D(D+1)/2</m>. Os pesos: <m>K</m> valores com a restrição <m>\sum_k\pi_k=1</m>, logo <m>K-1</m> livres. Total: <m>KD + K\frac{D(D+1)}{2} + K - 1</m>. O termo quadrático em <m>D</m> é o que domina e explica por que covariâncias completas ficam caras rápido: com <m>D=50</m> e <m>K=5</m>, só as covariâncias já somam 6&#8239;375 parâmetros. É esse crescimento que motiva as variantes <code>tied</code>, <code>diag</code> e <code>spherical</code>.</p></div></div>
+
+  <div class="qa"><div class="qn">24</div><div class="q">Um GMM é sempre melhor que o K-Means?</div>
+  <div class="a"><p>Não. Ele é mais <i>expressivo</i>, o que é diferente de melhor. O GMM ganha quando os grupos são elipsoidais, de tamanhos ou orientações diferentes, quando há sobreposição real e a incerteza da atribuição importa, ou quando se precisa de <m>p(\mathbf{x})</m> para anomalias, geração ou seleção de modelo. O K-Means ganha quando os grupos <i>são</i> aproximadamente esféricos e separados, quando <m>N</m> ou <m>D</m> são grandes (o GMM tem muito mais parâmetros e itera mais devagar), quando não há dados suficientes para estimar <m>K</m> covariâncias sem degenerar, ou quando se quer um resultado simples e reproduzível. Mais parâmetros com poucos dados significa variância alta e risco de singularidade — a expressividade extra do GMM pode custar caro.</p></div></div>
+</div>
+
+<div class="c-bishop">
+  <h3 class="sec"><span class="num">15.3</span>O algoritmo EM (Expectation&#8211;Maximization)</h3>
+
+  <p>O EM resolve o impasse do &#8220;ovo e a galinha&#8221;: para calcular as responsabilidades preciso dos parâmetros; para estimar os parâmetros preciso das responsabilidades. A saída é alternar, cada passo assumindo o outro como resolvido.</p>
+
+  <div class="key">
+    <div class="bt">O esqueleto do EM, válido para qualquer modelo latente</div>
+    <ol style="margin-bottom:0">
+      <li><b>Inicialize</b> os parâmetros <m>\boldsymbol\theta^{\text{old}}</m>.</li>
+      <li><b>Passo E</b> — com <m>\boldsymbol\theta^{\text{old}}</m> fixo, calcule o posterior das latentes, <m>p(\mathbf{Z}\mid\mathbf{X},\boldsymbol\theta^{\text{old}})</m>, isto é, as responsabilidades.</li>
+      <li><b>Passo M</b> — com as responsabilidades fixas, maximize a esperança da log-verossimilhança completa:<br>
+        <m>\boldsymbol\theta^{\text{new}} = \arg\max_{\boldsymbol\theta}\, \mathcal{Q}(\boldsymbol\theta,\boldsymbol\theta^{\text{old}})</m>, com <m>\mathcal{Q}(\boldsymbol\theta,\boldsymbol\theta^{\text{old}}) = \sum_{\mathbf{Z}} p(\mathbf{Z}\mid\mathbf{X},\boldsymbol\theta^{\text{old}})\ln p(\mathbf{X},\mathbf{Z}\mid\boldsymbol\theta)</m>.</li>
+      <li><b>Verifique</b> a convergência de <m>\ln p(\mathbf{X}\mid\boldsymbol\theta)</m> ou dos parâmetros; se não convergiu, volte ao passo 2.</li>
+    </ol>
+  </div>
+
+  <p>A razão de o passo M ser fácil está em como o logaritmo se comporta na verossimilhança <b>completa</b>. Enquanto <m>\ln p(\mathbf{X}\mid\boldsymbol\theta)</m> tem uma soma presa dentro do log, a versão completa tem os <m>z_{nk}</m> <i>fora</i> dele:</p>
+  <M>\ln p(\mathbf{X},\mathbf{Z}\mid\boldsymbol\theta) = \sum_{n=1}^{N}\sum_{k=1}^{K} z_{nk}\left\{\ln\pi_k + \ln p(\mathbf{x}_n\mid\boldsymbol\theta_k)\right\}</M>
+  <p>Tomando a esperança sobre <m>\mathbf{Z}</m>, cada <m>z_{nk}</m> é substituído pelo seu valor esperado, que é precisamente <m>\gamma(z_{nk})</m>. O resultado é uma soma de termos desacoplados, cada um com máximo em forma fechada.</p>
+
+  <h4 class="sub"><span class="num">15.3.1</span>EM para misturas gaussianas</h4>
+
+  <p><b>Passo E:</b> <m>\displaystyle \gamma(z_{nk}) = \frac{\pi_k\,\mathcal{N}(\mathbf{x}_n\mid\boldsymbol\mu_k,\boldsymbol\Sigma_k)}{\sum_{j}\pi_j\,\mathcal{N}(\mathbf{x}_n\mid\boldsymbol\mu_j,\boldsymbol\Sigma_j)}</m></p>
+
+  <p><b>Passo M:</b> definindo a massa efetiva <m>N_k = \sum_{n=1}^{N}\gamma(z_{nk})</m>,</p>
+  <M>\boldsymbol\mu_k^{\text{new}} = \frac{1}{N_k}\sum_{n=1}^{N}\gamma(z_{nk})\,\mathbf{x}_n</M>
+  <M>\boldsymbol\Sigma_k^{\text{new}} = \frac{1}{N_k}\sum_{n=1}^{N}\gamma(z_{nk})\,(\mathbf{x}_n-\boldsymbol\mu_k^{\text{new}})(\mathbf{x}_n-\boldsymbol\mu_k^{\text{new}})^\top \qquad\qquad \pi_k^{\text{new}} = \frac{N_k}{N}</M>
+
+  <p>Leitura das três fórmulas: são exatamente as estimativas de máxima verossimilhança de uma gaussiana isolada — média amostral, covariância amostral, frequência relativa — só que <b>ponderadas pelas responsabilidades</b>. Cada ponto contribui para cada componente na proporção em que aquele componente o reivindica. Note que <m>N_k</m> é fracionário: é o &#8220;número efetivo de pontos&#8221; do componente <m>k</m>.</p>
+
+  <h4 class="sub"><span class="num">15.3.2</span>Relação com o K-means</h4>
+
+  <p>Este é o resultado que unifica as duas primeiras seções do capítulo. Considere um GMM restrito, com covariâncias esféricas iguais e fixas, <m>\boldsymbol\Sigma_k = \epsilon\mathbf{I}</m> para todo <m>k</m>, e pesos iguais <m>\pi_k = 1/K</m>. A responsabilidade fica</p>
+  <M>\gamma(z_{nk}) = \frac{\exp\{-\lVert\mathbf{x}_n-\boldsymbol\mu_k\rVert^2/2\epsilon\}}{\sum_j \exp\{-\lVert\mathbf{x}_n-\boldsymbol\mu_j\rVert^2/2\epsilon\}}</M>
+  <p>Quando <m>\epsilon\to0</m>, o termo cujo expoente é menos negativo — o do protótipo <b>mais próximo</b> — domina todos os outros, e a razão converge para 1 para esse componente e 0 para os demais. Isto é: <m>\gamma(z_{nk}) \to r_{nk}</m>. As responsabilidades suaves endurecem, o passo E vira a atribuição do vizinho mais próximo, o passo M vira a média simples, e a esperança da log-verossimilhança completa se torna <m>-\frac{1}{2\epsilon}\sum_n\sum_k r_{nk}\lVert\mathbf{x}_n-\boldsymbol\mu_k\rVert^2 + \text{const}</m>. Maximizar isso é <b>minimizar a distorção <m>J</m></b>.</p>
+
+  <div class="key">
+    <div class="bt">O elo</div>
+    <M>\boldsymbol\Sigma_k = \epsilon\mathbf{I},\quad \pi_k = 1/K,\quad \epsilon\to 0 \qquad\Longrightarrow\qquad \gamma(z_{nk})\to r_{nk}\in\{0,1\} \qquad\text{e}\qquad \text{EM} \to \text{K-Means}</M>
+    <p style="margin-bottom:0">O K-Means é o <b>caso-limite rígido</b> do EM para misturas gaussianas. Ele é rápido justamente porque descartou tudo que o GMM carrega: a forma dos componentes, os pesos e a incerteza da atribuição.</p>
+  </div>
+
+  <h4 class="sub"><span class="num">15.3.3</span>Misturas de distribuições de Bernoulli</h4>
+
+  <p>Para dados <b>binários</b> <m>\mathbf{x}\in\{0,1\}^D</m> — pixels preto-e-branco, presença/ausência de palavras, respostas sim/não — a gaussiana é inadequada: ela põe massa de probabilidade em pontos que não existem, e a média de vetores binários não é um vetor binário. A troca é modelar cada componente como <m>D</m> moedas independentes.</p>
+
+  <M>p(\mathbf{x}\mid\boldsymbol\mu_k) = \prod_{i=1}^{D}\mu_{ki}^{\,x_i}\,(1-\mu_{ki})^{1-x_i}, \qquad\qquad p(\mathbf{x}\mid\boldsymbol\mu,\boldsymbol\pi) = \sum_{k=1}^{K}\pi_k\,p(\mathbf{x}\mid\boldsymbol\mu_k)</M>
+
+  <p>Cada <m>\mu_{ki}\in[0,1]</m> é a probabilidade de o bit <m>i</m> valer 1 no componente <m>k</m>. Em imagens de dígitos binarizados, o vetor <m>\boldsymbol\mu_k</m> visualizado como imagem é um <b>protótipo em tons de cinza</b>: pixels quase sempre acesos naquele dígito ficam claros, pixels ambíguos ficam intermediários.</p>
+
+  <p>Note a hipótese embutida: dentro de um componente, os <m>D</m> bits são <b>condicionalmente independentes</b>. Isso é claramente falso (pixels vizinhos são correlacionados), mas a mistura recupera boa parte da correlação — a dependência entre os bits é capturada pela variável latente, não dentro de cada componente. A covariância da mistura não é diagonal, embora a de cada componente seja:</p>
+  <M>\operatorname{cov}[\mathbf{x}] = \sum_{k=1}^{K}\pi_k\left\{\boldsymbol\Sigma_k + \boldsymbol\mu_k\boldsymbol\mu_k^\top\right\} - \mathbb{E}[\mathbf{x}]\,\mathbb{E}[\mathbf{x}]^\top, \qquad \boldsymbol\Sigma_k = \operatorname{diag}\!\left(\mu_{ki}(1-\mu_{ki})\right)</M>
+
+  <p><b>EM para a mistura de Bernoulli.</b> Mesma estrutura, densidade trocada:</p>
+  <M>\gamma(z_{nk}) = \frac{\pi_k\,p(\mathbf{x}_n\mid\boldsymbol\mu_k)}{\sum_j \pi_j\,p(\mathbf{x}_n\mid\boldsymbol\mu_j)} \qquad\qquad \boldsymbol\mu_k^{\text{new}} = \frac{1}{N_k}\sum_{n=1}^{N}\gamma(z_{nk})\,\mathbf{x}_n \qquad\qquad \pi_k^{\text{new}} = \frac{N_k}{N}</M>
+
+  <p>O passo M é a <b>média ponderada dos vetores binários</b> — e o resultado, sendo média de zeros e uns, cai naturalmente em <m>[0,1]</m>, que é exatamente o domínio válido para <m>\boldsymbol\mu_k</m>. Não há covariância a estimar, o que torna a mistura de Bernoulli muito mais barata e estável que o GMM, e imune ao problema de singularidade por colapso de covariância.</p>
+
+  <div class="box c-bishop">
+    <div class="bt">Dois modos de quebrar o EM em Bernoulli, e as defesas</div>
+    <p><b>1. Verossimilhança nula.</b> Se algum <m>\mu_{ki}</m> chegar exatamente a 0 ou 1, qualquer amostra que discorde naquele bit recebe <m>p(\mathbf{x}\mid\boldsymbol\mu_k)=0</m>, e o parâmetro trava para sempre (a média ponderada não consegue mais movê-lo). <b>Defesa</b>: suavização de Laplace, <m>\mu_{ki}=\frac{\sum_n\gamma_{nk}x_{ni} + \alpha}{N_k + 2\alpha}</m>, que é o estimador MAP com prior Beta e mantém <m>\mu_{ki}</m> estritamente dentro de <m>(0,1)</m>.</p>
+    <p style="margin-bottom:0"><b>2. Subfluxo numérico.</b> <m>p(\mathbf{x}\mid\boldsymbol\mu_k)</m> é um produto de <m>D</m> fatores menores que 1. Com <m>D=784</m> (uma imagem 28&#215;28), o produto fica abaixo do menor <code>float64</code> representável e colapsa para 0 — e a razão do passo E vira <m>0/0</m>. <b>Defesa</b>: trabalhar em espaço logarítmico e usar o truque <b>Log-Sum-Exp</b>: <m>\ln\sum_k e^{a_k} = a_{\max} + \ln\sum_k e^{a_k - a_{\max}}</m>. Subtrair o máximo garante que o maior expoente seja <m>e^0=1</m> e que nada transborde nem desapareça.</p>
+  </div>
+
+  <div class="qa-head"><span class="t">Perguntas 25&#8211;38 &#183; O algoritmo EM</span><span class="r"></span></div>
+
+  <div class="qa"><div class="qn">25</div><div class="q">Explique o EM em uma frase, e depois em quatro.</div>
+  <div class="a"><p><b>Em uma:</b> alterne entre estimar a distribuição das variáveis latentes com os parâmetros atuais e reestimar os parâmetros como se essa distribuição fosse os dados verdadeiros. <b>Em quatro:</b> (1) inicialize os parâmetros; (2) no passo E, calcule as responsabilidades <m>\gamma(z_{nk})</m> pelo teorema de Bayes; (3) no passo M, recalcule <m>\pi_k</m>, <m>\boldsymbol\mu_k</m> (e <m>\boldsymbol\Sigma_k</m>, no GMM) como estatísticas amostrais ponderadas por essas responsabilidades; (4) repita até <m>\ln p(\mathbf{X})</m> estabilizar.</p></div></div>
+
+  <div class="qa"><div class="qn">26</div><div class="q">Por que o passo M tem solução fechada se a máxima verossimilhança direta não tem?</div>
+  <div class="a"><p>Porque o passo M não maximiza <m>\ln p(\mathbf{X}\mid\boldsymbol\theta)</m>; ele maximiza <m>\mathcal{Q}(\boldsymbol\theta,\boldsymbol\theta^{\text{old}})</m>, a esperança da log-verossimilhança <b>completa</b>. Nessa expressão os <m>z_{nk}</m> estão fora do logaritmo, então <m>\ln p(\mathbf{X},\mathbf{Z}\mid\boldsymbol\theta) = \sum_n\sum_k z_{nk}\{\ln\pi_k + \ln p(\mathbf{x}_n\mid\boldsymbol\theta_k)\}</m> se decompõe em termos que envolvem um componente de cada vez. Cada termo é a log-verossimilhança de uma distribuição simples (uma gaussiana, uma Bernoulli), cujo máximo é conhecido em forma fechada. O somatório problemático desapareceu porque assumimos <m>\mathbf{Z}</m> conhecido (em esperança).</p></div></div>
+
+  <div class="qa"><div class="qn">27</div><div class="q">O que é <m>N_k</m> e por que ele é fracionário?</div>
+  <div class="a"><p><m>N_k=\sum_{n}\gamma(z_{nk})</m> é o <b>número efetivo de pontos</b> do componente <m>k</m>: a soma das frações de cada amostra que aquele componente reivindica. É fracionário porque as atribuições são suaves — um ponto na fronteira entre dois componentes pode contribuir 0,5 para cada. No K-Means, com <m>r_{nk}\in\{0,1\}</m>, o análogo seria uma contagem inteira. Duas propriedades úteis: <m>\sum_k N_k = N</m> (a massa total se conserva), e <m>\pi_k = N_k/N</m> no passo M — o peso do componente é a sua fatia da massa total.</p></div></div>
+
+  <div class="qa"><div class="qn">28</div><div class="q">As fórmulas do passo M para o GMM parecem as estimativas usuais de uma gaussiana. Qual a diferença?</div>
+  <div class="a"><p>São literalmente as mesmas fórmulas, com um peso <m>\gamma(z_{nk})</m> dentro de cada soma e <m>N_k</m> no lugar de <m>N</m> no denominador. Se as responsabilidades fossem 0/1 (atribuição rígida), você recuperaria exatamente a média e a covariância amostrais dos pontos daquele cluster. A ponderação é a única novidade, e ela codifica a ideia central do EM: como não sabemos a qual componente cada ponto pertence, deixamos cada ponto contribuir para <i>todos</i> os componentes, na proporção da sua responsabilidade.</p></div></div>
+
+  <div class="qa"><div class="qn">29</div><div class="q">Por que <m>\boldsymbol\Sigma_k^{\text{new}}</m> usa <m>\boldsymbol\mu_k^{\text{new}}</m> e não <m>\boldsymbol\mu_k^{\text{old}}</m>?</div>
+  <div class="a"><p>Porque o passo M maximiza <m>\mathcal{Q}</m> em relação a <i>todos</i> os parâmetros conjuntamente, e a solução ótima para a covariância é a dispersão em torno da <b>nova</b> média. Usar a média antiga daria uma covariância maior que a ótima (pelo teorema do eixo paralelo, a dispersão em torno de qualquer ponto que não seja a média é sempre maior). Na implementação, isso significa uma ordem obrigatória dentro do passo M: calcule <m>N_k</m>, depois <m>\boldsymbol\mu_k^{\text{new}}</m>, e só então <m>\boldsymbol\Sigma_k^{\text{new}}</m>. Inverter a ordem é um erro silencioso — o algoritmo ainda roda e ainda converge, mas para um ponto ligeiramente errado.</p></div></div>
+
+  <div class="qa"><div class="qn">30</div><div class="q">Demonstre por que o K-Means é o caso-limite do EM para GMM.</div>
+  <div class="a"><p>Fixe <m>\boldsymbol\Sigma_k=\epsilon\mathbf{I}</m> e <m>\pi_k=1/K</m>. Os fatores constantes de normalização e o <m>\pi_k</m> cancelam entre numerador e denominador, deixando <m>\gamma(z_{nk}) = \frac{\exp\{-\lVert\mathbf{x}_n-\boldsymbol\mu_k\rVert^2/2\epsilon\}}{\sum_j\exp\{-\lVert\mathbf{x}_n-\boldsymbol\mu_j\rVert^2/2\epsilon\}}</m>. Seja <m>j^\star</m> o índice do protótipo mais próximo. Dividindo numerador e denominador por <m>\exp\{-\lVert\mathbf{x}_n-\boldsymbol\mu_{j^\star}\rVert^2/2\epsilon\}</m>, cada termo <m>k\ne j^\star</m> vira <m>\exp\{-(d_k^2-d_{j^\star}^2)/2\epsilon\}</m> com <m>d_k^2-d_{j^\star}^2\gt0</m>, que tende a 0 quando <m>\epsilon\to0</m>. Sobra 1 para <m>j^\star</m> e 0 para o resto: <m>\gamma\to r</m>. Substituindo em <m>\mathcal{Q}</m>, obtém-se <m>-\frac{1}{2\epsilon}\sum_n\sum_k r_{nk}\lVert\mathbf{x}_n-\boldsymbol\mu_k\rVert^2 + \text{const} = -\frac{J}{2\epsilon} + \text{const}</m>. Maximizar em <m>\boldsymbol\mu</m> é minimizar <m>J</m>.</p></div></div>
+
+  <div class="qa"><div class="qn">31</div><div class="q">Por que a gaussiana é uma péssima escolha para dados binários?</div>
+  <div class="a"><p>Três razões que se reforçam. (i) <b>Suporte errado</b>: a gaussiana espalha densidade por todo <m>\mathbb{R}^D</m>, atribuindo massa a pontos como <m>(0{,}37;\,-1{,}2)</m> que não podem existir em <m>\{0,1\}^D</m>. (ii) <b>Média sem sentido como protótipo</b>: em <m>\{0,1\}^D</m> os dados vivem nos <m>2^D</m> vértices do hipercubo, e a média de vértices cai no <i>interior</i>, que não é um ponto válido do domínio. (iii) <b>Geometria enganosa</b>: a distância euclidiana entre vetores binários vira a raiz da distância de Hamming, e as noções de forma e orientação que <m>\boldsymbol\Sigma</m> captura não têm análogo útil aqui. A mistura de Bernoulli resolve os três: o suporte é o hipercubo, o parâmetro <m>\mu_{ki}</m> é uma probabilidade e não um ponto, e não há covariância a interpretar.</p></div></div>
+
+  <div class="qa"><div class="qn">32</div><div class="q">O que representa cada coordenada do vetor <m>\boldsymbol\mu_k</m> na mistura de Bernoulli?</div>
+  <div class="a"><p><m>\mu_{ki}</m> é a probabilidade de o bit <m>i</m> valer 1 dado que a amostra veio do componente <m>k</m>. Em imagens binarizadas 8&#215;8, <m>\boldsymbol\mu_k</m> tem 64 coordenadas e, visualizado como imagem, é o protótipo do dígito daquele componente em tons de cinza: <m>\mu_{ki}\approx1</m> onde o traço quase sempre passa, <m>\approx0</m> no fundo, e valores intermediários onde há variação de estilo entre as amostras — que é justamente onde a incerteza mora. Diferente de um centróide de K-Means, <m>\boldsymbol\mu_k</m> não é um ponto dos dados: é um parâmetro que descreve <m>D</m> moedas.</p></div></div>
+
+  <div class="qa"><div class="qn">33</div><div class="q">A mistura de Bernoulli assume independência entre os bits. Como ela consegue então capturar correlações?</div>
+  <div class="a"><p>A independência é <b>condicional</b>, válida apenas <i>dentro</i> de um componente. A distribuição marginal <m>p(\mathbf{x}) = \sum_k\pi_k\prod_i \mu_{ki}^{x_i}(1-\mu_{ki})^{1-x_i}</m> não fatora, e sua covariância — dada pela fórmula de 15.3.3 — tem termos fora da diagonal. A intuição: se o componente &#8220;dígito 1&#8221; tem uma coluna central acesa e o componente &#8220;dígito 0&#8221; tem um anel, então observar um pixel do anel aceso aumenta a probabilidade de outros pixels do anel também estarem acesos — não porque haja dependência direta entre eles, mas porque ambos são evidência do mesmo componente. A correlação é mediada pela variável latente. É a mesma estrutura do Naive Bayes, e a razão de ele funcionar melhor do que a sua hipótese ingênua sugeriria.</p></div></div>
+
+  <div class="qa"><div class="qn">34</div><div class="q">Por que o passo M da mistura de Bernoulli é mais simples e estável que o do GMM?</div>
+  <div class="a"><p>Porque não há covariância. O passo M inteiro é <m>\boldsymbol\mu_k = \frac{1}{N_k}\sum_n\gamma_{nk}\mathbf{x}_n</m> e <m>\pi_k = N_k/N</m>: uma média ponderada e uma fração. Consequências: o custo cai de <m>O(NKD^2)</m> para <m>O(NKD)</m>; não há matriz para inverter nem determinante para calcular, então nenhuma questão de condicionamento numérico; e não existe o modo de falha por <m>|\boldsymbol\Sigma_k|\to0</m>, porque não existe <m>\boldsymbol\Sigma_k</m>. O número de parâmetros também é muito menor: <m>KD + K - 1</m> contra <m>KD + KD(D+1)/2 + K-1</m>. A mistura de Bernoulli tem seus próprios modos de falha (o travamento em 0 ou 1 e o subfluxo), mas ambos têm defesas simples e baratas.</p></div></div>
+
+  <div class="qa"><div class="qn">35</div><div class="q">O que é a suavização de Laplace e qual problema ela resolve?</div>
+  <div class="a"><p>Substitui <m>\mu_{ki} = \frac{\sum_n\gamma_{nk}x_{ni}}{N_k}</m> por <m>\mu_{ki} = \frac{\sum_n\gamma_{nk}x_{ni} + \alpha}{N_k + 2\alpha}</m>, tipicamente com <m>\alpha=1</m>. Resolve o travamento em 0 ou 1: se nenhuma amostra do componente <m>k</m> jamais acender o bit <m>i</m>, o estimador sem suavização crava <m>\mu_{ki}=0</m>, e a partir daí qualquer amostra que acenda aquele bit recebe verossimilhança exatamente zero naquele componente — o que é uma afirmação absurda de certeza a partir de evidência finita, e é irreversível, porque o numerador da média ponderada fica permanentemente zero. Formalmente, é o estimador MAP com um prior Beta(<m>\alpha+1,\alpha+1</m>) sobre cada <m>\mu_{ki}</m>, e corresponde a &#8220;fingir&#8221; ter visto <m>\alpha</m> exemplos de cada resultado antes de olhar os dados. No Bishop, é o assunto de 15.4.3 (priores sobre parâmetros).</p></div></div>
+
+  <div class="qa"><div class="qn">36</div><div class="q">Explique o truque Log-Sum-Exp e por que ele é indispensável aqui.</div>
+  <div class="a"><p>Queremos <m>\ln\sum_k e^{a_k}</m> sem calcular <m>e^{a_k}</m> diretamente, porque com <m>a_k</m> muito negativo (o log de um produto de centenas de probabilidades) a exponencial vira 0 em <code>float64</code>, e o log de 0 é <m>-\infty</m>. O truque é fatorar o maior termo: seja <m>a_{\max}=\max_k a_k</m>; então <m>\ln\sum_k e^{a_k} = a_{\max} + \ln\sum_k e^{a_k-a_{\max}}</m>. Agora todos os expoentes são <m>\le 0</m>, o maior deles é exatamente 0 (dando <m>e^0=1</m>), e a soma está garantidamente entre 1 e <m>K</m> — nem transborda nem desaparece. É matematicamente uma identidade exata, não uma aproximação. Sem ele, uma mistura de Bernoulli sobre imagens de 784 pixels simplesmente não roda: <m>0{,}5^{784}\approx10^{-236}</m> já está no limite, e valores típicos são bem menores.</p></div></div>
+
+  <div class="qa"><div class="qn">37</div><div class="q">Como se inicializa o EM na prática, e por que a inicialização importa?</div>
+  <div class="a"><p>Importa porque o EM converge para um <b>máximo local</b>, e a superfície de verossimilhança de uma mistura é cheia deles. As estratégias comuns: (i) rodar K-Means primeiro e usar os centróides como <m>\boldsymbol\mu_k</m>, as covariâncias empíricas de cada cluster como <m>\boldsymbol\Sigma_k</m> e as proporções como <m>\pi_k</m> — é o padrão do scikit-learn (<code>init_params='kmeans'</code>); (ii) sortear <m>K</m> pontos dos dados como médias; (iii) k-means++ para as sementes. Rodar várias inicializações e ficar com a de maior <m>\ln p(\mathbf{X})</m> é a prática recomendada (<code>n_init</code>). Um detalhe importante: como o K-Means já é o caso-limite do EM, inicializar com ele coloca o EM num ponto razoável do espaço e reduz muito o número de iterações necessárias.</p></div></div>
+
+  <div class="qa"><div class="qn">38</div><div class="q">Quando se deve parar o EM?</div>
+  <div class="a"><p>O critério padrão é a estabilização da log-verossimilhança: parar quando <m>\ln p(\mathbf{X}\mid\boldsymbol\theta^{\text{new}}) - \ln p(\mathbf{X}\mid\boldsymbol\theta^{\text{old}}) \lt \text{tol}</m>, com uma tolerância relativa da ordem de <m>10^{-3}</m> a <m>10^{-6}</m> (o parâmetro <code>tol</code>), somada a um teto de iterações (<code>max_iter</code>). Alternativamente, monitorar a variação dos parâmetros. Uma observação prática que serve de teste de sanidade da implementação: como a teoria garante que <m>\ln p(\mathbf{X})</m> <b>nunca diminui</b>, qualquer queda observada é bug — tipicamente uma ordem trocada no passo M, um esquecimento de renormalizar as responsabilidades, ou perda de precisão numérica.</p></div></div>
+</div>
+
+<div class="c-bishop">
+  <h3 class="sec"><span class="num">15.4</span>Evidence Lower Bound (ELBO)</h3>
+
+  <p>As seções anteriores <i>usaram</i> o EM. Esta explica <b>por que ele funciona</b> — por que a log-verossimilhança nunca diminui, e o que exatamente cada passo está fazendo geometricamente.</p>
+
+  <p>A construção parte de uma identidade válida para <b>qualquer</b> distribuição <m>q(\mathbf{Z})</m> sobre as variáveis latentes:</p>
+
+  <div class="key">
+    <div class="bt">A decomposição fundamental</div>
+    <M>\ln p(\mathbf{X}\mid\boldsymbol\theta) = \mathcal{L}(q,\boldsymbol\theta) + \mathrm{KL}\!\left(q\,\|\,p\right)</M>
+    <M>\mathcal{L}(q,\boldsymbol\theta) = \sum_{\mathbf{Z}} q(\mathbf{Z})\,\ln\!\left\{\frac{p(\mathbf{X},\mathbf{Z}\mid\boldsymbol\theta)}{q(\mathbf{Z})}\right\}, \qquad \mathrm{KL}(q\|p) = -\sum_{\mathbf{Z}} q(\mathbf{Z})\,\ln\!\left\{\frac{p(\mathbf{Z}\mid\mathbf{X},\boldsymbol\theta)}{q(\mathbf{Z})}\right\}</M>
+  </div>
+
+  <p>Como a divergência de Kullback&#8211;Leibler satisfaz <m>\mathrm{KL}(q\|p)\ge0</m>, com igualdade se e somente se <m>q(\mathbf{Z}) = p(\mathbf{Z}\mid\mathbf{X},\boldsymbol\theta)</m>, segue imediatamente que</p>
+  <M>\mathcal{L}(q,\boldsymbol\theta) \;\le\; \ln p(\mathbf{X}\mid\boldsymbol\theta)</M>
+  <p>ou seja, <m>\mathcal{L}</m> é uma <b>cota inferior</b> da log-verossimilhança — daí o nome <i>evidence lower bound</i> (a &#8220;evidência&#8221; é <m>p(\mathbf{X})</m>).</p>
+
+  <h4 class="sub"><span class="num">15.4.1</span>O EM revisitado: os dois passos como dois movimentos</h4>
+
+  <p>Com a decomposição em mãos, os dois passos do EM ganham uma leitura geométrica limpa.</p>
+
+  <p><b>Passo E.</b> Mantendo <m>\boldsymbol\theta^{\text{old}}</m> fixo, maximiza-se <m>\mathcal{L}(q,\boldsymbol\theta^{\text{old}})</m> em relação a <m>q</m>. Como a soma <m>\mathcal{L}+\mathrm{KL}</m> é constante (não depende de <m>q</m>), maximizar <m>\mathcal{L}</m> é <b>zerar a KL</b>. Isso ocorre exatamente quando <m>q(\mathbf{Z}) = p(\mathbf{Z}\mid\mathbf{X},\boldsymbol\theta^{\text{old}})</m> — o posterior, isto é, as responsabilidades. Nesse ponto a cota <b>encosta</b> na log-verossimilhança: <m>\mathcal{L}(q,\boldsymbol\theta^{\text{old}}) = \ln p(\mathbf{X}\mid\boldsymbol\theta^{\text{old}})</m>.</p>
+
+  <p><b>Passo M.</b> Mantendo <m>q</m> fixo, maximiza-se <m>\mathcal{L}(q,\boldsymbol\theta)</m> em relação a <m>\boldsymbol\theta</m>. Substituindo <m>q</m> pelo posterior encontrado, <m>\mathcal{L}(q,\boldsymbol\theta) = \mathcal{Q}(\boldsymbol\theta,\boldsymbol\theta^{\text{old}}) + \text{const}</m>, onde a constante é a entropia de <m>q</m> — que não depende de <m>\boldsymbol\theta</m>. Maximizar a cota é, portanto, maximizar <m>\mathcal{Q}</m>: exatamente o passo M que já conhecíamos.</p>
+
+  <div class="box c-bishop">
+    <div class="bt">Por que <m>\ln p(\mathbf{X})</m> nunca diminui</div>
+    <p style="margin-bottom:0">Ao fim do passo E, <m>\mathcal{L} = \ln p(\mathbf{X}\mid\boldsymbol\theta^{\text{old}})</m> e <m>\mathrm{KL}=0</m>. O passo M aumenta <m>\mathcal{L}</m> (ou a mantém). Mas ao mudar <m>\boldsymbol\theta</m>, o posterior <m>p(\mathbf{Z}\mid\mathbf{X},\boldsymbol\theta^{\text{new}})</m> muda também, enquanto <m>q</m> ficou congelado — logo a KL volta a ser <m>\ge 0</m>. Somando: <m>\ln p(\mathbf{X}\mid\boldsymbol\theta^{\text{new}}) = \mathcal{L}(q,\boldsymbol\theta^{\text{new}}) + \mathrm{KL} \ge \mathcal{L}(q,\boldsymbol\theta^{\text{new}}) \ge \mathcal{L}(q,\boldsymbol\theta^{\text{old}}) = \ln p(\mathbf{X}\mid\boldsymbol\theta^{\text{old}})</m>. A log-verossimilhança sobe pelo menos tanto quanto a cota subiu, e ainda ganha o incremento da KL. <b>Monotonicidade garantida.</b></p>
+  </div>
+
+  <h4 class="sub"><span class="num">15.4.2</span>Dados independentes e identicamente distribuídos</h4>
+  <p>Quando as <m>N</m> observações são i.i.d., o posterior conjunto sobre <m>\mathbf{Z}</m> fatora por amostra: <m>p(\mathbf{Z}\mid\mathbf{X},\boldsymbol\theta) = \prod_n p(\mathbf{z}_n\mid\mathbf{x}_n,\boldsymbol\theta)</m>. É isso que torna o passo E viável: em vez de lidar com uma distribuição sobre <m>K^N</m> configurações conjuntas, calcula-se <m>N</m> distribuições independentes de <m>K</m> valores cada — a matriz <m>N\times K</m> de responsabilidades. Sem a hipótese i.i.d., o passo E exigiria inferência sobre um objeto exponencialmente grande.</p>
+
+  <h4 class="sub"><span class="num">15.4.3</span>Priores sobre os parâmetros</h4>
+  <p>Se em vez de máxima verossimilhança quisermos o <b>MAP</b> (maximum a posteriori), com um prior <m>p(\boldsymbol\theta)</m>, a decomposição vira <m>\ln p(\boldsymbol\theta\mid\mathbf{X}) = \mathcal{L}(q,\boldsymbol\theta) + \mathrm{KL}(q\|p) + \ln p(\boldsymbol\theta) + \text{const}</m>. O passo E fica idêntico; o passo M passa a maximizar <m>\mathcal{Q}(\boldsymbol\theta,\boldsymbol\theta^{\text{old}}) + \ln p(\boldsymbol\theta)</m>. Duas aplicações diretas do que já vimos: a suavização de Laplace na mistura de Bernoulli é o passo M com prior Beta, e o <code>reg_covar</code> do GMM é uma versão prática do passo M com prior sobre a covariância. O prior <b>elimina as singularidades</b>, porque penaliza covariâncias degeneradas e probabilidades exatamente 0 ou 1.</p>
+
+  <h4 class="sub"><span class="num">15.4.4</span>EM generalizado (GEM)</h4>
+  <p>Nada na prova da monotonicidade exige que o passo M encontre o máximo <i>global</i> de <m>\mathcal{Q}</m>. Basta que ele <b>aumente</b> <m>\mathcal{Q}</m>. Isso libera o EM generalizado: quando o passo M não tem solução fechada, pode-se dar alguns passos de subida de gradiente, ou maximizar em um subconjunto dos parâmetros por vez (o ECM, <i>expectation conditional maximization</i>). A garantia de que <m>\ln p(\mathbf{X})</m> não diminui permanece intacta. Simetricamente, existe uma versão generalizada do passo E, em que se maximiza <m>\mathcal{L}</m> apenas dentro de uma família restrita de <m>q</m> — é o ponto de partida da <b>inferência variacional</b>.</p>
+
+  <h4 class="sub"><span class="num">15.4.5</span>EM sequencial</h4>
+  <p>Em bases grandes, o passo E percorre todas as <m>N</m> amostras antes de qualquer atualização de parâmetro. O EM sequencial (ou <i>online</i>) processa uma amostra (ou um lote) por vez: calcula a responsabilidade daquela amostra e atualiza os parâmetros incrementalmente, usando estatísticas suficientes acumuladas. Converge mais rápido em tempo de relógio para <m>N</m> grande e permite aprendizado em fluxo, sem manter os dados em memória. É a mesma ideia que leva do K-Means clássico ao <code>MiniBatchKMeans</code> do scikit-learn.</p>
+
+  <div class="qa-head"><span class="t">Perguntas 39&#8211;46 &#183; ELBO e convergência</span><span class="r"></span></div>
+
+  <div class="qa"><div class="qn">39</div><div class="q">Enuncie a decomposição da log-verossimilhança e diga o que cada termo significa.</div>
+  <div class="a"><p><m>\ln p(\mathbf{X}\mid\boldsymbol\theta) = \mathcal{L}(q,\boldsymbol\theta) + \mathrm{KL}(q\|p)</m>, válida para qualquer <m>q(\mathbf{Z})</m>. O termo <m>\mathcal{L}</m> é a <b>cota inferior</b> (ELBO): o quanto conseguimos garantir sobre a log-verossimilhança usando a aproximação <m>q</m>. O termo <m>\mathrm{KL}(q\|p)</m> mede o <b>desencontro</b> entre a aproximação <m>q</m> e o posterior verdadeiro <m>p(\mathbf{Z}\mid\mathbf{X},\boldsymbol\theta)</m>; é sempre <m>\ge0</m> e vale 0 apenas quando as duas coincidem. A soma é fixa para um <m>\boldsymbol\theta</m> dado, então melhorar <m>q</m> significa transferir valor da KL para a cota.</p></div></div>
+
+  <div class="qa"><div class="qn">40</div><div class="q">Por que <m>\mathrm{KL}(q\|p)\ge0</m>, e por que isso é o que torna <m>\mathcal{L}</m> uma cota <i>inferior</i>?</div>
+  <div class="a"><p>A não-negatividade da KL segue da desigualdade de Jensen aplicada ao logaritmo, que é côncavo: <m>-\sum_Z q\ln\frac{p}{q} \ge -\ln\sum_Z q\frac{p}{q} = -\ln\sum_Z p = -\ln 1 = 0</m>. A igualdade em Jensen exige que o argumento seja constante, o que aqui significa <m>p(\mathbf{Z}\mid\mathbf{X})/q(\mathbf{Z})</m> constante — isto é, <m>q=p</m>. Como <m>\ln p(\mathbf{X}) = \mathcal{L} + \mathrm{KL}</m> e a KL nunca é negativa, subtraí-la só pode reduzir: <m>\mathcal{L} \le \ln p(\mathbf{X})</m>.</p></div></div>
+
+  <div class="qa"><div class="qn">41</div><div class="q">O que o passo E faz, em termos de <m>\mathcal{L}</m> e KL?</div>
+  <div class="a"><p>Com <m>\boldsymbol\theta</m> congelado, <m>\ln p(\mathbf{X}\mid\boldsymbol\theta)</m> é um número fixo, e portanto <m>\mathcal{L}</m> e KL são complementares: o que uma ganha, a outra perde. O passo E escolhe o <m>q</m> que <b>zera a KL</b>, o que é o mesmo que levar <m>\mathcal{L}</m> ao seu valor máximo possível para aquele <m>\boldsymbol\theta</m>. Esse <m>q</m> ótimo é o posterior exato, <m>p(\mathbf{Z}\mid\mathbf{X},\boldsymbol\theta^{\text{old}})</m> — as responsabilidades. Geometricamente: a cota, que estava abaixo da curva de log-verossimilhança, <b>sobe até tocá-la</b> no ponto <m>\boldsymbol\theta^{\text{old}}</m>.</p></div></div>
+
+  <div class="qa"><div class="qn">42</div><div class="q">E o passo M?</div>
+  <div class="a"><p>Congela <m>q</m> e move <m>\boldsymbol\theta</m> para maximizar <m>\mathcal{L}(q,\boldsymbol\theta)</m>. Como <m>\mathcal{L}(q,\boldsymbol\theta) = \mathcal{Q}(\boldsymbol\theta,\boldsymbol\theta^{\text{old}}) + \mathrm{H}[q]</m>, e a entropia <m>\mathrm{H}[q]</m> não depende de <m>\boldsymbol\theta</m>, maximizar a cota é maximizar <m>\mathcal{Q}</m>. Geometricamente: a cota, que agora toca a curva em <m>\boldsymbol\theta^{\text{old}}</m>, é <b>escalada até o seu próprio máximo</b>. Como ela está sempre abaixo da log-verossimilhança e a tocava no ponto de partida, subir na cota obriga a log-verossimilhança a subir pelo menos o mesmo tanto.</p></div></div>
+
+  <div class="qa"><div class="qn">43</div><div class="q">Prove que o EM nunca diminui a log-verossimilhança.</div>
+  <div class="a"><p>Encadeie quatro relações. (1) Após o passo E: <m>\mathcal{L}(q,\boldsymbol\theta^{\text{old}}) = \ln p(\mathbf{X}\mid\boldsymbol\theta^{\text{old}})</m>, pois a KL foi zerada. (2) O passo M garante <m>\mathcal{L}(q,\boldsymbol\theta^{\text{new}}) \ge \mathcal{L}(q,\boldsymbol\theta^{\text{old}})</m>, por definição de maximização. (3) Para qualquer <m>\boldsymbol\theta</m>, vale <m>\ln p(\mathbf{X}\mid\boldsymbol\theta) = \mathcal{L}(q,\boldsymbol\theta) + \mathrm{KL} \ge \mathcal{L}(q,\boldsymbol\theta)</m>. Aplicando em <m>\boldsymbol\theta^{\text{new}}</m> e juntando: <m>\ln p(\mathbf{X}\mid\boldsymbol\theta^{\text{new}}) \ge \mathcal{L}(q,\boldsymbol\theta^{\text{new}}) \ge \mathcal{L}(q,\boldsymbol\theta^{\text{old}}) = \ln p(\mathbf{X}\mid\boldsymbol\theta^{\text{old}})</m>. O ganho real é ainda maior que o ganho na cota, porque a KL reabre e soma. <b>Cuidado:</b> monotonicidade não é convergência ao ótimo global — a sequência sobe, mas pode estabilizar em um máximo local ou ponto de sela.</p></div></div>
+
+  <div class="qa"><div class="qn">44</div><div class="q">O que é o EM generalizado e por que ele ainda funciona?</div>
+  <div class="a"><p>É o EM em que o passo M apenas <b>aumenta</b> <m>\mathcal{Q}</m> em vez de maximizá-la. Continua funcionando porque a prova da monotonicidade só usa <m>\mathcal{L}(q,\boldsymbol\theta^{\text{new}}) \ge \mathcal{L}(q,\boldsymbol\theta^{\text{old}})</m> — a desigualdade não exige o máximo. Isso é útil quando o passo M não tem solução fechada: dá-se alguns passos de gradiente, ou maximiza-se um bloco de parâmetros por vez (ECM). Analogamente existe um passo E generalizado, em que <m>q</m> é otimizado dentro de uma família restrita e a KL não chega a zero — a cota fica frouxa, mas ainda é cota. Esse é o passo de partida da inferência variacional, e é o que a <code>BayesianGaussianMixture</code> faz.</p></div></div>
+
+  <div class="qa"><div class="qn">45</div><div class="q">Como um prior sobre os parâmetros se encaixa no EM, e o que ele resolve?</div>
+  <div class="a"><p>Trocando o alvo de <m>\ln p(\mathbf{X}\mid\boldsymbol\theta)</m> para <m>\ln p(\boldsymbol\theta\mid\mathbf{X}) \propto \ln p(\mathbf{X}\mid\boldsymbol\theta) + \ln p(\boldsymbol\theta)</m>. O passo E não muda em nada; o passo M passa a maximizar <m>\mathcal{Q}(\boldsymbol\theta,\boldsymbol\theta^{\text{old}}) + \ln p(\boldsymbol\theta)</m>. O ganho decisivo é que o prior <b>elimina as singularidades</b>: um prior que atribui densidade zero a covariâncias degeneradas (ou a probabilidades exatamente 0 e 1) torna essas configurações inatingíveis, e a função objetivo deixa de ser ilimitada. As duas defesas práticas que já vimos são exatamente isso: a suavização de Laplace é o passo M com prior Beta, e o <code>reg_covar</code> aproxima o passo M com prior sobre <m>\boldsymbol\Sigma</m>.</p></div></div>
+
+  <div class="qa"><div class="qn">46</div><div class="q">Qual a vantagem do EM sequencial sobre o EM em lote?</div>
+  <div class="a"><p>No EM em lote, nenhum parâmetro se move antes de percorrer todas as <m>N</m> amostras — com <m>N</m> na casa dos milhões, cada iteração é cara e o progresso é lento em tempo de relógio. O EM sequencial atualiza os parâmetros a cada amostra ou lote pequeno, usando estatísticas suficientes acumuladas, e por isso faz muito mais progresso por passagem nos dados. Vantagens adicionais: não exige manter o conjunto inteiro em memória e permite aprendizado em fluxo contínuo. O custo é que as garantias de monotonicidade estrita se enfraquecem — o objetivo passa a oscilar em torno da trajetória de subida, como em qualquer método estocástico. É a mesma troca do <code>MiniBatchKMeans</code>: convergência mais rápida, resultado ligeiramente pior.</p></div></div>
+</div>
+
+<!-- ============ PARTE II ============ -->
+<div class="part c-murphy">
+  <div class="part-head">
+    <div class="lbl">Parte II</div>
+    <h2>Murphy, 21.3 a 21.4.2</h2>
+    <div class="cite">Murphy, K. P. <i>Probabilistic Machine Learning: An Introduction</i>. MIT Press, 2022. Da seção 21.3 (K means clustering) até 21.4.2 (Mixtures of Bernoullis), inclusive.</div>
+  </div>
+
+  <p class="lead">O Murphy cobre os mesmos modelos do Bishop, mas com ênfase diferente: menos derivação, mais <b>decisão de projeto</b>. É aqui que aparecem as perguntas práticas — como escolher <m>K</m>, como inicializar, quais variantes do algoritmo existem e quando usar cada uma. Trate esta parte como o complemento operacional da Parte I.</p>
+
+  <h3 class="sec"><span class="num">21.3</span>K means clustering</h3>
+
+  <p>A apresentação do algoritmo é a mesma do Bishop 15.1 — atribuição ao centróide mais próximo, recálculo pela média, iterar — com uma diferença de enquadramento útil: o Murphy trata o K-means desde o início como um <b>método de quantização</b>, isto é, como um dispositivo que substitui cada ponto pelo seu representante mais próximo. Esse enquadramento torna natural tudo o que vem depois.</p>
+
+  <p>A função objetivo é chamada de <b>distorção</b>:</p>
+  <M>J(\mathbf{M},\mathbf{Z}) = \sum_{n=1}^{N}\lVert \mathbf{x}_n - \boldsymbol\mu_{z_n}\rVert^2</M>
+  <p>onde <m>z_n \in \{1,\dots,K\}</m> é o índice do cluster da amostra <m>n</m> (o Murphy usa índice inteiro em vez da codificação 1-de-<m>K</m>) e <m>\mathbf{M}</m> é a matriz dos centróides.</p>
+
+  <h4 class="sub"><span class="num">&#8226;</span>Quantização vetorial</h4>
+
+  <p>O ponto de vista da compressão. Um conjunto de <m>N</m> vetores reais de dimensão <m>D</m>, com <m>C</m> bits por número, ocupa <m>NDC</m> bits. Substituindo cada vetor pelo índice do seu centróide, guarda-se:</p>
+  <ul class="tight">
+    <li><m>N\lceil\log_2 K\rceil</m> bits para os índices (o <i>código</i>);</li>
+    <li><m>KDC</m> bits para a tabela de centróides (o <i>codebook</i>).</li>
+  </ul>
+  <p>Com <m>K \ll N</m>, o primeiro termo domina e a taxa de compressão é aproximadamente <m>DC/\lceil\log_2 K\rceil</m>. O erro introduzido é a distorção <m>J</m> — há uma troca explícita entre taxa e distorção, que é o assunto clássico da teoria da informação. O caso <m>K=N</m> dá distorção zero e nenhuma compressão; o caso <m>K=1</m> dá compressão máxima e distorção máxima.</p>
+
+  <h4 class="sub"><span class="num">&#8226;</span>O algoritmo k-means++</h4>
+
+  <p>A inicialização aleatória uniforme é ruim: se duas sementes caem no mesmo grupo real, o algoritmo tende a dividir aquele grupo e fundir dois outros, e a descida alternada não consegue mais se recuperar. O <b>k-means++</b> (Arthur &amp; Vassilvitskii, 2007) sorteia as sementes de forma a espalhá-las:</p>
+  <ol>
+    <li>Escolha o primeiro centro uniformemente entre os dados.</li>
+    <li>Para cada ponto <m>\mathbf{x}</m>, calcule <m>D(\mathbf{x})</m>, a distância ao centro <b>já escolhido</b> mais próximo.</li>
+    <li>Sorteie o próximo centro entre os dados, com probabilidade <m>p(\mathbf{x}) = \dfrac{D(\mathbf{x})^2}{\sum_{n} D(\mathbf{x}_n)^2}</m>.</li>
+    <li>Repita 2&#8211;3 até ter <m>K</m> centros; então rode o Lloyd normalmente.</li>
+  </ol>
+  <p>O peso <m>D^2</m> (e não <m>D</m>, nem uma escolha determinística do ponto mais distante) é o que dá a garantia teórica: o k-means++ é <m>O(\log K)</m>-competitivo com o ótimo global <b>em esperança</b>, antes mesmo de rodar uma iteração do Lloyd. O quadrado favorece fortemente pontos distantes sem tornar a escolha determinística — o que evitaria a captura por <i>outliers</i>.</p>
+
+  <h4 class="sub"><span class="num">&#8226;</span>O algoritmo K-medoids</h4>
+
+  <p>Variante em que os representantes são obrigatoriamente <b>pontos do conjunto de dados</b> (medoides), e não médias calculadas. O passo de atualização deixa de ser &#8220;tire a média&#8221; e passa a ser &#8220;escolha, entre os pontos do cluster, aquele que minimiza a soma das dissimilaridades aos demais&#8221;. O algoritmo clássico é o PAM (<i>Partitioning Around Medoids</i>).</p>
+  <p>Três vantagens sobre o K-means: (i) funciona com <b>qualquer</b> medida de dissimilaridade, inclusive não-métricas e matrizes de distância pré-calculadas — não é preciso que a média sequer exista; (ii) é bem mais <b>robusto a outliers</b>, porque um ponto extremo não consegue arrastar um medoide da mesma forma que arrasta uma média; (iii) o representante é um exemplo real, o que ajuda na interpretação. A desvantagem é o custo: o passo de atualização é <m>O(N_k^2)</m> por cluster, contra <m>O(N_k D)</m> do K-means.</p>
+
+  <h4 class="sub"><span class="num">&#8226;</span>Truques de aceleração</h4>
+  <p>O gargalo é o passo E, com suas <m>NK</m> distâncias por iteração. As técnicas de aceleração exploram a <b>desigualdade triangular</b> para provar que certas distâncias não precisam ser calculadas: se sabemos que <m>d(\mathbf{x},\boldsymbol\mu_j) \ge 2\,d(\mathbf{x},\boldsymbol\mu_k)</m>, então <m>\boldsymbol\mu_j</m> não pode ser o mais próximo e a distância nem precisa ser avaliada. Mantendo cotas superiores e inferiores por ponto e atualizando-as pelo quanto cada centróide se moveu, o algoritmo de <b>Elkan</b> elimina a maioria dos cálculos em dados de baixa dimensão. Outras rotas: estruturas espaciais (<i>k-d trees</i>) e amostragem por mini-lotes.</p>
+
+  <h4 class="sub"><span class="num">&#8226;</span>Escolhendo o número de clusters <m>K</m></h4>
+
+  <p>O ponto em que o Murphy é mais explícito que o Bishop. O problema de fundo: <m>J</m> <b>decresce monotonicamente</b> com <m>K</m> — com <m>K=N</m> ela é exatamente zero. Portanto <b>não se pode escolher <m>K</m> minimizando <m>J</m></b>. São apresentadas três saídas.</p>
+
+  <table>
+    <tr><th style="width:42mm">Método</th><th>Como funciona</th><th style="width:44mm">Limitação</th></tr>
+    <tr><td><b>Cotovelo da distorção</b></td><td>Plote <m>J(K)</m> contra <m>K</m> e procure o &#8220;joelho&#8221;: o ponto a partir do qual acrescentar clusters deixa de compensar. A intuição é que, abaixo do <m>K</m> correto, cada cluster novo divide um grupo real e reduz muito <m>J</m>; acima, ele apenas fatia grupos já homogêneos.</td><td>Subjetivo e frequentemente <b>não há cotovelo visível</b>. É uma heurística, não um critério.</td></tr>
+    <tr><td><b>Verossimilhança marginal</b></td><td>Só disponível em modelos probabilísticos (GMM, mistura de Bernoulli): compare <m>p(\mathcal{D}\mid K)</m> entre valores de <m>K</m>. Aqui a curva tem <b>máximo genuíno</b>, porque a navalha de Occam bayesiana penaliza automaticamente modelos complexos demais — eles espalham a massa de probabilidade e explicam mal qualquer conjunto específico. Aproximações práticas: BIC e AIC.</td><td>Exige um modelo generativo. O K-means, não sendo probabilístico, está fora.</td></tr>
+    <tr><td><b>Coeficiente de silhueta</b></td><td>Mede simultaneamente coesão e separação, sem precisar de rótulos. Para cada ponto <m>i</m>: <m>a(i)</m> é a distância média aos pontos do próprio cluster; <m>b(i)</m> é a menor distância média a algum outro cluster. Escolhe-se o <m>K</m> que maximiza a silhueta média.</td><td>Custo <m>O(N^2)</m>, e tende a favorecer clusters convexos e bem separados — herda a hipótese geométrica que está tentando avaliar.</td></tr>
+  </table>
+
+  <div class="key">
+    <div class="bt">Coeficiente de silhueta</div>
+    <M>s(i) = \frac{b(i)-a(i)}{\max\{a(i),\,b(i)\}} \;\in\; [-1,\,1]</M>
+    <p style="margin-bottom:0"><m>s(i)\approx 1</m>: o ponto está muito mais perto do seu cluster do que do vizinho mais próximo — bem agrupado. <m>s(i)\approx 0</m>: está na fronteira, a atribuição é ambígua. <m>s(i)\lt 0</m>: está em média <b>mais perto de outro cluster</b> que do próprio — provavelmente mal atribuído.</p>
+  </div>
+
+  <h3 class="sec"><span class="num">21.4</span>Clustering usando modelos de mistura</h3>
+
+  <p>A virada conceitual: em vez de um algoritmo que particiona, um <b>modelo probabilístico</b> que gera. A vantagem prática que o Murphy destaca é que isso transforma o clustering em um problema de ajuste de modelo, com todas as ferramentas que vêm junto — verossimilhança, seleção de modelo, quantificação de incerteza, e a possibilidade de amostrar dados novos.</p>
+
+  <p>A distinção operacional que se ganha é entre <b>hard clustering</b> (cada ponto recebe um rótulo) e <b>soft clustering</b> (cada ponto recebe uma distribuição sobre rótulos). O hard clustering se recupera do soft por <m>\hat{z}_n = \arg\max_k \gamma_{nk}</m>, mas a informação descartada nessa conversão — a confiança da atribuição — é frequentemente a mais valiosa.</p>
+
+  <h4 class="sub"><span class="num">21.4.1</span>Misturas gaussianas</h4>
+  <p>Mesmo modelo da Parte I: <m>p(\mathbf{x}) = \sum_k \pi_k\,\mathcal{N}(\mathbf{x}\mid\boldsymbol\mu_k,\boldsymbol\Sigma_k)</m>, ajustado por EM. O Murphy enfatiza o resultado de que <b>o K-means é um caso especial do EM</b> para GMM, sob três restrições: covariâncias esféricas e iguais (<m>\boldsymbol\Sigma_k=\sigma^2\mathbf{I}</m>), pesos iguais (<m>\pi_k=1/K</m>) e o limite <m>\sigma^2\to0</m>, que endurece as responsabilidades. Nessa leitura, o K-means aparece como uma variante de &#8220;<b>hard EM</b>&#8221;: em vez de usar o posterior completo no passo E, usa-se apenas o seu modo.</p>
+
+  <h4 class="sub"><span class="num">21.4.2</span>Misturas de Bernoulli</h4>
+  <p>Para dados binários, cada componente é um produto de <m>D</m> Bernoullis independentes:</p>
+  <M>p(\mathbf{x}\mid z=k,\boldsymbol\theta) = \prod_{d=1}^{D}\operatorname{Ber}(x_d\mid\mu_{dk}) = \prod_{d=1}^{D}\mu_{dk}^{\,x_d}(1-\mu_{dk})^{1-x_d}</M>
+  <p>O modelo é também conhecido como <i>latent class analysis</i> na literatura de ciências sociais. O ajuste por EM é o da Parte I. O Murphy destaca a aplicação em imagens binarizadas (MNIST) e o fato de que os componentes aprendidos tendem a capturar <b>estilos de escrita</b> e não apenas classes de dígito — rodar com <m>K=10</m> sobre os dez dígitos raramente produz um componente por dígito, e sim uma mistura de variantes.</p>
+
+  <div class="qa-head"><span class="t">Perguntas 47&#8211;74 &#183; Murphy</span><span class="r"></span></div>
+
+  <div class="qa"><div class="qn">47</div><div class="q">Por que não se pode escolher <m>K</m> minimizando a distorção <m>J</m>?</div>
+  <div class="a"><p>Porque <m>J</m> é monotonicamente <b>não-crescente</b> em <m>K</m>: qualquer solução com <m>K</m> clusters pode ser transformada numa solução com <m>K+1</m> dividindo um cluster, o que só pode reduzir a distorção. No extremo <m>K=N</m>, cada ponto vira seu próprio centróide e <m>J=0</m>. Minimizar <m>J</m> sobre <m>K</m>, portanto, sempre responde &#8220;<m>K=N</m>&#8221; — uma resposta correta e inútil. O problema é que <m>J</m> mede apenas ajuste, sem nenhuma penalização por complexidade. As saídas são adicionar essa penalização (BIC, verossimilhança marginal) ou usar um critério de natureza diferente, que meça separação além de coesão (silhueta).</p></div></div>
+
+  <div class="qa"><div class="qn">48</div><div class="q">Explique o método do cotovelo e por que ele é frágil.</div>
+  <div class="a"><p>Plota-se <m>J(K)</m> contra <m>K</m> e procura-se o ponto de inflexão onde a curva &#8220;dobra&#8221;. O raciocínio: enquanto <m>K</m> for menor que o número real de grupos, cada cluster adicional separa dois grupos genuinamente distintos e derruba <m>J</m> bastante; a partir do <m>K</m> correto, clusters adicionais apenas subdividem grupos já homogêneos, e o ganho vira marginal. A fragilidade tem dois lados: primeiro, em dados reais frequentemente <b>não existe</b> um cotovelo visível — a curva é suave e a escolha vira arbitrária; segundo, quando existe, sua localização é subjetiva e diferentes pessoas leem valores diferentes no mesmo gráfico. É uma heurística visual, não um critério, e por isso deve ser cruzada com a silhueta ou com o BIC.</p></div></div>
+
+  <div class="qa"><div class="qn">49</div><div class="q">Defina o coeficiente de silhueta e interprete seus valores.</div>
+  <div class="a"><p>Para cada ponto <m>i</m>: <m>a(i)</m> é a distância média dele aos outros pontos do <b>seu próprio</b> cluster (coesão) e <m>b(i)</m> é a menor, entre os outros clusters, da distância média dele aos pontos daquele cluster (separação ao vizinho mais próximo). Então <m>s(i) = \frac{b(i)-a(i)}{\max\{a(i),b(i)\}}</m>, que fica em <m>[-1,1]</m>. Perto de <m>+1</m>: ponto bem agrupado, muito mais próximo dos seus que dos outros. Perto de <m>0</m>: ponto na fronteira, a atribuição poderia ir para qualquer lado. <b>Negativo</b>: em média o ponto está mais perto de outro cluster que do seu — sinal de má atribuição. A silhueta média sobre todos os pontos serve como score global para comparar valores de <m>K</m>.</p></div></div>
+
+  <div class="qa"><div class="qn">50</div><div class="q">Por que a silhueta consegue ter um máximo em <m>K</m> se a distorção não consegue?</div>
+  <div class="a"><p>Porque ela mede <b>duas</b> coisas em tensão, não uma. Aumentar <m>K</m> tende a reduzir <m>a(i)</m> — clusters menores são mais coesos —, o que empurra a silhueta para cima; mas também reduz <m>b(i)</m>, porque os clusters ficam mais próximos uns dos outros, o que a empurra para baixo. Existe um <m>K</m> em que essas duas forças se equilibram, e é ele que maximiza a silhueta. A distorção só enxerga a primeira força (coesão), então nada a impede de melhorar indefinidamente. O princípio geral: um critério de seleção de modelo precisa de um termo que <i>piore</i> quando o modelo fica complexo demais.</p></div></div>
+
+  <div class="qa"><div class="qn">51</div><div class="q">O que é a quantização vetorial e qual a sua relação com o K-means?</div>
+  <div class="a"><p>É a compressão com perdas de vetores, substituindo cada um pelo índice do seu representante mais próximo num dicionário de <m>K</m> <i>codewords</i>. O K-means <b>é</b> o algoritmo que aprende esse dicionário: os centróides são as codewords, o codebook é a matriz de centróides, e a distorção <m>J</m> é exatamente o erro de reconstrução total introduzido pela compressão. É a mesma coisa vista de dois ângulos — o clustering pergunta &#8220;quais são os grupos?&#8221;, a quantização pergunta &#8220;quais são os melhores <m>K</m> representantes?&#8221;, e a resposta ótima é a mesma.</p></div></div>
+
+  <div class="qa"><div class="qn">52</div><div class="q">Calcule a taxa de compressão da quantização vetorial.</div>
+  <div class="a"><p>Original: <m>N</m> vetores de <m>D</m> números com <m>C</m> bits cada, total <m>NDC</m> bits. Comprimido: <m>N\lceil\log_2 K\rceil</m> bits de índices mais <m>KDC</m> bits de codebook. A razão é <m>\frac{NDC}{N\lceil\log_2 K\rceil + KDC}</m>, que para <m>K\ll N</m> se aproxima de <m>\frac{DC}{\lceil\log_2 K\rceil}</m>. Exemplo concreto: imagem RGB (<m>D=3</m>, <m>C=8</m>, logo 24 bits/pixel) com <m>K=64</m> cores dá <m>24/6 = 4\times</m> de compressão. Note que a taxa <b>não depende de <m>N</m></b> no limite — depende só de quantos bits você gasta por símbolo, o que é a intuição central da teoria de taxa-distorção.</p></div></div>
+
+  <div class="qa"><div class="qn">53</div><div class="q">Descreva o k-means++ e explique por que o peso é <m>D(\mathbf{x})^2</m>.</div>
+  <div class="a"><p>Primeiro centro uniforme entre os dados; cada centro seguinte sorteado com probabilidade proporcional ao quadrado da distância ao centro já escolhido mais próximo, <m>p(\mathbf{x}) = D(\mathbf{x})^2/\sum_n D(\mathbf{x}_n)^2</m>; repete-se até <m>K</m> centros. O expoente 2 equilibra duas pressões opostas. Um peso proporcional a <m>D</m> (sem quadrado) espalha pouco — regiões densas próximas a centros existentes ainda ganham massa demais no sorteio. Já escolher <b>deterministicamente</b> o ponto mais distante (o limite de expoente infinito) é frágil: um único outlier isolado seria escolhido sempre, desperdiçando um centro. O quadrado favorece fortemente pontos distantes mantendo a escolha aleatória, e é precisamente esse expoente que faz a demonstração de <m>O(\log K)</m>-competitividade funcionar — não é uma constante ajustada empiricamente.</p></div></div>
+
+  <div class="qa"><div class="qn">54</div><div class="q">O que significa dizer que o k-means++ é &#8220;<m>O(\log K)</m>-competitivo&#8221;?</div>
+  <div class="a"><p>Que o valor esperado da distorção obtida <b>apenas pela semeadura</b>, antes de rodar qualquer iteração do Lloyd, é no máximo <m>O(\log K)</m> vezes a distorção do agrupamento ótimo global: <m>\mathbb{E}[J_{\text{++}}] \le 8(\ln K + 2)\,J_{\text{ótimo}}</m>. A esperança é sobre a aleatoriedade do sorteio. É uma garantia notável porque o K-means em geral não tem nenhuma — a inicialização uniforme pode ficar arbitrariamente longe do ótimo. Duas ressalvas: é uma cota <i>em esperança</i>, não uma garantia para uma execução específica, e ela vale para a inicialização, então rodar o Lloyd depois só melhora.</p></div></div>
+
+  <div class="qa"><div class="qn">55</div><div class="q">O que é o K-medoids e quando ele é preferível ao K-means?</div>
+  <div class="a"><p>É a variante em que cada representante é obrigatoriamente um <b>ponto do conjunto de dados</b> (o medoide), escolhido como aquele que minimiza a soma das dissimilaridades aos demais membros do cluster. Prefira-o em três situações: (i) quando a <b>média não existe ou não faz sentido</b> — dados categóricos, sequências, grafos, ou qualquer domínio em que só se tem uma matriz de dissimilaridades; (ii) quando há <b>outliers</b>, porque um ponto extremo puxa uma média mas não consegue puxar um medoide (a mesma diferença entre média e mediana); (iii) quando o representante precisa ser um <b>exemplo real</b> e interpretável — &#8220;o cliente típico deste segmento é este cliente&#8221; comunica melhor que um vetor de médias. O preço é o custo: o passo de atualização é <m>O(N_k^2)</m> por cluster.</p></div></div>
+
+  <div class="qa"><div class="qn">56</div><div class="q">Como a desigualdade triangular acelera o K-means?</div>
+  <div class="a"><p>Ela permite <b>provar</b> que certas distâncias são irrelevantes sem calculá-las. O caso mais simples: se <m>d(\boldsymbol\mu_j,\boldsymbol\mu_k) \ge 2\,d(\mathbf{x},\boldsymbol\mu_k)</m>, então pela desigualdade triangular <m>d(\mathbf{x},\boldsymbol\mu_j) \ge d(\boldsymbol\mu_j,\boldsymbol\mu_k) - d(\mathbf{x},\boldsymbol\mu_k) \ge d(\mathbf{x},\boldsymbol\mu_k)</m>, logo <m>j</m> não pode ser o centro mais próximo e a distância nem precisa ser avaliada. O algoritmo de Elkan generaliza isso mantendo, para cada ponto, uma cota superior da distância ao centro atribuído e cotas inferiores para os demais, e atualizando essas cotas pelo <i>quanto cada centróide se moveu</i> a cada iteração — o que exige apenas <m>K^2</m> distâncias entre centróides por iteração, em vez de <m>NK</m> distâncias ponto-centro. O ganho é grande em baixa dimensão e evapora em alta, onde as cotas ficam frouxas demais para eliminar candidatos.</p></div></div>
+
+  <div class="qa"><div class="qn">57</div><div class="q">Qual a diferença entre hard clustering e soft clustering?</div>
+  <div class="a"><p>No <b>hard</b>, cada ponto recebe exatamente um rótulo: a saída é um vetor de <m>N</m> inteiros. É o que o K-means produz. No <b>soft</b>, cada ponto recebe uma distribuição de probabilidade sobre os <m>K</m> componentes: a saída é uma matriz <m>N\times K</m> com linhas que somam 1. É o que as misturas produzem, via responsabilidades. A conversão soft <m>\to</m> hard é <m>\hat{z}_n = \arg\max_k\gamma_{nk}</m>, mas ela <b>descarta a confiança</b>: um ponto com <m>\gamma = (0{,}98;\,0{,}02)</m> e outro com <m>(0{,}51;\,0{,}49)</m> recebem o mesmo rótulo, embora o segundo seja essencialmente uma moeda ao ar. Em aplicações onde o custo de errar é assimétrico, essa informação é a mais valiosa que o modelo produz.</p></div></div>
+
+  <div class="qa"><div class="qn">58</div><div class="q">Por que a verossimilhança marginal tem um máximo genuíno em <m>K</m>, ao contrário de <m>J</m>?</div>
+  <div class="a"><p>Pela <b>navalha de Occam bayesiana</b>. A verossimilhança marginal <m>p(\mathcal{D}\mid K) = \int p(\mathcal{D}\mid\boldsymbol\theta,K)\,p(\boldsymbol\theta\mid K)\,d\boldsymbol\theta</m> é uma média sobre <i>todos</i> os valores possíveis dos parâmetros, não o valor no melhor deles. Um modelo com muitos parâmetros consegue explicar bem <i>muitos</i> conjuntos de dados diferentes, e como a probabilidade total precisa somar 1 sobre todos os conjuntos possíveis, ele necessariamente espalha sua massa — atribuindo menos probabilidade a <i>qualquer</i> conjunto específico, inclusive o observado. A penalização por complexidade é automática, não precisa ser adicionada à mão. É por isso que a curva sobe, atinge o máximo no <m>K</m> adequado e depois <b>desce</b>. A distorção <m>J</m>, ao contrário, avalia o ajuste no melhor <m>\boldsymbol\theta</m>, e por isso só pode melhorar com mais parâmetros.</p></div></div>
+
+  <div class="qa"><div class="qn">59</div><div class="q">Em que sentido preciso o K-means é um caso especial do EM?</div>
+  <div class="a"><p>Sob três restrições simultâneas sobre o GMM: covariâncias esféricas e compartilhadas <m>\boldsymbol\Sigma_k = \sigma^2\mathbf{I}</m>, pesos uniformes <m>\pi_k = 1/K</m>, e o limite <m>\sigma^2\to0</m>. As duas primeiras removem os parâmetros de forma e de peso; a terceira endurece o passo E, fazendo <m>\gamma_{nk}\to r_{nk}\in\{0,1\}</m>. Com isso, o passo E vira a atribuição ao centróide mais próximo, o passo M vira a média simples, e maximizar a esperança da log-verossimilhança completa equivale a minimizar <m>J</m>. Uma leitura alternativa e igualmente correta: o K-means é o <b>hard EM</b>, aquele que usa o <i>modo</i> do posterior em vez do posterior completo no passo E.</p></div></div>
+
+  <div class="qa"><div class="qn">60</div><div class="q">Que vantagens práticas um modelo de mistura oferece sobre o K-means?</div>
+  <div class="a"><p>Cinco, todas decorrentes de ele ser probabilístico. (1) <b>Densidade</b>: fornece <m>p(\mathbf{x})</m>, o que habilita detecção de anomalias por limiar de densidade. (2) <b>Incerteza</b>: as responsabilidades dizem quão confiável é cada atribuição. (3) <b>Geração</b>: pode-se amostrar dados sintéticos do modelo ajustado. (4) <b>Seleção de modelo</b>: pode-se comparar valores de <m>K</m> por verossimilhança, BIC ou AIC, sem depender de heurísticas visuais. (5) <b>Flexibilidade geométrica</b>: com covariâncias completas, os clusters podem ser elipsoidais, de tamanhos e orientações diferentes, e as fronteiras deixam de ser hiperplanos. O custo é mais parâmetros, mais iterações, e a exposição a singularidades.</p></div></div>
+
+  <div class="qa"><div class="qn">61</div><div class="q">Ao rodar uma mistura de Bernoulli com <m>K=10</m> sobre os dez dígitos do MNIST, você espera um componente por dígito?</div>
+  <div class="a"><p>Não, e essa expectativa é o erro conceitual mais comum aqui. O modelo é <b>não supervisionado</b>: ele não conhece os rótulos e não tem nenhum incentivo para alinhar componentes com classes semânticas. O que ele maximiza é a verossimilhança, e a estrutura que maximiza verossimilhança é a de <b>estilos visuais</b>, não a de categorias. Na prática, é comum ver dois componentes para o dígito 1 (o traço vertical simples e o com serifa), o 4 e o 9 fundidos por serem visualmente próximos, e assim por diante. Se você quer um componente por classe, precisa de supervisão ou de <m>K</m> maior que 10 seguido de um mapeamento componente&#8594;classe.</p></div></div>
+
+  <div class="qa"><div class="qn">62</div><div class="q">Quando você usaria mistura de Bernoulli em vez de GMM?</div>
+  <div class="a"><p>Sempre que os dados forem <b>binários</b> por natureza: pixels preto-e-branco, presença/ausência de palavras num documento (<i>bag of words</i> binarizado), respostas sim/não de um questionário, cliques, indicadores de sintomas, dados genômicos de presença de mutação. O critério é o domínio da variável, não o tamanho ou a dimensão. Usar GMM em dados binários é um erro de modelagem: a gaussiana atribui densidade a pontos que não podem existir, e a covariância descreve uma geometria que não tem análogo no hipercubo. Ganhos adicionais da Bernoulli: muito menos parâmetros (<m>KD+K-1</m> contra <m>KD+KD(D+1)/2+K-1</m>), passo M mais barato, e imunidade ao colapso de covariância.</p></div></div>
+
+  <div class="qa"><div class="qn">63</div><div class="q">O que a inicialização por k-means++ garante que a aleatória uniforme não garante?</div>
+  <div class="a"><p>Uma <b>cota de aproximação</b>. Com inicialização uniforme não existe garantia alguma: é possível construir conjuntos em que a distorção final fica arbitrariamente pior que a ótima, e o modo de falha típico — duas sementes caindo no mesmo grupo real — é comum na prática e irrecuperável pela descida alternada. O k-means++ garante <m>\mathbb{E}[J] \le 8(\ln K+2)\,J_{\text{ótimo}}</m> logo após a semeadura. Vale registrar o que ele <b>não</b> garante: não garante o ótimo global, não garante nada para uma execução isolada (a cota é em esperança), e não dispensa <code>n_init</code> — apenas reduz bastante a variância entre execuções.</p></div></div>
+
+  <div class="qa"><div class="qn">64</div><div class="q">Por que rodar o K-means várias vezes com sementes diferentes?</div>
+  <div class="a"><p>Porque ele converge para um mínimo <b>local</b>, e qual mínimo depende inteiramente da inicialização. Rodando <m>n</m> vezes e ficando com a execução de menor <m>J</m>, você amostra <m>n</m> mínimos locais e fica com o melhor — o que reduz muito a chance de aceitar uma solução ruim. É o que o parâmetro <code>n_init</code> do scikit-learn faz automaticamente. É importante notar que <m>J</m> é um critério <b>legítimo</b> para essa comparação, ao contrário do que ocorre na escolha de <m>K</m>: aqui todas as execuções têm o mesmo <m>K</m> e portanto a mesma complexidade, então comparar ajuste puro é justo.</p></div></div>
+
+  <div class="qa"><div class="qn">65</div><div class="q">Qual o efeito de outliers sobre o K-means, e como mitigá-lo?</div>
+  <div class="a"><p>Grande, porque a média não é robusta e a distorção usa a distância <b>ao quadrado</b> — um ponto a 10 unidades contribui 100 vezes mais que um a 1 unidade. Um único outlier distante pode deslocar sensivelmente um centróide, e o k-means++ chega a <i>aumentar</i> a chance de desperdiçar um centro sobre ele, já que sorteia proporcionalmente a <m>D^2</m>. Mitigações: remover outliers na preparação dos dados; usar K-medoids, que é muito mais robusto; usar um GMM, em que um componente de covariância larga pode absorver os pontos dispersos sem distorcer os demais; ou aumentar <m>K</m> e aceitar que alguns clusters minúsculos sejam &#8220;lixeiras&#8221; de outliers.</p></div></div>
+
+  <div class="qa"><div class="qn">66</div><div class="q">Silhueta e BIC podem discordar sobre o melhor <m>K</m>. O que fazer?</div>
+  <div class="a"><p>Entender que eles perguntam coisas diferentes e decidir qual pergunta importa. A <b>silhueta</b> é geométrica e não paramétrica: mede quão separados e compactos os grupos estão, e favorece partições convexas e bem apartadas. O <b>BIC</b> é estatístico: mede quão bem um modelo generativo explica os dados, penalizado por complexidade, e pode preferir mais componentes se eles genuinamente melhoram a densidade — inclusive vários componentes descrevendo um único grupo alongado. Discordância típica: em dados anisotrópicos, a silhueta prefere <m>K</m> pequeno (os grupos alongados não são bem separados por métrica euclidiana) e o BIC prefere <m>K</m> maior (várias gaussianas modelam bem a forma alongada). Se o objetivo é <b>interpretar grupos</b>, siga a silhueta; se é <b>estimar densidade</b>, siga o BIC. E inspecione visualmente antes de decidir.</p></div></div>
+
+  <div class="qa"><div class="qn">67</div><div class="q">O que <m>J</m> mede que a silhueta não mede, e vice-versa?</div>
+  <div class="a"><p><m>J</m> mede apenas <b>coesão</b>: o quanto os pontos estão próximos do seu próprio centróide. Ela ignora completamente onde estão os outros clusters — dois clusters vizinhos e sobrepostos podem ter <m>J</m> tão baixo quanto dois bem separados, se a dispersão interna for a mesma. A silhueta mede coesão <b>e separação</b>, via o termo <m>b(i)</m>, e por isso enxerga a sobreposição que <m>J</m> não vê. Em compensação, <m>J</m> é <m>O(NKD)</m> e a silhueta é <m>O(N^2D)</m>, o que a torna proibitiva em bases grandes (na prática, calcula-se sobre uma amostra). Na prática usam-se as duas: <m>J</m> para comparar execuções com o mesmo <m>K</m>, silhueta para comparar valores de <m>K</m>.</p></div></div>
+
+  <div class="qa"><div class="qn">68</div><div class="q">Qual o custo computacional do EM para GMM por iteração, comparado ao K-means?</div>
+  <div class="a"><p>O K-means custa <m>O(NKD)</m>. O EM para GMM com covariâncias completas custa <m>O(NKD^2)</m> por iteração: cada avaliação da densidade exige a forma quadrática <m>(\mathbf{x}-\boldsymbol\mu)^\top\boldsymbol\Sigma^{-1}(\mathbf{x}-\boldsymbol\mu)</m>, que é <m>O(D^2)</m>, e há <m>NK</m> delas. Some a isso o custo de inverter (ou fatorar por Cholesky) <m>K</m> matrizes <m>D\times D</m> a cada passo M, que é <m>O(KD^3)</m>. Com <code>covariance_type='diag'</code> o custo por avaliação cai para <m>O(D)</m> e o EM volta a ser comparável ao K-means. Além do custo por iteração, o EM costuma precisar de mais iterações, porque tem mais parâmetros para acomodar.</p></div></div>
+
+  <div class="qa"><div class="qn">69</div><div class="q">O que acontece com o K-means quando os clusters têm tamanhos ou densidades muito diferentes?</div>
+  <div class="a"><p>Ele fatia o grupo grande e funde os pequenos. A razão é que <m>J</m> soma distâncias quadradas <b>sem normalizar por cluster</b>: um grupo volumoso contribui muito para a distorção total, e o algoritmo reduz <m>J</m> mais eficientemente dividindo-o do que respeitando a estrutura real. As fronteiras de Voronoi, sendo equidistantes entre centróides, também não têm como refletir que um grupo é mais disperso que outro. Um GMM lida melhor com isso por dois mecanismos independentes: os <m>\pi_k</m> permitem componentes com massas diferentes, e os <m>\boldsymbol\Sigma_k</m> permitem dispersões diferentes.</p></div></div>
+
+  <div class="qa"><div class="qn">70</div><div class="q">Como você validaria um resultado de clustering sem rótulos verdadeiros?</div>
+  <div class="a"><p>Combinando evidências, já que não há gabarito. (i) <b>Índices internos</b>: silhueta, Calinski&#8211;Harabasz, Davies&#8211;Bouldin. (ii) <b>Estabilidade</b>: reamostre (bootstrap) ou perturbe os dados e verifique se a partição se mantém — agrupamentos genuínos são estáveis, artefatos não. (iii) <b>Critérios probabilísticos</b>, se o modelo for generativo: verossimilhança em dados de validação, BIC, AIC. (iv) <b>Inspeção visual</b> após redução de dimensionalidade (PCA, t-SNE, UMAP), lembrando que essas projeções podem criar ou destruir aparência de estrutura. (v) <b>Validação externa qualitativa</b>: os grupos fazem sentido para quem conhece o domínio? Essa última costuma ser a mais decisiva na prática, e é a que nenhum índice substitui.</p></div></div>
+
+  <div class="qa"><div class="qn">71</div><div class="q">Por que é comum rodar PCA antes de agrupar?</div>
+  <div class="a"><p>Três razões. (i) <b>Concentração de distâncias</b>: em alta dimensão as distâncias euclidianas se homogeneízam, e a noção de &#8220;mais próximo&#8221; perde poder discriminante; projetar em poucas componentes restaura o contraste. (ii) <b>Ruído</b>: as componentes de baixa variância frequentemente carregam mais ruído que sinal, e descartá-las melhora o agrupamento. (iii) <b>Custo</b>: o K-means é <m>O(NKD)</m> e o GMM com covariância completa é <m>O(NKD^2)</m> — reduzir <m>D</m> de 784 para 50 muda a ordem de grandeza do tempo de execução, e no caso do GMM também torna a estimação das covariâncias viável. A ressalva importante: o PCA maximiza variância, não separabilidade de grupos, então é possível (embora incomum) que ele descarte justamente a direção que separava os clusters.</p></div></div>
+
+  <div class="qa"><div class="qn">72</div><div class="q">Um cluster com silhueta média negativa. O que isso indica?</div>
+  <div class="a"><p>Que, em média, seus pontos estão mais próximos de outro cluster do que do próprio — o que é um diagnóstico forte de que aquele cluster não corresponde a estrutura real. Causas possíveis: <m>K</m> alto demais, e o algoritmo teve de inventar um grupo fatiando outro; um cluster que é apenas a interseção sobreposta de dois grupos vizinhos; ou a hipótese geométrica errada (grupos alongados cortados transversalmente pelas fronteiras de Voronoi produzem exatamente esse sintoma). A ação recomendada é olhar o <b>gráfico de silhueta por cluster</b>, não só a média global: um único cluster ruim pode ser mascarado por vários bons na média, e é a distribuição que revela o problema.</p></div></div>
+
+  <div class="qa"><div class="qn">73</div><div class="q">Em que situação o K-means supera o GMM na prática?</div>
+  <div class="a"><p>Quando as hipóteses do K-means são aproximadamente verdadeiras e os recursos são escassos. Concretamente: grupos aproximadamente esféricos e de tamanho semelhante; <m>N</m> muito grande, onde o custo <m>O(NKD)</m> contra <m>O(NKD^2)</m> decide; <m>D</m> alto com poucos dados por componente, situação em que estimar <m>K</m> covariâncias <m>D\times D</m> é inviável e o GMM degenera; necessidade de resultado rápido e reproduzível; ou quando só se quer uma partição e nenhuma das capacidades probabilísticas. Um princípio geral que vale além deste conteúdo: o modelo mais expressivo só ganha se houver dados suficientes para estimar seus parâmetros extras — caso contrário a variância adicional supera o ganho de viés.</p></div></div>
+
+  <div class="qa"><div class="qn">74</div><div class="q">Como se determina <m>K</m> quando os métodos disponíveis discordam e não há conhecimento de domínio?</div>
+  <div class="a"><p>Aceite que <m>K</m> raramente tem uma resposta única e correta, e trate a escolha como uma decisão, não uma medição. O procedimento defensável: rode várias métricas (cotovelo, silhueta, BIC, AIC) sobre uma faixa de <m>K</m>; procure a <b>faixa</b> em que várias delas são simultaneamente razoáveis, em vez de um valor exato; teste a estabilidade da partição por reamostragem dentro dessa faixa; e escolha o menor <m>K</m> dentro dela, pelo princípio da parcimônia. Documente o critério usado. Se a aplicação a jusante tolerar, entregar duas granularidades (por exemplo <m>K=4</m> e <m>K=8</m>) costuma ser mais honesto e mais útil do que fingir precisão que os dados não sustentam.</p></div></div>
+</div>
+
+<!-- ============ PARTE III ============ -->
+<div class="part c-skmix">
+  <div class="part-head">
+    <div class="lbl">Parte III</div>
+    <h2>scikit-learn §2.1 a §2.1.1 — Gaussian mixture models</h2>
+    <div class="cite">scikit-learn User Guide, <i>Gaussian mixture models</i>. Seção 2.1 e 2.1.1 (Gaussian Mixture), inclusive.</div>
+  </div>
+
+  <p class="lead">Esta referência é curta e prática. Ela não deriva nada: assume a teoria das Partes I e II e responde &#8220;como isso vira código, e quais botões existem&#8221;. Duas coisas aqui costumam cair em prova: a lista de prós e contras que a própria documentação enuncia, e o significado dos quatro valores de <code>covariance_type</code>.</p>
+
+  <h3 class="sec"><span class="num">2.1</span>O módulo <code>sklearn.mixture</code></h3>
+
+  <p>O pacote implementa modelos de mistura gaussiana em duas classes principais. A <code>GaussianMixture</code> ajusta por <b>máxima verossimilhança via EM</b>. A <code>BayesianGaussianMixture</code> faz inferência variacional com priores, e tem a propriedade de conseguir <i>desligar</i> componentes desnecessários (empurrando seus pesos para perto de zero), o que a torna menos sensível à escolha de <m>K</m>.</p>
+
+  <p>Além do ajuste, o módulo oferece o cálculo de <b>elipsóides de confiança</b> para visualização e o critério <b>BIC</b> para avaliar quantos componentes usar.</p>
+
+  <h3 class="sec"><span class="num">2.1.1</span>A classe <code>GaussianMixture</code></h3>
+
+  <p>Os métodos que importam, e o que cada um devolve:</p>
+  <table>
+    <tr><th style="width:44mm">Método</th><th>O que faz / devolve</th></tr>
+    <tr><td><code>fit(X)</code></td><td>Ajusta o modelo por EM. Por padrão inicializa com K-Means (<code>init_params='kmeans'</code>).</td></tr>
+    <tr><td><code>predict(X)</code></td><td>Rótulo <b>rígido</b> de cada amostra: <m>\arg\max_k \gamma_{nk}</m>. Vetor de <m>N</m> inteiros.</td></tr>
+    <tr><td><code>predict_proba(X)</code></td><td>As <b>responsabilidades</b> <m>\gamma_{nk}</m>. Matriz <m>N\times K</m>, linhas somando 1. É a saída que o K-Means não tem.</td></tr>
+    <tr><td><code>score_samples(X)</code></td><td>A log-densidade <m>\ln p(\mathbf{x}_n)</m> de cada amostra. Base para detecção de anomalias.</td></tr>
+    <tr><td><code>score(X)</code></td><td>A log-verossimilhança <b>média</b> por amostra.</td></tr>
+    <tr><td><code>sample(n)</code></td><td>Gera amostras novas do modelo ajustado — o modelo é generativo.</td></tr>
+    <tr><td><code>bic(X)</code> / <code>aic(X)</code></td><td>Critérios de seleção de modelo. Menor é melhor em ambos.</td></tr>
+  </table>
+
+  <div class="key">
+    <div class="bt">Prós e contras, como a documentação enuncia</div>
+    <p><b>Vantagens.</b> <i>Velocidade</i> — é o algoritmo mais rápido para aprender modelos de mistura. <i>Neutralidade</i> — por maximizar apenas a verossimilhança, não enviesa as médias para zero nem força os clusters a terem tamanhos ou formatos particulares que poderiam não corresponder aos dados.</p>
+    <p style="margin-bottom:0"><b>Desvantagens.</b> <i>Singularidades</i> — quando há poucos pontos por componente, estimar as covariâncias fica mal condicionado e o algoritmo diverge para soluções de verossimilhança infinita, a menos que se regularize artificialmente. <i>Número de componentes</i> — o algoritmo sempre usará todos os componentes que tiver disponíveis, então determinar <m>K</m> exige dados de validação ou critérios de teoria da informação.</p>
+  </div>
+
+  <h4 class="sub"><span class="num">&#8226;</span>O parâmetro <code>covariance_type</code></h4>
+
+  <p>A decisão de modelagem mais consequente da classe. Ela controla quantos graus de liberdade cada componente tem para descrever sua forma:</p>
+
+  <table>
+    <tr><th style="width:26mm">Valor</th><th>Geometria</th><th style="width:34mm">Parâmetros de covariância</th><th>Quando usar</th></tr>
+    <tr><td><code>'full'</code></td><td>Cada componente tem sua própria elipse, com orientação livre.</td><td class="tnum"><m>K\cdot D(D{+}1)/2</m></td><td>Máxima flexibilidade. Exige muitos dados por componente.</td></tr>
+    <tr><td><code>'tied'</code></td><td>Todos os componentes compartilham a <b>mesma</b> matriz de covariância: mesma forma e orientação, posições diferentes.</td><td class="tnum"><m>D(D{+}1)/2</m></td><td>Quando os grupos têm forma parecida mas centros distintos. Bom meio-termo.</td></tr>
+    <tr><td><code>'diag'</code></td><td>Elipses alinhadas aos eixos: largura livre por dimensão, sem rotação.</td><td class="tnum"><m>K\cdot D</m></td><td>Alta dimensão. É o padrão prático quando <m>D</m> é grande.</td></tr>
+    <tr><td><code>'spherical'</code></td><td>Círculos (hiperesferas): uma única variância por componente.</td><td class="tnum"><m>K</m></td><td>O mais restrito. Próximo do K-Means, mas ainda probabilístico.</td></tr>
+  </table>
+
+  <p>A progressão <code>full</code> &#8594; <code>tied</code> &#8594; <code>diag</code> &#8594; <code>spherical</code> é uma escada de viés-variância: menos parâmetros significa menos flexibilidade (mais viés) e estimativas mais estáveis (menos variância). Com poucos dados, um modelo restrito frequentemente supera um flexível.</p>
+
+  <h4 class="sub"><span class="num">&#8226;</span>Selecionando o número de componentes com o BIC</h4>
+
+  <M>\mathrm{BIC} = -2\ln\hat{L} + p\ln N \qquad\qquad \mathrm{AIC} = -2\ln\hat{L} + 2p</M>
+
+  <p>onde <m>\hat{L}</m> é a verossimilhança maximizada, <m>p</m> o número de parâmetros livres e <m>N</m> o número de amostras. <b>Menor é melhor</b> nos dois. O primeiro termo premia o ajuste; o segundo penaliza a complexidade. A diferença entre eles: o BIC penaliza mais forte (pois <m>\ln N \gt 2</m> assim que <m>N \gt 7</m>) e tende a escolher modelos mais parcimoniosos; o AIC tende a escolher modelos maiores.</p>
+
+  <p>Na prática, faz-se uma varredura dupla — sobre <m>K</m> e sobre <code>covariance_type</code> — e escolhe-se o par de menor BIC. Contando os parâmetros livres de um GMM: <m>p = \underbrace{(K-1)}_{\text{pesos}} + \underbrace{KD}_{\text{médias}} + \underbrace{p_{\boldsymbol\Sigma}}_{\text{ver tabela}}</m>.</p>
+
+  <h4 class="sub"><span class="num">&#8226;</span>O algoritmo de estimação: EM</h4>
+  <p>A documentação descreve o EM como &#8220;o algoritmo mais bem estabelecido para modelos de mistura&#8221; e resume-o exatamente como a Parte I: passo E calcula as probabilidades de pertencimento a partir dos parâmetros atuais; passo M maximiza a verossimilhança esperada; itera-se com garantia de que a verossimilhança nunca diminui. Os parâmetros que controlam esse processo são <code>max_iter</code>, <code>tol</code>, <code>n_init</code>, <code>init_params</code> e <code>reg_covar</code>.</p>
+
+  <div class="qa-head"><span class="t">Perguntas 75&#8211;88 &#183; scikit-learn: mistura gaussiana</span><span class="r"></span></div>
+
+  <div class="qa"><div class="qn">75</div><div class="q">Qual a diferença entre <code>predict</code> e <code>predict_proba</code>, e quando a segunda importa?</div>
+  <div class="a"><p><code>predict</code> devolve o rótulo rígido de cada amostra, <m>\arg\max_k\gamma_{nk}</m>: um vetor de <m>N</m> inteiros. <code>predict_proba</code> devolve a matriz <m>N\times K</m> das responsabilidades, com linhas somando 1. A segunda importa sempre que a <b>confiança</b> da atribuição for relevante: para sinalizar casos ambíguos para revisão humana, para ponderar decisões a jusante pelo grau de pertencimento, para detectar regiões de sobreposição entre grupos, ou para tomar decisões com custos assimétricos. Um ponto com <m>(0{,}99;\,0{,}01)</m> e outro com <m>(0{,}52;\,0{,}48)</m> recebem o mesmo rótulo em <code>predict</code>, e são situações completamente diferentes.</p></div></div>
+
+  <div class="qa"><div class="qn">76</div><div class="q">Explique os quatro valores de <code>covariance_type</code> e o efeito de cada um.</div>
+  <div class="a"><p><code>'full'</code>: cada componente tem sua matriz completa — elipses de forma e orientação livres, <m>KD(D+1)/2</m> parâmetros. <code>'tied'</code>: uma única matriz compartilhada por todos — todos os componentes têm a mesma forma e orientação, só mudam de lugar, <m>D(D+1)/2</m> parâmetros. <code>'diag'</code>: uma matriz diagonal por componente — elipses alinhadas aos eixos, sem rotação, <m>KD</m> parâmetros. <code>'spherical'</code>: uma variância escalar por componente — círculos, <m>K</m> parâmetros. Quanto menos parâmetros, mais restrita a geometria, mais estável a estimação e menor o risco de singularidade — ao custo de não conseguir descrever formas que os dados de fato têm.</p></div></div>
+
+  <div class="qa"><div class="qn">77</div><div class="q">Você tem <m>D=100</m> dimensões e apenas 500 amostras. Qual <code>covariance_type</code> escolher e por quê?</div>
+  <div class="a"><p><code>'diag'</code> ou <code>'spherical'</code>. Com <code>'full'</code> e, digamos, <m>K=5</m>, seriam <m>5\times\frac{100\times101}{2} = 25\,250</m> parâmetros de covariância para 500 amostras — cinquenta parâmetros por amostra. As matrizes estimadas seriam singulares ou quase, o EM divergiria ou dependeria inteiramente do <code>reg_covar</code>, e o resultado teria variância enorme. Com <code>'diag'</code> caem para <m>5\times100=500</m>; com <code>'spherical'</code>, para 5. A regra prática é ter pelo menos algumas dezenas de amostras por parâmetro estimado. Considere também reduzir <m>D</m> com PCA antes — frequentemente é a melhor jogada, e permite voltar a usar <code>'full'</code> no espaço reduzido.</p></div></div>
+
+  <div class="qa"><div class="qn">78</div><div class="q">O que faz <code>reg_covar</code> e por que ele vem ativo por padrão?</div>
+  <div class="a"><p>Soma uma constante positiva pequena à diagonal de cada matriz de covariância a cada passo M: <m>\boldsymbol\Sigma_k \leftarrow \boldsymbol\Sigma_k + \epsilon\mathbf{I}</m>, com <m>\epsilon = 10^{-6}</m> por padrão. Isso garante que <m>\boldsymbol\Sigma_k</m> permaneça estritamente positiva definida — logo invertível, com determinante estritamente positivo. Vem ativo por padrão porque a singularidade não é um caso raro: é o comportamento <i>esperado</i> da máxima verossimilhança em misturas, e sem regularização qualquer ajuste com poucos pontos por componente tende a divergir. É a materialização prática do que Bishop 15.4.3 apresenta como prior sobre os parâmetros.</p></div></div>
+
+  <div class="qa"><div class="qn">79</div><div class="q">Interprete a afirmação da documentação de que o algoritmo é &#8220;agnóstico&#8221;.</div>
+  <div class="a"><p>Significa que, por maximizar apenas a verossimilhança, ele não impõe estruturas que os dados talvez não tenham: não puxa as médias para a origem (como fariam métodos com regularização <m>L_2</m> sobre <m>\boldsymbol\mu</m>) e não força os clusters a terem tamanhos iguais ou formatos específicos. Compare com o K-Means, que <i>impõe</i> geometria esférica e fronteiras equidistantes por construção. O lado B dessa neutralidade é a segunda desvantagem listada na mesma documentação: sem nenhuma pressão estrutural, o modelo usa todos os componentes que tiver e vai até a singularidade se deixarem — a ausência de viés é exatamente o que exige <code>reg_covar</code> e um critério externo para <m>K</m>.</p></div></div>
+
+  <div class="qa"><div class="qn">80</div><div class="q">Por que &#8220;o algoritmo sempre usará todos os componentes que tiver acesso&#8221; é um problema?</div>
+  <div class="a"><p>Porque significa que o modelo nunca lhe dirá que <m>K</m> está grande demais. Acrescentar componentes sempre aumenta (ou mantém) a verossimilhança, então não existe sinal interno de excesso: com <m>K</m> alto, o EM simplesmente fatia grupos reais em subgrupos artificiais e reporta uma verossimilhança melhor. A consequência prática é que <m>K</m> <b>precisa</b> ser decidido por um critério externo — BIC, AIC, verossimilhança em dados de validação separados, ou conhecimento de domínio. A alternativa oferecida pela própria biblioteca é a <code>BayesianGaussianMixture</code>, que com priores apropriados empurra os pesos de componentes supérfluos para perto de zero e efetivamente os desliga.</p></div></div>
+
+  <div class="qa"><div class="qn">81</div><div class="q">Escreva a fórmula do BIC e explique cada termo.</div>
+  <div class="a"><p><m>\mathrm{BIC} = -2\ln\hat{L} + p\ln N</m>. O termo <m>-2\ln\hat{L}</m> mede o <b>desajuste</b>: quanto melhor o modelo explica os dados, maior <m>\hat{L}</m> e menor esse termo. O termo <m>p\ln N</m> é a <b>penalização por complexidade</b>: <m>p</m> é o número de parâmetros livres e <m>\ln N</m> é o peso da penalização, que cresce com o tamanho da amostra. Menor BIC é melhor. A presença de <m>\ln N</m> é o que diferencia o BIC do AIC (que usa <m>2p</m>): com muitos dados, o BIC penaliza a complexidade muito mais duramente e tende a selecionar modelos menores. A intuição por trás disso é que o BIC aproxima <m>-2\ln p(\mathcal{D}\mid K)</m>, a verossimilhança marginal do Murphy 21.3.</p></div></div>
+
+  <div class="qa"><div class="qn">82</div><div class="q">Conte os parâmetros livres de um GMM com <m>K=3</m>, <m>D=2</m>, para cada <code>covariance_type</code>.</div>
+  <div class="a"><p>Base comum: pesos <m>K-1=2</m>; médias <m>KD=6</m>. Total base: 8. Somando as covariâncias: <b>full</b> <m>= K\frac{D(D+1)}{2} = 3\times3 = 9</m>, total <b>17</b>. <b>tied</b> <m>= \frac{D(D+1)}{2} = 3</m>, total <b>11</b>. <b>diag</b> <m>= KD = 6</m>, total <b>14</b>. <b>spherical</b> <m>= K = 3</m>, total <b>11</b>. Note que em <m>D=2</m> as opções <code>tied</code> e <code>spherical</code> empatam em contagem, mas descrevem geometrias bem diferentes (uma elipse comum inclinada versus três círculos de raios distintos) — a contagem de parâmetros não é o único critério.</p></div></div>
+
+  <div class="qa"><div class="qn">83</div><div class="q">Como usar um GMM para detectar anomalias?</div>
+  <div class="a"><p>Ajuste o modelo em dados considerados normais e use <code>score_samples(X)</code>, que devolve <m>\ln p(\mathbf{x}_n)</m>. Pontos em regiões de baixa densidade têm log-densidade baixa. Defina um limiar <m>\tau</m> e sinalize <m>\ln p(\mathbf{x}) \lt \tau</m> como anomalia. O limiar pode vir de um percentil dos escores de treino (por exemplo, o percentil 1, aceitando 1% de falsos positivos) ou ser calibrado num conjunto de validação com anomalias conhecidas. Três cuidados: o modelo precisa ter sido ajustado em dados limpos, ou ele aprende as anomalias como um componente legítimo; a densidade depende da escala das variáveis, então padronize antes; e em alta dimensão as estimativas de densidade ficam pouco confiáveis. Essa é uma capacidade que o K-Means simplesmente não tem — a distância ao centróide mais próximo é um substituto pobre, porque ignora a forma e a dispersão do cluster.</p></div></div>
+
+  <div class="qa"><div class="qn">84</div><div class="q">Por que <code>init_params='kmeans'</code> é o padrão?</div>
+  <div class="a"><p>Porque o EM converge para um máximo local e a inicialização decide qual. O K-Means é barato, é ele próprio o caso-limite do EM para GMM, e entrega em poucos segundos uma configuração já razoável: centróides bem posicionados, dos quais se derivam covariâncias empíricas e pesos por cluster. Partir daí reduz muito o número de iterações do EM e a chance de cair num máximo local ruim, comparado a sortear médias aleatoriamente. É um exemplo elegante de como a relação teórica entre os dois algoritmos (Bishop 15.3.2) tem consequência prática direta: usa-se o caso-limite rígido como ponto de partida para o modelo completo.</p></div></div>
+
+  <div class="qa"><div class="qn">85</div><div class="q">Quando preferir <code>BayesianGaussianMixture</code> à <code>GaussianMixture</code>?</div>
+  <div class="a"><p>Quando você não sabe <m>K</m> e não quer (ou não pode) fazer uma varredura com BIC, ou quando há poucos dados por componente e a singularidade é uma ameaça real. Ela usa inferência variacional com priores sobre os parâmetros, o que traz dois efeitos: componentes desnecessários têm seus pesos empurrados para perto de zero e efetivamente desligados — bastando definir um <m>K</m> generoso como teto —, e os priores regularizam as covariâncias naturalmente, eliminando as singularidades sem precisar do truque do <code>reg_covar</code>. Os custos são mais hiperparâmetros a definir (a concentração do prior de Dirichlet, em especial) e um ajuste mais lento.</p></div></div>
+
+  <div class="qa"><div class="qn">86</div><div class="q">Qual a diferença entre <code>score</code> e <code>score_samples</code>?</div>
+  <div class="a"><p><code>score_samples(X)</code> devolve um vetor de tamanho <m>N</m>: a log-densidade <m>\ln p(\mathbf{x}_n)</m> de cada amostra individualmente. <code>score(X)</code> devolve um único escalar: a <b>média</b> dessas log-densidades, isto é, <m>\frac{1}{N}\sum_n \ln p(\mathbf{x}_n)</m>. Use <code>score_samples</code> para decisões por amostra, como detecção de anomalias; use <code>score</code> para avaliar o modelo como um todo, por exemplo comparando o desempenho em treino e validação. Atenção a um detalhe que confunde: como <code>score</code> é a média e não a soma, ao reconstruir a log-verossimilhança total para calcular o BIC manualmente é preciso multiplicar por <m>N</m>.</p></div></div>
+
+  <div class="qa"><div class="qn">87</div><div class="q">O BIC pode ser usado para comparar modelos com <code>covariance_type</code> diferentes?</div>
+  <div class="a"><p>Sim, e é exatamente para isso que ele serve. O BIC é comparável entre quaisquer modelos ajustados <b>ao mesmo conjunto de dados</b>, porque ele já contabiliza o número de parâmetros de cada um. Isso permite a varredura dupla que a documentação ilustra: para cada <m>K</m> e cada um dos quatro tipos de covariância, calcule o BIC e escolha o par de menor valor. É comum o resultado ser não óbvio — por exemplo, <code>tied</code> com <m>K=5</m> vencer <code>full</code> com <m>K=3</m>, porque compartilhar a covariância libera parâmetros para modelar mais componentes. O que <b>não</b> se pode fazer é comparar BICs calculados sobre conjuntos de dados diferentes, ou com números de amostras diferentes.</p></div></div>
+
+  <div class="qa"><div class="qn">88</div><div class="q">Você ajusta um GMM e recebe um aviso de que o modelo não convergiu. O que investigar?</div>
+  <div class="a"><p>Na ordem: (1) <code>max_iter</code> baixo demais para o problema — aumente e veja se converge. (2) <code>tol</code> apertado demais para a escala dos seus dados. (3) <m>K</m> grande demais, com componentes disputando os mesmos pontos e as responsabilidades oscilando sem estabilizar. (4) Dados não padronizados, com variáveis de escalas muito diferentes, tornando as covariâncias mal condicionadas. (5) Poucos pontos por componente, empurrando o ajuste para a singularidade — aumentar <code>reg_covar</code> ou restringir o <code>covariance_type</code> costuma resolver. (6) Inicialização ruim — aumente <code>n_init</code>. A checagem mais informativa é registrar <m>\ln p(\mathbf{X})</m> por iteração: se ela sobe e estabiliza, é só falta de iterações; se oscila, é instabilidade real; se dispara para valores muito altos, é singularidade.</p></div></div>
+</div>
+
+<!-- ============ PARTE IV ============ -->
+<div class="part c-skclu">
+  <div class="part-head">
+    <div class="lbl">Parte IV</div>
+    <h2>scikit-learn §2.3 a §2.3.2 — Clustering</h2>
+    <div class="cite">scikit-learn User Guide, <i>Clustering</i>. Seção 2.3, 2.3.1 (Overview of clustering methods) e 2.3.2 (K-means), inclusive.</div>
+  </div>
+
+  <p class="lead">Duas coisas aqui que não aparecem em nenhuma das outras três referências: o <b>panorama comparativo</b> dos métodos de clustering — que situa o K-Means dentro de um campo muito maior — e as <b>limitações do K-Means enunciadas explicitamente</b> pela documentação, que são material de prova frequente.</p>
+
+  <h3 class="sec"><span class="num">2.3 / 2.3.1</span>Panorama dos métodos de clustering</h3>
+
+  <p>A documentação abre com uma observação que vale internalizar: todo algoritmo de clustering vem em duas formas — uma classe que implementa <code>fit</code> para aprender os clusters dos dados de treino, e uma função que, dados os dados, devolve um vetor de rótulos inteiros. E cada método traz consigo uma <b>hipótese geométrica implícita</b> sobre o que constitui um cluster; escolher o método é escolher essa hipótese.</p>
+
+  <table>
+    <tr><th style="width:36mm">Método</th><th style="width:30mm">Parâmetros</th><th style="width:30mm">Escalabilidade</th><th>Caso de uso / geometria</th></tr>
+    <tr><td><b>K-Means</b></td><td>número de clusters</td><td>Muito grande <m>N</m>, <m>K</m> médio (com MiniBatch)</td><td>Uso geral, clusters uniformes, poucos, geometria plana. <b>Distâncias entre pontos.</b></td></tr>
+    <tr><td><b>Affinity propagation</b></td><td>damping, preferência de amostra</td><td>Não escalável (<m>N</m> pequeno)</td><td>Muitos clusters, tamanhos desiguais, geometria não plana. Distância de grafo.</td></tr>
+    <tr><td><b>Mean-shift</b></td><td>bandwidth</td><td>Não escalável</td><td>Muitos clusters, tamanhos desiguais, geometria não plana. Distâncias entre pontos.</td></tr>
+    <tr><td><b>Spectral clustering</b></td><td>número de clusters</td><td><m>N</m> médio, <m>K</m> pequeno</td><td>Poucos clusters, tamanhos parelhos, geometria não plana. Distância de grafo.</td></tr>
+    <tr><td><b>Ward (hierárquico)</b></td><td>número de clusters / limiar de distância</td><td><m>N</m> e <m>K</m> grandes</td><td>Muitos clusters, restrições de conectividade. Distâncias entre pontos.</td></tr>
+    <tr><td><b>Agglomerative</b></td><td>nº de clusters, tipo de ligação, distância</td><td><m>N</m> e <m>K</m> grandes</td><td>Muitos clusters, conectividade, distâncias não euclidianas.</td></tr>
+    <tr><td><b>DBSCAN</b></td><td>tamanho da vizinhança</td><td><m>N</m> muito grande, <m>K</m> médio</td><td>Geometria não plana, tamanhos desiguais, <b>remove outliers</b>. Distâncias entre pontos mais próximos.</td></tr>
+    <tr><td><b>HDBSCAN</b></td><td>tamanho mín. de cluster e de vizinhança</td><td><m>N</m> grande, <m>K</m> médio</td><td>Como DBSCAN, mas com densidades variáveis e hierarquia.</td></tr>
+    <tr><td><b>OPTICS</b></td><td>tamanho mínimo de cluster</td><td><m>N</m> muito grande, <m>K</m> grande</td><td>Geometria não plana, densidades variáveis, remove outliers.</td></tr>
+    <tr><td><b>Misturas gaussianas</b></td><td>muitos</td><td>Não escalável</td><td><b>Estimação de densidade</b>, geometria plana. Distâncias de Mahalanobis.</td></tr>
+    <tr><td><b>BIRCH</b></td><td>fator de ramificação, limiar</td><td><m>N</m> e <m>K</m> grandes</td><td>Conjuntos grandes, remoção de outliers, redução de dados.</td></tr>
+    <tr><td><b>Bisecting K-Means</b></td><td>número de clusters</td><td><m>N</m> e <m>K</m> muito grandes</td><td>Uso geral, geometria plana, estrutura hierárquica, clusters mais uniformes que o K-Means.</td></tr>
+  </table>
+
+  <p>A coluna decisiva é a última. &#8220;Geometria plana&#8221; significa que o método assume que os clusters são blobs convexos separáveis por fronteiras retas; &#8220;não plana&#8221; significa que ele consegue capturar formas arbitrárias — anéis, espirais, variedades curvas. O K-Means e o GMM estão do lado plano; DBSCAN e spectral clustering, do lado não plano.</p>
+
+  <h3 class="sec"><span class="num">2.3.2</span>K-means</h3>
+
+  <p>A documentação descreve o K-Means como um algoritmo que agrupa dividindo as amostras em <m>K</m> grupos de <b>variância igual</b>, minimizando a <b>inércia</b> (ou soma de quadrados intra-cluster):</p>
+  <M>\sum_{i=0}^{n}\;\min_{\boldsymbol\mu_j \in C}\;\left(\lVert \mathbf{x}_i - \boldsymbol\mu_j \rVert^2\right)</M>
+
+  <p>É a mesma <m>J</m> das Partes I e II, escrita com o mínimo explícito em vez das variáveis de atribuição. O algoritmo requer que o número de clusters seja especificado e escala bem para <m>N</m> grande.</p>
+
+  <div class="key">
+    <div class="bt">As limitações que a documentação enuncia — material de prova</div>
+    <ol style="margin-bottom:0">
+      <li><b>A inércia assume clusters convexos e isotrópicos.</b> Ela responde mal a conjuntos alongados ou a variedades de forma irregular, porque a única geometria que sabe descrever é a esférica.</li>
+      <li><b>A inércia não é uma métrica normalizada.</b> Sabemos apenas que valores menores são melhores e que zero é o ótimo — não há escala absoluta que permita dizer se um valor é &#8220;bom&#8221;.</li>
+      <li><b>Em espaços de alta dimensão, as distâncias euclidianas se inflam</b> (a maldição da dimensionalidade). Rodar uma redução de dimensionalidade como o PCA antes do K-Means pode aliviar o problema e acelerar a execução.</li>
+      <li><b>A convergência é garantida, mas para um mínimo local</b>, possivelmente distante do global — daí a necessidade de múltiplas inicializações.</li>
+    </ol>
+  </div>
+
+  <h4 class="sub"><span class="num">&#8226;</span>Inicialização e execuções múltiplas</h4>
+  <p>O parâmetro <code>init='k-means++'</code> (padrão) inicializa os centróides distantes entre si, o que produz resultados comprovadamente melhores que a inicialização aleatória. O parâmetro <code>n_init</code> controla quantas execuções independentes são feitas, ficando com a de menor inércia.</p>
+
+  <h4 class="sub"><span class="num">2.3.2.1</span>Paralelismo de baixo nível</h4>
+  <p>A implementação usa paralelismo via OpenMP no código Cython, com os dados divididos em blocos para o cálculo das distâncias — o que também melhora o uso de cache. O número de <i>threads</i> é controlado pela variável de ambiente <code>OMP_NUM_THREADS</code>. Vale distinguir esse paralelismo, que ocorre <i>dentro</i> de uma execução, do paralelismo entre as <code>n_init</code> execuções.</p>
+
+  <h4 class="sub"><span class="num">2.3.2.2</span>Mini Batch K-Means</h4>
+  <p>A <code>MiniBatchKMeans</code> é uma variante que usa <b>mini-lotes</b> — subconjuntos dos dados sorteados a cada iteração — para reduzir drasticamente o tempo de convergência. A cada iteração, sorteia-se um lote, atribuem-se suas amostras aos centróides mais próximos e atualizam-se os centróides por uma média corrente, com taxa de aprendizado que decresce conforme o número de amostras já atribuídas àquele centróide. O resultado é geralmente <b>ligeiramente pior</b> que o do K-Means padrão em termos de inércia, mas obtido em uma fração do tempo — a troca que faz sentido quando <m>N</m> é muito grande.</p>
+
+  <div class="qa-head"><span class="t">Perguntas 89&#8211;104 &#183; scikit-learn: clustering</span><span class="r"></span></div>
+
+  <div class="qa"><div class="qn">89</div><div class="q">O que significa a coluna &#8220;geometria&#8221; na tabela comparativa, e por que ela é a mais importante?</div>
+  <div class="a"><p>Ela declara a <b>hipótese implícita</b> de cada método sobre o que é um cluster e qual métrica usa para decidir. &#8220;Geometria plana&#8221; significa que o método assume blobs convexos separáveis por fronteiras retas — é o caso do K-Means (distâncias entre pontos) e do GMM (distâncias de Mahalanobis). &#8220;Não plana&#8221; significa capacidade de capturar formas arbitrárias, como anéis concêntricos ou espirais — é o caso do DBSCAN e do spectral clustering, que trabalham com conectividade ou distância de grafo. É a coluna mais importante porque nenhuma quantidade de ajuste de hiperparâmetros conserta uma hipótese geométrica errada: rodar K-Means em dois anéis concêntricos vai falhar para qualquer <m>K</m>, qualquer inicialização e qualquer <code>n_init</code>.</p></div></div>
+
+  <div class="qa"><div class="qn">90</div><div class="q">Escreva a inércia como a documentação a define e relacione com a distorção <m>J</m>.</div>
+  <div class="a"><p><m>\sum_{i=0}^{n}\min_{\boldsymbol\mu_j\in C}\left(\lVert\mathbf{x}_i-\boldsymbol\mu_j\rVert^2\right)</m>: para cada amostra, a distância quadrada ao centróide mais próximo; soma-se sobre todas. É <b>exatamente</b> a mesma quantidade que <m>J = \sum_n\sum_k r_{nk}\lVert\mathbf{x}_n-\boldsymbol\mu_k\rVert^2</m> do Bishop, apenas escrita de outra forma: como <m>r_{nk}</m> vale 1 só para o centróide mais próximo, a soma interna em <m>k</m> seleciona precisamente o mínimo. A documentação usa &#8220;inércia&#8221;, o Bishop usa &#8220;distorção&#8221;, o Murphy também usa &#8220;distorção&#8221; — três nomes para a mesma soma de quadrados intra-cluster, e é útil reconhecer os três.</p></div></div>
+
+  <div class="qa"><div class="qn">91</div><div class="q">Por que a documentação diz que a inércia &#8220;não é uma métrica normalizada&#8221;? Que problema isso cria?</div>
+  <div class="a"><p>Porque seu valor depende da escala das variáveis, de <m>N</m> e de <m>D</m>, e não existe nenhum limite superior de referência. Um valor de inércia igual a 4&#8239;217 não diz nada isoladamente: pode ser excelente ou terrível dependendo do conjunto. O problema prático é duplo: não se pode comparar inércias entre conjuntos de dados diferentes, nem entre versões diferentes do mesmo conjunto (padronizado versus não padronizado); e não se pode usá-la para escolher <m>K</m>, porque ela decresce monotonicamente. A comparação legítima é entre execuções com o <b>mesmo <m>K</m> sobre os mesmos dados</b>, que é justamente o que o <code>n_init</code> faz. Para comparar valores de <m>K</m>, use silhueta ou, em modelos probabilísticos, BIC.</p></div></div>
+
+  <div class="qa"><div class="qn">92</div><div class="q">Cite as três suposições implícitas do K-Means e o que quebra em cada caso.</div>
+  <div class="a"><p>(1) <b>Clusters isotrópicos (esféricos)</b>. Quebra em dados anisotrópicos: grupos alongados são cortados transversalmente pelas fronteiras de Voronoi, porque a distância euclidiana não sabe que uma direção é mais &#8220;longa&#8221; que outra. (2) <b>Variâncias semelhantes</b>. Quebra com grupos de dispersões diferentes: o algoritmo fatia o grupo mais espalhado e funde os compactos, já que a inércia soma distâncias sem normalizar por cluster. (3) <b>Tamanhos semelhantes</b>. Quebra com grupos de contagens muito diferentes: as fronteiras equidistantes entre centróides não conseguem representar que um grupo tem dez vezes mais pontos que outro. As três falham simultaneamente no exemplo clássico da documentação, com blobs anisotrópicos e de variâncias desiguais.</p></div></div>
+
+  <div class="qa"><div class="qn">93</div><div class="q">Por que rodar PCA antes do K-Means alivia a maldição da dimensionalidade?</div>
+  <div class="a"><p>Em alta dimensão as distâncias euclidianas se concentram: a diferença entre a distância ao ponto mais próximo e ao mais distante encolhe em termos relativos, e &#8220;o centróide mais próximo&#8221; deixa de ser informação discriminante — as atribuições ficam quase arbitrárias. O PCA projeta em um subespaço de poucas dimensões que retém a maior parte da variância, onde as distâncias voltam a ter contraste. Dois ganhos colaterais: descartar componentes de baixa variância remove ruído, e reduzir <m>D</m> acelera diretamente o algoritmo, que é <m>O(NKD)</m>. A ressalva a mencionar em prova: o PCA maximiza variância, não separabilidade, então em casos raros ele descarta justamente a direção que separava os clusters.</p></div></div>
+
+  <div class="qa"><div class="qn">94</div><div class="q">O que faz <code>n_init</code> e por que o padrão não é 1?</div>
+  <div class="a"><p>Executa o algoritmo <m>n</m> vezes com inicializações diferentes e retorna a execução de <b>menor inércia</b>. O padrão não é 1 porque o K-Means converge para um mínimo local, e uma única execução pode cair num resultado ruim — especialmente se duas sementes caírem no mesmo grupo real. Rodar várias vezes amostra vários mínimos locais e fica com o melhor. Vale notar que, com <code>init='k-means++'</code>, a variância entre execuções já é bem menor do que com inicialização aleatória, e por isso as versões recentes do scikit-learn reduziram o valor padrão de <code>n_init</code> — as duas defesas se sobrepõem parcialmente.</p></div></div>
+
+  <div class="qa"><div class="qn">95</div><div class="q">Quando usar <code>MiniBatchKMeans</code> em vez de <code>KMeans</code>?</div>
+  <div class="a"><p>Quando <m>N</m> é grande o bastante para que o tempo de execução seja o gargalo, e uma perda pequena de qualidade seja aceitável. O MiniBatch sorteia um lote a cada iteração, atribui apenas aquelas amostras e atualiza os centróides por média corrente com taxa decrescente — o custo por iteração deixa de depender de <m>N</m>. Ele converge em uma fração do tempo e produz uma inércia <b>ligeiramente pior</b>. Também é a opção natural para aprendizado em fluxo, via <code>partial_fit</code>, quando os dados não cabem em memória. Se <m>N</m> é moderado, não há razão para abrir mão da qualidade: use o <code>KMeans</code> padrão.</p></div></div>
+
+  <div class="qa"><div class="qn">96</div><div class="q">Explique o esquema de atualização do MiniBatchKMeans.</div>
+  <div class="a"><p>A cada iteração: (1) sorteia-se um mini-lote de tamanho fixo; (2) cada amostra do lote é atribuída ao centróide mais próximo; (3) cada centróide é atualizado como uma <b>média corrente</b> — desloca-se na direção das amostras recém-atribuídas, com um peso que decresce à medida que aquele centróide acumula amostras. Essa taxa decrescente é o que estabiliza o processo: no começo os centróides se movem bastante, e com o tempo as atualizações ficam cada vez menores, o que reduz o efeito estocástico dos lotes individuais. É a mesma ideia do EM sequencial do Bishop 15.4.5 aplicada ao caso-limite rígido, e a mesma família de algoritmos do gradiente estocástico.</p></div></div>
+
+  <div class="qa"><div class="qn">97</div><div class="q">Qual a diferença entre o paralelismo de <code>OMP_NUM_THREADS</code> e o de <code>n_init</code>?</div>
+  <div class="a"><p><code>OMP_NUM_THREADS</code> controla o paralelismo de <b>baixo nível, dentro</b> de uma única execução: o cálculo das distâncias é dividido em blocos e distribuído entre threads via OpenMP no código Cython, o que além de paralelizar melhora o uso de cache. O <code>n_init</code> descreve quantas execuções <b>independentes</b> são feitas — um paralelismo de nível mais alto, entre tarefas que não compartilham estado. São ortogonais: você pode ter 8 threads acelerando cada uma de 10 inicializações. Na prática, atenção a um efeito comum: combinar paralelismo em dois níveis pode gerar <i>oversubscription</i> (mais threads que núcleos) e piorar o desempenho.</p></div></div>
+
+  <div class="qa"><div class="qn">98</div><div class="q">Você tem dois anéis concêntricos. Por que o K-Means falha e qual método usar?</div>
+  <div class="a"><p>Falha porque a estrutura é <b>não plana</b>: os dois anéis não são separáveis por nenhum hiperplano, e o K-Means só produz fronteiras de Voronoi, que são retas. Pior: o centróide do anel externo cai no centro geométrico da figura, dentro do anel interno, então nem os protótipos fazem sentido. Nenhum <m>K</m>, nenhuma inicialização e nenhum <code>n_init</code> resolve — é a hipótese que está errada, não o ajuste. Os métodos adequados são os de geometria não plana: <b>DBSCAN</b>, que agrupa por conectividade de densidade e separa os anéis naturalmente, ou <b>spectral clustering</b>, que projeta os dados num espaço onde a estrutura vira linearmente separável antes de agrupar. Um GMM também falharia, embora menos catastroficamente, porque sua geometria também é plana (elipsoidal).</p></div></div>
+
+  <div class="qa"><div class="qn">99</div><div class="q">Compare K-Means e DBSCAN.</div>
+  <div class="a"><p><b>K-Means</b>: você informa <m>K</m>; assume clusters convexos e isotrópicos; todo ponto recebe um cluster; usa distância ao centróide; escala muito bem; produz centróides interpretáveis. <b>DBSCAN</b>: você informa o raio da vizinhança e o número mínimo de pontos, não <m>K</m>; encontra clusters de <b>forma arbitrária</b>; classifica pontos em regiões esparsas como <b>ruído</b>, sem forçar atribuição; usa conectividade por densidade; escala bem; não produz protótipos. Escolha o DBSCAN quando não souber quantos grupos existem, quando as formas forem irregulares ou quando houver outliers a isolar. Escolha o K-Means quando souber <m>K</m>, quando os grupos forem blobs e quando precisar de centróides. A fraqueza do DBSCAN é a densidade variável — grupos densos e esparsos no mesmo conjunto exigem HDBSCAN ou OPTICS.</p></div></div>
+
+  <div class="qa"><div class="qn">100</div><div class="q">Onde o GMM aparece na tabela comparativa e como ele é caracterizado?</div>
+  <div class="a"><p>Aparece com caso de uso &#8220;<b>estimação de densidade</b>, geometria plana&#8221;, métrica &#8220;distâncias de Mahalanobis&#8221;, escalabilidade &#8220;não escalável&#8221; e parâmetros &#8220;muitos&#8221;. Cada um desses campos é informativo. &#8220;Estimação de densidade&#8221; sinaliza que o GMM não é primariamente um algoritmo de clustering: agrupar é um subproduto de modelar <m>p(\mathbf{x})</m>. &#8220;Geometria plana&#8221; o coloca do mesmo lado do K-Means — ele é mais flexível (elipses em vez de esferas), mas ainda não captura anéis nem espirais. &#8220;Mahalanobis&#8221; é o que dá essa flexibilidade extra. &#8220;Não escalável&#8221; reflete o custo <m>O(NKD^2)</m> das covariâncias completas.</p></div></div>
+
+  <div class="qa"><div class="qn">101</div><div class="q">Bisecting K-Means aparece como produzindo &#8220;clusters mais uniformes que o K-Means&#8221;. Por quê?</div>
+  <div class="a"><p>Porque ele constrói a solução <b>hierarquicamente</b>: começa com todos os pontos em um cluster e, repetidamente, escolhe um cluster e o divide em dois com um K-Means de <m>K=2</m>, até chegar aos <m>K</m> desejados. Como a escolha de qual cluster dividir costuma recair sobre o de maior inércia ou maior número de pontos, o procedimento naturalmente evita deixar um cluster gigantesco ao lado de vários minúsculos — desequilíbrio que o K-Means padrão produz com facilidade. Benefícios adicionais: escala melhor para <m>K</m> grande (cada divisão é um problema pequeno) e produz uma árvore hierárquica que permite examinar a estrutura em várias granularidades.</p></div></div>
+
+  <div class="qa"><div class="qn">102</div><div class="q">A documentação diz que o K-Means divide as amostras em grupos de &#8220;variância igual&#8221;. Isso é hipótese ou resultado?</div>
+  <div class="a"><p>É <b>hipótese</b>, embutida na função objetivo — e a frase é uma descrição do que o algoritmo tenta fazer, não uma garantia sobre os dados. Ao minimizar a soma de quadrados sem normalizar por cluster, o método distribui a &#8220;energia&#8221; de dispersão de forma tendencialmente equilibrada entre os grupos, porque um cluster com variância muito maior contribui desproporcionalmente para a inércia total e é vantajoso dividi-lo. A consequência é que, se os grupos reais têm variâncias muito diferentes, o K-Means <b>não</b> os recupera: ele impõe a sua hipótese aos dados, fatiando o grupo disperso e fundindo os compactos. Reconhecer isso como hipótese, e não como propriedade dos dados, é o que permite prever o modo de falha.</p></div></div>
+
+  <div class="qa"><div class="qn">103</div><div class="q">Quais métodos da tabela dispensam informar o número de clusters?</div>
+  <div class="a"><p>DBSCAN, HDBSCAN, OPTICS, Mean-shift e Affinity propagation. Eles não pedem <m>K</m>, mas pedem <b>outros</b> hiperparâmetros que determinam indiretamente quantos clusters emergem: DBSCAN pede o raio da vizinhança <m>\epsilon</m> e o mínimo de pontos; Mean-shift pede a largura de banda; Affinity propagation pede a preferência de amostra e o damping. Não é, portanto, uma dispensa de decisão — é uma <b>troca</b> de qual decisão você toma. A vantagem é que às vezes o parâmetro alternativo é mais fácil de justificar a partir do domínio (&#8220;dois pontos a menos de 5 metros são vizinhos&#8221; é mais concreto que &#8220;existem 7 grupos&#8221;).</p></div></div>
+
+  <div class="qa"><div class="qn">104</div><div class="q">Descreva o fluxo completo de uma análise de clustering bem feita.</div>
+  <div class="a"><p>(1) <b>Entender os dados</b> e o objetivo: o domínio é contínuo, binário, categórico? Quer-se partição, densidade ou detecção de anomalias? (2) <b>Pré-processar</b>: tratar faltantes, padronizar (obrigatório para métodos baseados em distância) e, se <m>D</m> for grande, reduzir dimensionalidade. (3) <b>Escolher o método pela hipótese geométrica</b>, usando a tabela do §2.3.1 — não pela popularidade. (4) <b>Varrer os hiperparâmetros</b>, tipicamente <m>K</m>, avaliando com silhueta, BIC ou verossimilhança de validação. (5) <b>Validar</b>: estabilidade por reamostragem, inspeção visual em projeção, e verificação de sentido com quem conhece o domínio. (6) <b>Interpretar</b>: caracterizar cada grupo pelos seus centróides ou perfis. (7) <b>Documentar</b> as escolhas e as limitações — sobretudo a hipótese geométrica assumida e o critério usado para <m>K</m>.</p></div></div>
+</div>
+
+<!-- ============ PARTE V ============ -->
+<div class="part c-ink">
+  <div class="part-head">
+    <div class="lbl">Parte V</div>
+    <h2>Simulado integrador</h2>
+    <div class="cite">Questões que cruzam as quatro referências, no formato de arguição oral. Tente responder antes de ler.</div>
+  </div>
+
+  <p class="lead">As perguntas anteriores testam cada referência isoladamente. Estas testam se você consegue <b>ligar</b> as quatro — que é o que uma banca costuma fazer quando quer separar quem estudou de quem decorou.</p>
+
+  <div class="qa-head"><span class="t">Simulado &#183; 12 questões de arguição</span><span class="r"></span></div>
+
+  <div class="qa"><div class="qn">S1</div><div class="q">Conte a história completa que liga K-Means, mistura de Bernoulli e GMM em um parágrafo.</div>
+  <div class="a"><p>Todos os três resolvem o mesmo problema — descobrir estrutura de grupos sem rótulos — com a mesma arquitetura: uma variável latente discreta <m>\mathbf{z}</m> em codificação 1-de-<m>K</m> que diz de qual componente cada amostra veio, e um procedimento de duas fases que alterna entre inferir <m>\mathbf{z}</m> e reestimar os parâmetros. O que os separa é a <b>hipótese sobre <m>p(\mathbf{x}\mid\mathbf{z})</m></b>. O K-Means não faz hipótese nenhuma: descarta a probabilidade, usa atribuição rígida e minimiza distância quadrada — e é, por isso, o caso-limite rígido do GMM com <m>\boldsymbol\Sigma_k=\epsilon\mathbf{I}</m> e <m>\epsilon\to0</m>. A mistura de Bernoulli supõe <m>D</m> moedas independentes por componente, apropriada para <m>\{0,1\}^D</m>. O GMM supõe gaussianas multivariadas, apropriadas para <m>\mathbb{R}^D</m>, e é o único que descreve forma e orientação via <m>\boldsymbol\Sigma_k</m>. Os dois últimos são ajustados por EM, cuja correção decorre da decomposição <m>\ln p(\mathbf{X}) = \mathcal{L} + \mathrm{KL}</m>.</p></div></div>
+
+  <div class="qa"><div class="qn">S2</div><div class="q">A mesma quantidade aparece com três nomes nas quatro referências. Quais e por quê?</div>
+  <div class="a"><p><b>Distorção</b> (Bishop 15.1 e Murphy 21.3) e <b>inércia</b> (scikit-learn 2.3.2) são a mesma soma de quadrados intra-cluster, <m>J = \sum_n\min_k\lVert\mathbf{x}_n-\boldsymbol\mu_k\rVert^2</m>. Os nomes vêm de tradições diferentes: &#8220;distorção&#8221; é vocabulário de teoria da informação e quantização (o erro introduzido ao substituir um sinal por seu representante), &#8220;inércia&#8221; é vocabulário de estatística multivariada francesa (a dispersão de uma nuvem de pontos em torno do seu centro). Um terceiro nome que aparece na literatura é <b>within-cluster sum of squares (WCSS)</b>. Reconhecer os três é útil porque enunciados de prova podem usar qualquer um.</p></div></div>
+
+  <div class="qa"><div class="qn">S3</div><div class="q">Por que o K-Means precisa de heurísticas para escolher <m>K</m> enquanto o GMM tem o BIC?</div>
+  <div class="a"><p>Porque a seleção de modelo por critérios de informação exige uma <b>verossimilhança</b>, e o K-Means não define nenhuma distribuição de probabilidade. Sem <m>p(\mathbf{x}\mid\boldsymbol\theta)</m> não há <m>\hat{L}</m>, e sem <m>\hat{L}</m> não há BIC nem AIC nem verossimilhança marginal. Resta o que se pode calcular sem modelo: a inércia (que decresce monotonicamente e por isso não serve sozinha, exigindo a heurística visual do cotovelo) e índices geométricos como a silhueta (que funcionam, mas medem separação convexa e são caros, <m>O(N^2)</m>). O GMM, sendo generativo, entra na maquinaria estatística padrão de seleção de modelos. É mais uma consequência da mesma diferença estrutural que dá ao GMM a detecção de anomalias e a geração de amostras.</p></div></div>
+
+  <div class="qa"><div class="qn">S4</div><div class="q">Ligue os três mecanismos de regularização que aparecem nas quatro referências. Eles são a mesma ideia?</div>
+  <div class="a"><p>Sim, são a mesma ideia em três disfarces, e Bishop 15.4.3 é onde ela aparece de forma explícita: <b>substituir a máxima verossimilhança pelo MAP, somando <m>\ln p(\boldsymbol\theta)</m> ao passo M</b>. (1) A <b>suavização de Laplace</b> na mistura de Bernoulli é o passo M com prior Beta, e impede <m>\mu_{ki}</m> de travar em 0 ou 1. (2) O <b><code>reg_covar</code></b> do scikit-learn soma <m>\epsilon\mathbf{I}</m> à covariância, o que aproxima o passo M com um prior sobre <m>\boldsymbol\Sigma</m>, e impede o colapso singular. (3) A <b><code>BayesianGaussianMixture</code></b> faz isso de forma completa e principiada, com priores sobre todos os parâmetros e inferência variacional. Em todos os casos o efeito é o mesmo: tornar inatingíveis as configurações degeneradas que a verossimilhança pura premia.</p></div></div>
+
+  <div class="qa"><div class="qn">S5</div><div class="q">Um colega diz: &#8220;rodei K-Means com <m>K</m> de 2 a 20 e escolhi <m>K=20</m> porque teve a menor inércia&#8221;. Corrija.</div>
+  <div class="a"><p>O raciocínio está errado por construção. A inércia é monotonicamente não-crescente em <m>K</m>: sempre é possível reduzi-la dividindo um cluster, e em <m>K=N</m> ela vale exatamente zero. Portanto &#8220;o <m>K</m> de menor inércia&#8221; é sempre o maior <m>K</m> testado — o resultado não diz nada sobre os dados, apenas reflete a mecânica da métrica. É o mesmo erro de escolher a ordem de um polinômio pelo menor erro de treino. O que fazer: procurar o <b>cotovelo</b> da curva (heurística), maximizar a <b>silhueta</b> (que penaliza a perda de separação e por isso tem máximo genuíno), ou, se um modelo probabilístico for aceitável, ajustar um GMM e minimizar o <b>BIC</b>, que penaliza explicitamente a complexidade. E cruzar pelo menos dois desses critérios antes de decidir.</p></div></div>
+
+  <div class="qa"><div class="qn">S6</div><div class="q">Deduza por que o passo E é &#8220;Bayes&#8221; e o passo M é &#8220;máxima verossimilhança ponderada&#8221;.</div>
+  <div class="a"><p>O <b>passo E</b> pergunta: dado o que sei dos parâmetros, qual a probabilidade de esta amostra ter vindo do componente <m>k</m>? Isso é literalmente um posterior, <m>p(z_k=1\mid\mathbf{x})</m>, calculado por Bayes com prior <m>\pi_k</m>, verossimilhança <m>p(\mathbf{x}\mid\boldsymbol\theta_k)</m> e a evidência no denominador. O <b>passo M</b> pergunta: dadas essas atribuições (fracionárias), quais parâmetros melhor explicam os dados? Se as atribuições fossem rígidas, a resposta seria a estimativa de máxima verossimilhança usual de cada componente sobre o seu subconjunto. Como são fracionárias, cada amostra entra em cada componente com peso <m>\gamma_{nk}</m>, e o que se obtém são as mesmas fórmulas de MLE com somas ponderadas e <m>N_k</m> no lugar de <m>N</m>. Em resumo: <b>E infere as latentes por Bayes; M ajusta os parâmetros por MLE, ponderado pelo resultado de E</b>.</p></div></div>
+
+  <div class="qa"><div class="qn">S7</div><div class="q">Você tem 50 000 documentos representados por um vetor binário de 5 000 palavras. Qual modelo usar e por quê?</div>
+  <div class="a"><p><b>Mistura de Bernoulli</b>, pelo domínio: os dados são <m>\{0,1\}^{5000}</m> e a gaussiana seria um erro de modelagem. Considerações de execução: (i) o EM tem <m>KD + K - 1</m> parâmetros — com <m>K=20</m>, cerca de 100 mil, viável com 50 mil documentos, mas justo, então use suavização de Laplace; (ii) o subfluxo é <b>certo</b>, pois o produto de 5 000 fatores menores que 1 colapsa em <code>float64</code> — trabalhe em espaço logarítmico com Log-Sum-Exp desde o início, não como otimização posterior; (iii) inicialize com k-means++ sobre a distância de Hamming ou com pequenas perturbações da média global; (iv) escolha <m>K</m> por verossimilhança em um conjunto de validação separado. Alternativa a mencionar: se os documentos tiverem contagens em vez de indicadores binários, uma mistura multinomial ou o LDA seriam mais apropriados.</p></div></div>
+
+  <div class="qa"><div class="qn">S8</div><div class="q">Explique por que a log-verossimilhança nunca diminui, sem usar a palavra &#8220;ELBO&#8221;.</div>
+  <div class="a"><p>Imagine uma curva, a log-verossimilhança em função dos parâmetros, e uma segunda curva que fica sempre <b>abaixo</b> dela, mas que podemos construir de modo a <b>tocá-la</b> num ponto à nossa escolha. O passo E constrói essa curva auxiliar de forma que ela toque a log-verossimilhança exatamente no <m>\boldsymbol\theta</m> atual. O passo M então escala a curva auxiliar — ele acha o máximo <i>dela</i>, não da original. Como a auxiliar nunca está acima da original, o valor da original no novo ponto é pelo menos o valor da auxiliar ali, que por sua vez é pelo menos o valor da auxiliar no ponto de partida, que é <i>igual</i> ao valor da original no ponto de partida. Encadeando: a original no ponto novo <m>\ge</m> a original no ponto antigo. Nunca desce. (E a diferença entre as duas curvas no ponto novo é a KL que reabriu — é o ganho extra.)</p></div></div>
+
+  <div class="qa"><div class="qn">S9</div><div class="q">Compare os modos de falha numérica do GMM e da mistura de Bernoulli.</div>
+  <div class="a"><p>Falham por motivos <b>opostos</b>. O GMM falha por <b>explosão</b>: um componente colapsa sobre um ponto, <m>|\boldsymbol\Sigma_k|\to0</m>, a densidade e a log-verossimilhança divergem para <m>+\infty</m>. É uma patologia da <i>função objetivo</i>, que é genuinamente ilimitada — a defesa é regularizar a covariância (<code>reg_covar</code>) ou usar priores. A Bernoulli falha por <b>desaparecimento</b>: o produto de <m>D</m> probabilidades subflui para zero em ponto flutuante, e a razão do passo E vira <m>0/0</m>. É uma patologia da <i>aritmética de ponto flutuante</i>, não da matemática — em precisão infinita não haveria problema, e a defesa é o Log-Sum-Exp, que é uma identidade exata. Há ainda o travamento em <m>\mu_{ki}\in\{0,1\}</m>, que é problema de estimação e se resolve com suavização de Laplace. Regra mnemônica: <b>GMM explode por causa da geometria; Bernoulli some por causa dos bits</b>.</p></div></div>
+
+  <div class="qa"><div class="qn">S10</div><div class="q">Em que ordem você apresentaria estes conceitos a alguém que nunca os viu, e por quê?</div>
+  <div class="a"><p>Na ordem que Bishop e Murphy adotam, que é a mesma: <b>K-Means primeiro</b>. Ele é visual, tem duas regras simples, converge à vista e não exige nenhuma probabilidade — cria a intuição de &#8220;protótipo&#8221; e de &#8220;alternar entre atribuir e atualizar&#8221; que todo o resto reaproveita. Em seguida, mostre <b>onde ele falha</b> (anisotropia, densidades desiguais, dados binários): é a motivação genuína para o que vem depois, e sem ela os modelos de mistura parecem complicação gratuita. Aí introduza a <b>variável latente</b> e a <b>responsabilidade</b>, que generalizam a atribuição rígida para suave. Depois o <b>EM</b> como o algoritmo que substitui o Lloyd, e só então a <b>prova pelo ELBO</b>. Fechar revelando que o K-Means era o caso-limite do EM o tempo todo dá ao aluno a sensação de que o arco se fecha — e é literalmente verdade.</p></div></div>
+
+  <div class="qa"><div class="qn">S11</div><div class="q">Qual a diferença entre &#8220;o EM convergiu&#8221; e &#8220;o EM encontrou a resposta certa&#8221;?</div>
+  <div class="a"><p>Convergir significa apenas que a log-verossimilhança parou de subir de forma apreciável — que se chegou a um ponto estacionário. Isso não garante três coisas distintas. (1) Não garante o <b>máximo global</b>: pode ser um máximo local, ou até uma sela; a superfície de verossimilhança de misturas é notoriamente multimodal. (2) Não garante que o <b>modelo</b> esteja certo: um GMM converge lindamente sobre dois anéis concêntricos e produz uma resposta sem sentido, porque a hipótese geométrica é inadequada — o algoritmo não tem como detectar isso. (3) Não garante que <m>K</m> esteja certo. Convergência é uma propriedade do <i>otimizador</i>; adequação é uma propriedade do <i>modelo</i>. Verificar a segunda exige inspeção, validação e conhecimento do domínio — nunca o log de convergência.</p></div></div>
+
+  <div class="qa"><div class="qn">S12</div><div class="q">Se você pudesse guardar apenas cinco ideias de todo este conteúdo, quais seriam?</div>
+  <div class="a"><p>(1) <b>A variável latente discreta é o conceito unificador</b>: os três modelos são a mesma estrutura com hipóteses diferentes sobre <m>p(\mathbf{x}\mid\mathbf{z})</m>. (2) <b>A responsabilidade <m>\gamma_{nk}</m> é o teorema de Bayes</b> aplicado a essa latente, e é o que transforma atribuição rígida em suave. (3) <b>O EM existe porque o somatório está preso dentro do logaritmo</b>; ele contorna isso otimizando a verossimilhança completa em esperança, e a decomposição <m>\ln p = \mathcal{L} + \mathrm{KL}</m> prova que isso nunca piora. (4) <b>K-Means é o caso-limite rígido do GMM</b> — a relação não é analógica, é exata, com <m>\boldsymbol\Sigma_k=\epsilon\mathbf{I}</m> e <m>\epsilon\to0</m>. (5) <b>Todo método traz uma hipótese geométrica</b>, e escolher o método é escolher a hipótese: nenhum ajuste de hiperparâmetro conserta a hipótese errada.</p></div></div>
+</div>
+
+<!-- ============ APÊNDICE ============ -->
+<div class="part c-ink">
+  <div class="part-head">
+    <div class="lbl">Apêndice</div>
+    <h2>Formulário</h2>
+    <div class="cite">Todas as equações essenciais reunidas, para revisão de véspera.</div>
+  </div>
+
+  <h3 class="sec"><span class="num">A.1</span>K-Means</h3>
+  <M>J = \sum_{n=1}^{N}\sum_{k=1}^{K} r_{nk}\lVert\mathbf{x}_n-\boldsymbol\mu_k\rVert^2 \;=\; \sum_{n=1}^{N}\min_{k}\lVert\mathbf{x}_n-\boldsymbol\mu_k\rVert^2</M>
+  <M>r_{nk}=\mathbb{1}\!\left[k=\arg\min_j\lVert\mathbf{x}_n-\boldsymbol\mu_j\rVert^2\right] \qquad\qquad \boldsymbol\mu_k=\frac{\sum_n r_{nk}\mathbf{x}_n}{\sum_n r_{nk}}</M>
+  <p class="note">Custo <m>O(NKD)</m> por iteração. Converge para mínimo local. Fronteiras de Voronoi (hiperplanos).</p>
+
+  <h3 class="sec"><span class="num">A.2</span>k-means++ e silhueta</h3>
+  <M>p(\mathbf{x}) = \frac{D(\mathbf{x})^2}{\sum_n D(\mathbf{x}_n)^2},\quad D(\mathbf{x})=\min_j\lVert\mathbf{x}-\boldsymbol\mu_j\rVert \qquad\qquad \mathbb{E}[J_{++}]\le 8(\ln K+2)\,J_{\text{ótimo}}</M>
+  <M>s(i)=\frac{b(i)-a(i)}{\max\{a(i),b(i)\}}\in[-1,1]</M>
+
+  <h3 class="sec"><span class="num">A.3</span>Gaussiana multivariada e GMM</h3>
+  <M>\mathcal{N}(\mathbf{x}\mid\boldsymbol\mu,\boldsymbol\Sigma)=\frac{1}{(2\pi)^{D/2}|\boldsymbol\Sigma|^{1/2}}\exp\!\left\{-\tfrac12(\mathbf{x}-\boldsymbol\mu)^\top\boldsymbol\Sigma^{-1}(\mathbf{x}-\boldsymbol\mu)\right\}</M>
+  <M>p(\mathbf{x})=\sum_{k=1}^{K}\pi_k\,\mathcal{N}(\mathbf{x}\mid\boldsymbol\mu_k,\boldsymbol\Sigma_k),\qquad \sum_k\pi_k=1,\quad \pi_k\ge0</M>
+  <M>\ln p(\mathbf{X})=\sum_{n=1}^{N}\ln\left\{\sum_{k=1}^{K}\pi_k\,\mathcal{N}(\mathbf{x}_n\mid\boldsymbol\mu_k,\boldsymbol\Sigma_k)\right\}</M>
+
+  <h3 class="sec"><span class="num">A.4</span>EM para GMM</h3>
+  <M>\text{Passo E:}\quad \gamma(z_{nk})=\frac{\pi_k\,\mathcal{N}(\mathbf{x}_n\mid\boldsymbol\mu_k,\boldsymbol\Sigma_k)}{\sum_{j}\pi_j\,\mathcal{N}(\mathbf{x}_n\mid\boldsymbol\mu_j,\boldsymbol\Sigma_j)} \qquad N_k=\sum_{n=1}^{N}\gamma(z_{nk})</M>
+  <M>\text{Passo M:}\quad \boldsymbol\mu_k=\frac{1}{N_k}\sum_n \gamma(z_{nk})\mathbf{x}_n,\qquad \pi_k=\frac{N_k}{N}</M>
+  <M>\boldsymbol\Sigma_k=\frac{1}{N_k}\sum_n \gamma(z_{nk})(\mathbf{x}_n-\boldsymbol\mu_k)(\mathbf{x}_n-\boldsymbol\mu_k)^\top</M>
+
+  <h3 class="sec"><span class="num">A.5</span>Mistura de Bernoulli</h3>
+  <M>p(\mathbf{x}\mid\boldsymbol\mu_k)=\prod_{i=1}^{D}\mu_{ki}^{\,x_i}(1-\mu_{ki})^{1-x_i} \qquad\qquad p(\mathbf{x})=\sum_{k=1}^{K}\pi_k\,p(\mathbf{x}\mid\boldsymbol\mu_k)</M>
+  <M>\gamma(z_{nk})=\frac{\pi_k\,p(\mathbf{x}_n\mid\boldsymbol\mu_k)}{\sum_j\pi_j\,p(\mathbf{x}_n\mid\boldsymbol\mu_j)} \qquad \boldsymbol\mu_k=\frac{1}{N_k}\sum_n\gamma(z_{nk})\mathbf{x}_n \qquad \pi_k=\frac{N_k}{N}</M>
+  <M>\text{Laplace:}\quad \mu_{ki}=\frac{\sum_n\gamma(z_{nk})x_{ni}+\alpha}{N_k+2\alpha} \qquad\qquad \text{LSE:}\quad \ln\sum_k e^{a_k}=a_{\max}+\ln\sum_k e^{a_k-a_{\max}}</M>
+
+  <h3 class="sec"><span class="num">A.6</span>ELBO e a relação K-Means &#8596; GMM</h3>
+  <M>\ln p(\mathbf{X}\mid\boldsymbol\theta)=\mathcal{L}(q,\boldsymbol\theta)+\mathrm{KL}(q\|p),\qquad \mathrm{KL}\ge0 \;\Rightarrow\; \mathcal{L}\le \ln p(\mathbf{X}\mid\boldsymbol\theta)</M>
+  <M>\mathcal{L}(q,\boldsymbol\theta)=\sum_{\mathbf{Z}}q(\mathbf{Z})\ln\frac{p(\mathbf{X},\mathbf{Z}\mid\boldsymbol\theta)}{q(\mathbf{Z})} \qquad\qquad \mathcal{Q}(\boldsymbol\theta,\boldsymbol\theta^{\text{old}})=\sum_{\mathbf{Z}}p(\mathbf{Z}\mid\mathbf{X},\boldsymbol\theta^{\text{old}})\ln p(\mathbf{X},\mathbf{Z}\mid\boldsymbol\theta)</M>
+  <M>\boldsymbol\Sigma_k=\epsilon\mathbf{I},\;\;\pi_k=1/K,\;\;\epsilon\to0 \quad\Longrightarrow\quad \gamma(z_{nk})\to r_{nk}\in\{0,1\} \quad\text{e}\quad \text{EM}\to\text{K-Means}</M>
+
+  <h3 class="sec"><span class="num">A.7</span>Seleção de modelo e contagem de parâmetros</h3>
+  <M>\mathrm{BIC}=-2\ln\hat{L}+p\ln N \qquad\qquad \mathrm{AIC}=-2\ln\hat{L}+2p \qquad\qquad \text{(menor é melhor)}</M>
+  <table style="margin-top:4mm">
+    <tr><th>Modelo</th><th>Parâmetros livres <m>p</m></th></tr>
+    <tr><td>GMM <code>full</code></td><td class="tnum"><m>(K-1) + KD + K\,D(D{+}1)/2</m></td></tr>
+    <tr><td>GMM <code>tied</code></td><td class="tnum"><m>(K-1) + KD + D(D{+}1)/2</m></td></tr>
+    <tr><td>GMM <code>diag</code></td><td class="tnum"><m>(K-1) + KD + KD</m></td></tr>
+    <tr><td>GMM <code>spherical</code></td><td class="tnum"><m>(K-1) + KD + K</m></td></tr>
+    <tr><td>Mistura de Bernoulli</td><td class="tnum"><m>(K-1) + KD</m></td></tr>
+  </table>
+
+  <h3 class="sec"><span class="num">A.8</span>Quadro comparativo final</h3>
+  <table>
+    <tr><th></th><th>K-Means</th><th>Mistura de Bernoulli</th><th>GMM</th></tr>
+    <tr><td><b>Domínio</b></td><td><m>\mathbb{R}^D</m></td><td><m>\{0,1\}^D</m></td><td><m>\mathbb{R}^D</m></td></tr>
+    <tr><td><b>Hipótese</b></td><td>Hiperesferas isotrópicas</td><td><m>D</m> Bernoullis independentes</td><td>Elipsóides <m>\mathcal{N}(\boldsymbol\mu_k,\boldsymbol\Sigma_k)</m></td></tr>
+    <tr><td><b>Atribuição</b></td><td>Rígida, <m>r_{nk}\in\{0,1\}</m></td><td>Suave, <m>\gamma_{nk}\in[0,1]</m></td><td>Suave, <m>\gamma_{nk}\in[0,1]</m></td></tr>
+    <tr><td><b>Critério</b></td><td>Minimizar <m>J</m></td><td>Maximizar <m>\ln p(\mathbf{X})</m></td><td>Maximizar <m>\ln p(\mathbf{X})</m></td></tr>
+    <tr><td><b>Algoritmo</b></td><td>Lloyd</td><td>EM</td><td>EM</td></tr>
+    <tr><td><b>Custo/iteração</b></td><td class="tnum"><m>O(NKD)</m></td><td class="tnum"><m>O(NKD)</m></td><td class="tnum"><m>O(NKD^2)</m></td></tr>
+    <tr><td><b>Generativo?</b></td><td>Não</td><td>Sim</td><td>Sim</td></tr>
+    <tr><td><b>Escolha de <m>K</m></b></td><td>Cotovelo, silhueta</td><td>BIC, AIC, validação</td><td>BIC, AIC, validação</td></tr>
+    <tr><td><b>Modo de falha</b></td><td>Mínimo local; anisotropia</td><td>Subfluxo; <m>\mu\to\{0,1\}</m></td><td>Singularidade <m>|\boldsymbol\Sigma|\to0</m></td></tr>
+  </table>
+
+  <div class="box c-ink" style="margin-top:8mm">
+    <div class="bt">Sobre as fontes deste guia</div>
+    <p style="margin-bottom:0">O conteúdo foi redigido a partir do material canônico das quatro referências indicadas e da apresentação do grupo. Os textos originais não puderam ser consultados diretamente durante a redação, porque o ambiente de rede utilizado bloqueia o acesso a <code>bishopbook.com</code>, <code>probml.github.io</code> e <code>scikit-learn.org</code>. As definições, equações e resultados apresentados são padrão da literatura e conferem com os livros; a <b>numeração exata das subseções</b>, porém, deve ser verificada nos sumários originais antes de ser citada em trabalho avaliado.</p>
+  </div>
+</div>
+
+</body></html>
