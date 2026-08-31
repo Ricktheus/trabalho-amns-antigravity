@@ -9,7 +9,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Variáveis Latentes Discretas, K-Means e Modelos de Mistura</title>
-<meta name="description" content="Apresentação acadêmica interativa e auto-didática em 73 slides sobre variáveis latentes discretas, K-Means, Misturas de Bernoulli, algoritmo EM e Gaussian Mixture Models.">
+<meta name="description" content="Apresentação acadêmica interativa em 47 slides sobre variáveis latentes discretas, K-Means, Misturas de Bernoulli, algoritmo EM e Gaussian Mixture Models.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -818,35 +818,33 @@ body.notes-open #notes-panel { transform: translateX(0); }
     <div class="eyebrow accent">Bacharelado em IA · Aprendizado de Máquina Não Supervisionado</div>
     <h1 class="s-title">Variáveis Latentes Discretas, <span class="hl nb">K-Means</span> e Modelos de Mistura</h1>
     <div class="rule" aria-hidden="true"></div>
-    <p class="sub">Material autodidático completo em 73 slides: dos fundamentos de álgebra linear e probabilidade ao particionamento geométrico e à inferência estatística com o algoritmo EM.</p>
+    <p class="sub">Deck enxuto em 47 slides: da variável latente e do K-Means ao algoritmo EM e aos Gaussian Mixture Models.</p>
     <div style="flex:1 1 auto"></div>
     <div class="cover-map" aria-label="Percurso da apresentação">
-      <div class="mrow"><i class="dot" style="background:var(--m0)"></i> Bloco 0 · Nivelamento &nbsp;<span style="color:var(--line-strong)">→</span>&nbsp; Álgebra linear, notação e Bayes (slides 01–07)</div>
-      <div class="mrow"><i class="dot" style="background:var(--m1)"></i> Bloco 1 · Henrique &nbsp;<span style="color:var(--line-strong)">→</span>&nbsp; Variáveis latentes e 1-de-K (slides 08–21)</div>
-      <div class="mrow"><i class="dot" style="background:var(--m2)"></i> Bloco 2 · Lucas &nbsp;<span style="color:var(--line-strong)">→</span>&nbsp; K-Means e algoritmo de Lloyd (slides 22–40)</div>
-      <div class="mrow"><i class="dot" style="background:var(--m3)"></i> Bloco 3 · Antonio &nbsp;<span style="color:var(--line-strong)">→</span>&nbsp; Misturas de Bernoulli e algoritmo EM (slides 41–58)</div>
-      <div class="mrow"><i class="dot" style="background:var(--m4)"></i> Bloco 4 · Bianca &nbsp;<span style="color:var(--line-strong)">→</span>&nbsp; Gaussian Mixture Models e comparação (slides 59–73)</div>
+      <div class="mrow"><i class="dot" style="background:var(--m1)"></i> Bloco 1 · Henrique e Lucas &nbsp;<span style="color:var(--line-strong)">→</span>&nbsp; Variáveis latentes e K-Means (slides 02–14)</div>
+      <div class="mrow"><i class="dot" style="background:var(--m3)"></i> Bloco 2 · Antonio &nbsp;<span style="color:var(--line-strong)">→</span>&nbsp; Misturas de Bernoulli e algoritmo EM (slides 15–32)</div>
+      <div class="mrow"><i class="dot" style="background:var(--m4)"></i> Bloco 3 · Bianca &nbsp;<span style="color:var(--line-strong)">→</span>&nbsp; Gaussian Mixture Models e comparação (slides 33–47)</div>
     </div>
   </div>
   <div class="cover-side">
     <div>
-      <div class="eyebrow">Apresentação · Rota de 60 min (28 slides de núcleo)</div>
+      <div class="eyebrow">Apresentação · 3 blocos · 47 slides</div>
       <ul class="team">
         <li><i class="bar" style="background:var(--m1)"></i><span class="nm">Henrique Matheus</span><span class="tm">Bloco 1</span></li>
-        <li><i class="bar" style="background:var(--m2)"></i><span class="nm">Lucas Nogueira</span><span class="tm">Bloco 2</span></li>
-        <li><i class="bar" style="background:var(--m3)"></i><span class="nm">Antonio Carlos</span><span class="tm">Bloco 3</span></li>
-        <li><i class="bar" style="background:var(--m4)"></i><span class="nm">Bianca Visco</span><span class="tm">Bloco 4</span></li>
+        <li><i class="bar" style="background:var(--m1)"></i><span class="nm">Lucas Nogueira</span><span class="tm">Bloco 1</span></li>
+        <li><i class="bar" style="background:var(--m3)"></i><span class="nm">Antonio Carlos</span><span class="tm">Bloco 2</span></li>
+        <li><i class="bar" style="background:var(--m4)"></i><span class="nm">Bianca Visco</span><span class="tm">Bloco 3</span></li>
       </ul>
     </div>
     <div class="meta">
-      73 slides (28 núcleo + 45 aprofundamentos/labs)<br>
+      47 slides · 3 blocos<br>
       Bishop · Murphy · scikit-learn<br>
       <span style="color:var(--fg-dim)">Pressione <b style="color:var(--accent)">?</b> para ajuda ou <b style="color:var(--accent)">G</b> para o Glossário</span>
     </div>
   </div>
   <div class="slide-notes" hidden>
     <h4>Fala sugerida [00:00 – 01:30]</h4>
-    <p class="fala">"Bom dia a todos os professores, membros da banca e colegas. Apresentamos nosso trabalho sobre Variáveis Latentes Discretas, K-Means, Misturas de Bernoulli e Gaussian Mixture Models. Estruturamos este ambiente interativo com 73 slides: além dos 28 slides fundamentais de núcleo para nossa apresentação oral de 60 minutos, o material traz 24 laboratórios práticos e códigos em Python que constroem a intuição de cada fórmula matemática passo a passo."</p>
+    <p class="fala">"Bom dia a todos os professores, membros da banca e colegas. Apresentamos nosso trabalho sobre Variáveis Latentes Discretas, K-Means, Misturas de Bernoulli e Gaussian Mixture Models. O material está dividido em três blocos: começamos pela variável latente e pelo K-Means, passamos às misturas de Bernoulli e ao algoritmo EM, e fechamos com os Gaussian Mixture Models e a comparação entre os três métodos."</p>
   </div>
 </section>
 
@@ -854,115 +852,14 @@ body.notes-open #notes-panel { transform: translateX(0); }
 <!-- BLOCO 0 — NIVELAMENTO E FUNDAMENTOS MATEMÁTICOS                        -->
 <!-- ====================================================================== -->
 
-<!-- ============================== SLIDE 02 ============================== -->
-<section class="slide" id="slide-02" data-member-id="0" data-time="Nivelamento" data-type="aprofundamento"
-         data-ref="Guia de Notação Matemática · Bishop (Apêndices)">
-  <h2 class="s-title">Decodificador: como ler a matemática deste trabalho</h2>
-  <div class="s-body">
-    <div class="c12">
-      <div data-lab="lab-decoder"></div>
-    </div>
-  </div>
-  <div class="slide-notes" hidden>
-    <h4>Objetivo do slide</h4>
-    <p>Desarmar o medo da notação matemática. Clique em cada símbolo no menu para ver sua tipografia formal renderizada em KaTeX, sua tradução em português simples, um exemplo numérico e onde ele reaparece no trabalho.</p>
-  </div>
-</section>
 
-<!-- ============================== SLIDE 03 ============================== -->
-<section class="slide" id="slide-03" data-member-id="0" data-time="Nivelamento" data-type="aprofundamento"
-         data-ref="Álgebra Linear Básica para Machine Learning">
-  <h2 class="s-title">Álgebra Linear 101: vetores, transposta \(\mathbf{x}^\top\), produto interno e normas</h2>
-  <div class="s-body">
-    <div class="c12">
-      <div data-lab="lab-linear-algebra"></div>
-    </div>
-  </div>
-  <div class="slide-notes" hidden>
-    <h4>Como demonstrar</h4>
-    <p>Ajuste os sliders dos vetores \(\mathbf{x}\) e \(\mathbf{y}\): veja o produto interno \(\mathbf{x}^\top\mathbf{y}\), a norma euclidiana \(\|\mathbf{x}\|\), a distância \(\|\mathbf{x}-\mathbf{y}\|\) e o ângulo \(\theta\) sendo recalculados ao vivo no plano cartesiano.</p>
-  </div>
-</section>
 
-<!-- ============================== SLIDE 04 ============================== -->
-<section class="slide" id="slide-04" data-member-id="0" data-time="Nivelamento" data-type="aprofundamento"
-         data-ref="Estatística Descritiva Básica">
-  <h2 class="s-title">Revisão relâmpago: média \(\mu\), variância \(\sigma^2\) e a curva normal</h2>
-  <div class="s-body">
-    <div class="c12">
-      <div data-lab="lab-review-stats"></div>
-    </div>
-  </div>
-  <div class="slide-notes" hidden>
-    <h4>Como demonstrar</h4>
-    <p>Arraste os pontos 1-D com os sliders: a média \(\mu\) desloca o centro da curva gaussiana e a variância \(\sigma^2\) controla sua largura e dispersão.</p>
-  </div>
-</section>
 
-<!-- ============================== SLIDE 05 ============================== -->
-<section class="slide" id="slide-05" data-member-id="0" data-time="Nivelamento" data-type="aprofundamento"
-         data-ref="Probabilidade Condicional e Regra da Soma">
-  <h2 class="s-title">Probabilidade conjunta, condicional e a lei da probabilidade total</h2>
-  <div class="s-body">
-    <div class="c6 stack">
-      <div class="eyebrow accent">Regras Fundamentais da Probabilidade</div>
-      <div class="formula">
-        <span class="formula-label">1. Regra do Produto</span>
-        <span class="tex">\[ p(\mathbf{x}, z) = p(z)\, p(\mathbf{x}\mid z) \]</span>
-        <span class="plain">p(x, z) = p(z) · p(x | z)</span>
-      </div>
-      <div class="formula">
-        <span class="formula-label">2. Regra da Soma (Marginalização)</span>
-        <span class="tex">\[ p(\mathbf{x}) = \sum_{z} p(\mathbf{x}, z) = \sum_{z} p(z)\, p(\mathbf{x}\mid z) \]</span>
-        <span class="plain">p(x) = Σ_z p(x, z) = Σ_z p(z) · p(x | z)</span>
-      </div>
-      <div class="note-box intuicao">
-        <span class="tag intuicao">intuição</span>
-        Para descobrir a probabilidade de observar um dado \(\mathbf{x}\), somamos sobre todos os cenários possíveis da causa oculta \(z\).
-      </div>
-    </div>
-    <div class="c6 stack">
-      <div data-lab="lab-bayes-intro"></div>
-    </div>
-  </div>
-  <div class="slide-notes" hidden>
-    <h4>Objetivo</h4>
-    <p>Relembrar a regra do produto e a marginalização, que são a base formal de todos os modelos de mistura.</p>
-  </div>
-</section>
 
-<!-- ============================== SLIDE 06 ============================== -->
-<section class="slide" id="slide-06" data-member-id="0" data-time="Nivelamento" data-type="aprofundamento"
-         data-ref="Teorema de Bayes e Inferência Inversa">
-  <h2 class="s-title">Teorema de Bayes: invertendo causas e efeitos com números</h2>
-  <div class="s-body">
-    <div class="c12">
-      <div data-lab="lab-bayes-numbers"></div>
-    </div>
-  </div>
-  <div class="slide-notes" hidden>
-    <h4>Como demonstrar</h4>
-    <p>Mova a amostra \(x_n\): veja a tabela calcular o Prior \(\pi_k\), a Verossimilhança \(p(x_n|\theta_k)\), o Produto Numerador e a divisão pelo denominador comum, gerando a responsabilidade \(\gamma_{nk}\).</p>
-  </div>
-</section>
 
-<!-- ============================== SLIDE 07 ============================== -->
-<section class="slide" id="slide-07" data-member-id="0" data-time="Nivelamento" data-type="aprofundamento"
-         data-ref="Processo Generativo de Misturas">
-  <h2 class="s-title">A máquina geradora: gerando dados sintéticos a partir de misturas</h2>
-  <div class="s-body">
-    <div class="c12">
-      <div data-lab="lab-generative-machine"></div>
-    </div>
-  </div>
-  <div class="slide-notes" hidden>
-    <h4>Como demonstrar</h4>
-    <p>Clique em "Sortear 1 ponto" ou "Animar": veja o sorteio em duas etapas acumulando amostras e convergindo para a densidade marginal teórica \(p(\mathbf{x})\).</p>
-  </div>
-</section>
 
 <!-- ====================================================================== -->
-<!-- BLOCO 1 — HENRIQUE MATHEUS                                             -->
+<!-- BLOCO 1 — HENRIQUE MATHEUS E LUCAS NOGUEIRA                            -->
 <!-- ====================================================================== -->
 
 <!-- ============================== SLIDE 08 ============================== -->
@@ -997,38 +894,6 @@ body.notes-open #notes-panel { transform: translateX(0); }
   </div>
 </section>
 
-<!-- ============================== SLIDE 09 ============================== -->
-<section class="slide" id="slide-09" data-member-id="1" data-time="02:00" data-type="aprofundamento"
-         data-ref="Murphy, PML (Cap. 21.1–21.3)">
-  <h2 class="s-title">Os três grandes objetivos do Aprendizado Não Supervisionado</h2>
-  <div class="s-body">
-    <div class="c4 stack">
-      <div class="node accent">
-        <div class="n-title">1. Agrupamento (Clustering)</div>
-        Particionar observações em subpopulações homogêneas e disjuntas, onde pontos do mesmo grupo compartilham características similares.
-      </div>
-      <p style="font-size:12.5px;color:var(--fg-muted)">Exemplos: segmentação de clientes, taxonomia de espécies, descoberta de subtipos celulares.</p>
-    </div>
-    <div class="c4 stack">
-      <div class="node" style="border-color:var(--m2)">
-        <div class="n-title" style="color:var(--m2)">2. Estimação de Densidade</div>
-        Modelar a função contínua de probabilidade \(p(\mathbf{x})\) que rege os dados, quantificando regiões de alta e baixa concentração.
-      </div>
-      <p style="font-size:12.5px;color:var(--fg-muted)">Exemplos: detecção de anomalias e fraudes (\(p(\mathbf{x}) < \tau\)), síntese generativa.</p>
-    </div>
-    <div class="c4 stack">
-      <div class="node" style="border-color:var(--m4)">
-        <div class="n-title" style="color:var(--m4)">3. Representações Latentes</div>
-        Descobrir fatores compactos e interpretáveis \(\mathbf{z}\) que resumem a dimensionalidade original sem perda excessiva de sinal.
-      </div>
-      <p style="font-size:12.5px;color:var(--fg-muted)">Exemplos: quantização vetorial, compressão de imagens, modelagem de tópicos.</p>
-    </div>
-  </div>
-  <div class="slide-notes" hidden>
-    <h4>Intuição</h4>
-    <p>Destacar como K-Means foca primariamente em clustering, enquanto Bernoulli e GMM cobrem simultaneamente clustering, densidade e geração.</p>
-  </div>
-</section>
 
 <!-- ============================== SLIDE 10 ============================== -->
 <section class="slide" id="slide-10" data-member-id="1" data-time="02:30" data-type="nucleo"
@@ -1093,67 +958,7 @@ body.notes-open #notes-panel { transform: translateX(0); }
   </div>
 </section>
 
-<!-- ============================== SLIDE 11 ============================== -->
-<section class="slide" id="slide-11" data-member-id="1" data-time="02:00" data-type="aprofundamento"
-         data-ref="Exemplos Práticos de Variáveis Latentes">
-  <h2 class="s-title">Variáveis latentes no mundo real: 4 casos concretos</h2>
-  <div class="s-body">
-    <div class="c6 stack">
-      <div class="node" style="border-left-width:3px;border-left-color:var(--d1)">
-        <div class="n-title" style="color:var(--d1)">1. Visão Computacional (OCR / Dígitos)</div>
-        <p style="font-size:13px;color:var(--fg-muted);margin:4px 0"><b>Observado \(\mathbf{x}\):</b> Grade de 64 ou 784 pixels em preto e branco.<br><b>Latente \(\mathbf{z}\):</b> O dígito pretendido \(\{0, 1, \dots, 9\}\) pelo escritor.</p>
-      </div>
-      <div class="node" style="border-left-width:3px;border-left-color:var(--d2)">
-        <div class="n-title" style="color:var(--d2)">2. Medicina Diagnóstica e Genômica</div>
-        <p style="font-size:13px;color:var(--fg-muted);margin:4px 0"><b>Observado \(\mathbf{x}\):</b> Painel de 50 sintomas e biomarcadores sanguíneos.<br><b>Latente \(\mathbf{z}\):</b> O subtipo da patologia ou mutação causadora.</p>
-      </div>
-    </div>
-    <div class="c6 stack">
-      <div class="node" style="border-left-width:3px;border-left-color:var(--d3)">
-        <div class="n-title" style="color:var(--d3)">3. Processamento de Texto (NLP)</div>
-        <p style="font-size:13px;color:var(--fg-muted);margin:4px 0"><b>Observado \(\mathbf{x}\):</b> Vetor binário de contagem de palavras do artigo.<br><b>Latente \(\mathbf{z}\):</b> O tema editorial latente (Esportes, Economia, Tecnologia).</p>
-      </div>
-      <div class="node" style="border-left-width:3px;border-left-color:var(--d4)">
-        <div class="n-title" style="color:var(--d4)">4. Finanças e Detecção de Fraude</div>
-        <p style="font-size:13px;color:var(--fg-muted);margin:4px 0"><b>Observado \(\mathbf{x}\):</b> Valor, horário, geolocalização e velocidade da compra.<br><b>Latente \(\mathbf{z}\):</b> Regime de transação (legítima vs fraudulenta).</p>
-      </div>
-    </div>
-  </div>
-  <div class="slide-notes" hidden>
-    <h4>Intuição</h4>
-    <p>Mostrar que variáveis latentes não são abstrações teóricas: em quase todo problema real de ML, o sinal que capturamos é o reflexo indireto de uma causa oculta.</p>
-  </div>
-</section>
 
-<!-- ============================== SLIDE 12 ============================== -->
-<section class="slide" id="slide-12" data-member-id="1" data-time="02:00" data-type="aprofundamento"
-         data-ref="Modelos Gráficos Probabilísticos (PGM) · Bishop (Cap. 8)">
-  <h2 class="s-title">O Modelo Gráfico Probabilístico e as independências condicionais</h2>
-  <div class="s-body">
-    <div class="c6 stack">
-      <div class="eyebrow accent">Propriedades Estruturais do Grafo</div>
-      <ul class="points sm">
-        <li><strong>Fatoração da Conjunta:</strong> A topologia do grafo define a fatoração exata:
-          <div class="formula sm" style="margin:6px 0">
-            <span class="tex">\[ p(X, Z \mid \boldsymbol\pi, \boldsymbol\theta) = \prod_{n=1}^{N} p(\mathbf{z}_n \mid \boldsymbol\pi)\, p(\mathbf{x}_n \mid \mathbf{z}_n, \boldsymbol\theta) \]</span>
-          </div>
-        </li>
-        <li><strong>Independência Amostral (i.i.d.):</strong> Dado o modelo, os pares \((\mathbf{x}_n, \mathbf{z}_n)\) são independentes e identicamente distribuídos entre si.</li>
-        <li><strong>Acoplamento Observado:</strong> Ao marginalizar \(\mathbf{z}\), as observações \(\mathbf{x}_n\) tornam-se marginalmente acopladas pelos parâmetros globais compartilhados \(\boldsymbol\pi, \boldsymbol\theta\).</li>
-      </ul>
-    </div>
-    <div class="c6 stack">
-      <div class="note-box" style="border-left-color:var(--accent)">
-        <span class="tag intuicao">por que a placa importa?</span>
-        A caixa retangular com o índice \(N\) no canto inferior direito representa \(N\) cópias independentes dos nós internos \(\mathbf{z}_n\) e \(\mathbf{x}_n\). Os nós fora da placa (\(\boldsymbol\pi, \boldsymbol\theta\)) são parâmetros globais compartilhados por todas as amostras.
-      </div>
-    </div>
-  </div>
-  <div class="slide-notes" hidden>
-    <h4>D-separação</h4>
-    <p>Se condicionarmos em \(\mathbf{z}_n\), \(\mathbf{x}_n\) torna-se condicionalmente independente dos parâmetros de outros componentes.</p>
-  </div>
-</section>
 
 <!-- ============================== SLIDE 13 ============================== -->
 <section class="slide" id="slide-13" data-member-id="1" data-time="02:00" data-type="nucleo"
@@ -1202,20 +1007,6 @@ body.notes-open #notes-panel { transform: translateX(0); }
   </div>
 </section>
 
-<!-- ============================== SLIDE 14 ============================== -->
-<section class="slide" id="slide-14" data-member-id="1" data-time="01:30" data-type="aprofundamento"
-         data-ref="Notação de Vetores Categóricos 1-de-K">
-  <h2 class="s-title">Laboratório: a mecânica 1-de-\(K\) e o colapso do produto</h2>
-  <div class="s-body">
-    <div class="c12">
-      <div data-lab="lab-one-hot"></div>
-    </div>
-  </div>
-  <div class="slide-notes" hidden>
-    <h4>Como demonstrar</h4>
-    <p>Clique nos botões de componente para ver o vetor \(\mathbf{z}\) mudar e a equação algébrica colapsar imediatamente no peso \(\pi_k\) correspondente.</p>
-  </div>
-</section>
 
 <!-- ============================== SLIDE 15 ============================== -->
 <section class="slide" id="slide-15" data-member-id="1" data-time="02:30" data-type="nucleo"
@@ -1255,37 +1046,6 @@ body.notes-open #notes-panel { transform: translateX(0); }
   </div>
 </section>
 
-<!-- ============================== SLIDE 16 ============================== -->
-<section class="slide" id="slide-16" data-member-id="1" data-time="02:00" data-type="aprofundamento"
-         data-ref="Família Exponencial e Modelos de Mistura">
-  <h2 class="s-title">A árvore genealógica completa dos Modelos de Mistura</h2>
-  <div class="s-body">
-    <div class="c12">
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
-        <div class="node" style="border-top-color:var(--m2);border-top-width:3px">
-          <div class="n-title" style="color:var(--m2)">K-Means</div>
-          <p style="font-size:12px;color:var(--fg-muted)"><b>Domínio:</b> \(\mathbb{R}^D\)<br><b>Condicional:</b> Dirac / Limite Gaussiano com \(\boldsymbol\Sigma \to \epsilon\mathbf{I}\)<br><b>Atribuição:</b> Rígida \(r_{nk} \in \{0,1\}\)<br><b>Custo:</b> Distorção \(J\)</p>
-        </div>
-        <div class="node" style="border-top-color:var(--m3);border-top-width:3px">
-          <div class="n-title" style="color:var(--m3)">Mistura de Bernoulli</div>
-          <p style="font-size:12px;color:var(--fg-muted)"><b>Domínio:</b> \(\{0,1\}^D\)<br><b>Condicional:</b> \(\prod \mu_{kd}^{x_d}(1-\mu_{kd})^{1-x_d}\)<br><b>Atribuição:</b> Suave \(\gamma_{nk} \in [0,1]\)<br><b>Custo:</b> \(\ln p(X)\)</p>
-        </div>
-        <div class="node" style="border-top-color:var(--m4);border-top-width:3px">
-          <div class="n-title" style="color:var(--m4)">Mistura Gaussiana (GMM)</div>
-          <p style="font-size:12px;color:var(--fg-muted)"><b>Domínio:</b> \(\mathbb{R}^D\)<br><b>Condicional:</b> \(\mathcal{N}(\mathbf{x}\mid\boldsymbol\mu_k, \boldsymbol\Sigma_k)\)<br><b>Atribuição:</b> Suave \(\gamma_{nk} \in [0,1]\)<br><b>Custo:</b> \(\ln p(X)\)</p>
-        </div>
-        <div class="node" style="border-top-color:var(--accent);border-top-width:3px">
-          <div class="n-title" style="color:var(--accent)">Outras Misturas (Família Exp.)</div>
-          <p style="font-size:12px;color:var(--fg-muted)"><b>Domínio:</b> \(\mathbb{N}^D\) ou \(\mathbb{R}^+\)<br><b>Condicional:</b> Poisson (contagem), Exponencial (tempos)<br><b>Atribuição:</b> Suave \(\gamma_{nk} \in [0,1]\)<br><b>Custo:</b> \(\ln p(X)\)</p>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="slide-notes" hidden>
-    <h4>Visão geral</h4>
-    <p>Mostrar que qualquer distribuição da família exponencial pode servir como componente gerador condicional dentro do mesmo arcabouço EM.</p>
-  </div>
-</section>
 
 <!-- ============================== SLIDE 17 ============================== -->
 <section class="slide" id="slide-17" data-member-id="1" data-time="02:30" data-type="nucleo"
@@ -1326,169 +1086,16 @@ body.notes-open #notes-panel { transform: translateX(0); }
   </div>
 </section>
 
-<!-- ============================== SLIDE 18 ============================== -->
-<section class="slide" id="slide-18" data-member-id="1" data-time="02:00" data-type="aprofundamento"
-         data-ref="Cálculo Tabular de Responsabilidades">
-  <h2 class="s-title">Laboratório: cálculo de \(\gamma_{nk}\) passo a passo na mão</h2>
-  <div class="s-body">
-    <div class="c12">
-      <div data-lab="lab-bayes-numbers"></div>
-    </div>
-  </div>
-  <div class="slide-notes" hidden>
-    <h4>Como demonstrar</h4>
-    <p>Desloque o slider da amostra \(x_n\): observe como a tabela calcula Prior, Verossimilhança Gaussiana, Produto Numerador e a divisão final pelo denominador comum, garantindo soma 1.</p>
-  </div>
-</section>
 
-<!-- ============================== SLIDE 19 ============================== -->
-<section class="slide" id="slide-19" data-member-id="1" data-time="02:00" data-type="aprofundamento"
-         data-ref="Implementação em Python puro (NumPy)">
-  <h2 class="s-title">Código Python: calculando responsabilidades \(\gamma_{nk}\) do zero</h2>
-  <div class="s-body">
-    <div class="c12">
-      <div class="codeblock" style="max-height:460px;overflow-y:auto">
-<pre><span class="kw">import</span> numpy <span class="kw">as</span> np
 
-<span class="kw">def</span> <span class="fn">compute_responsibilities</span>(X, pis, mus, sigmas):
-    <span class="st">"""
-    Calcula as responsabilidades gamma_nk pelo Teorema de Bayes puro em NumPy.
-    X: matriz (N, D) | pis: vetor (K,) | mus: (K, D) | sigmas: (K, D, D)
-    Retorna: gamma de formato (N, K), onde cada linha soma 1.0
-    """</span>
-    N, D = X.shape
-    K = len(pis)
-    likelihoods = np.zeros((N, K))
-    
-    <span class="cm"># 1. Avalia a verossimilhança gaussiana condicional p(x_n | theta_k) para cada componente</span>
-    <span class="kw">for</span> k <span class="kw">in</span> range(K):
-        diff = X - mus[k]  <span class="cm"># (N, D)</span>
-        inv_sigma = np.linalg.inv(sigmas[k])
-        det_sigma = np.linalg.det(sigmas[k])
-        
-        <span class="cm"># Distância quadrática de Mahalanobis: diag(diff @ inv_sigma @ diff.T)</span>
-        dist_sq = np.sum(diff @ inv_sigma * diff, axis=<span class="nu">1</span>)
-        norm_const = <span class="nu">1.0</span> / np.sqrt(((<span class="nu">2</span> * np.pi) ** D) * det_sigma)
-        likelihoods[:, k] = norm_const * np.exp(-<span class="nu">0.5</span> * dist_sq)
-    
-    <span class="cm"># 2. Multiplica pelo prior: numerador = pi_k * p(x_n | theta_k)</span>
-    weighted = likelihoods * pis  <span class="cm"># broadcasting (N, K)</span>
-    
-    <span class="cm"># 3. Normaliza pela evidência marginal p(x_n): soma sobre todos os K componentes</span>
-    evidence = np.sum(weighted, axis=<span class="nu">1</span>, keepdims=<span class="kw">True</span>)
-    gamma = weighted / evidence  <span class="cm"># garante que sum_k gamma_nk = 1.0 para todo n</span>
-    
-    <span class="kw">return</span> gamma
-</pre>
-      </div>
-    </div>
-  </div>
-  <div class="slide-notes" hidden>
-    <h4>Código Didático</h4>
-    <p>Explique cada uma das 3 etapas do código: avaliação da densidade gaussiana multivariada, ponderação pelo prior \(\pi_k\) e divisão pela evidência para fechar a probabilidade posterior em 1.0.</p>
-  </div>
-</section>
 
-<!-- ============================== SLIDE 20 ============================== -->
-<section class="slide" id="slide-20" data-member-id="1" data-time="02:00" data-type="aprofundamento"
-         data-ref="Atribuição Suave vs Rígida">
-  <h2 class="s-title">Soft vs Hard Assignment: incerteza probabilística vs decisão binária</h2>
-  <div class="s-body">
-    <div class="c6 stack">
-      <div class="node accent">
-        <div class="n-title">Atribuição Suave (Soft Assignment)</div>
-        <p style="font-size:13px;line-height:1.45;color:var(--fg-muted);margin:4px 0">
-          Cada ponto distribui seu pertencimento entre todos os clusters através de um vetor de probabilidades \(\boldsymbol\gamma_n = (\gamma_{n1}, \ldots, \gamma_{nK})\), com \(\gamma_{nk} \in [0,1]\) e \(\sum \gamma_{nk} = 1\).
-        </p>
-        <ul class="points sm" style="margin-top:6px">
-          <li>Preserva a incerteza real em regiões de sobreposição.</li>
-          <li>Gradientes contínuos e suaves para otimização.</li>
-        </ul>
-      </div>
-    </div>
-    <div class="c6 stack">
-      <div class="node" style="border-color:var(--m2)">
-        <div class="n-title" style="color:var(--m2)">Atribuição Rígida (Hard Assignment)</div>
-        <p style="font-size:13px;line-height:1.45;color:var(--fg-muted);margin:4px 0">
-          Cada ponto pertence estritamente a um único cluster: \(r_{nk} \in \{0,1\}\), com \(r_{nk} = 1\) para o vencedor e \(0\) para os demais.
-        </p>
-        <ul class="points sm" style="margin-top:6px">
-          <li>Descarte total da incerteza na fronteira de decisão.</li>
-          <li>Decisões binárias abruptas (Voronoi).</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-  <div class="slide-notes" hidden>
-    <h4>Contraste</h4>
-    <p>A atribuição rígida é o caso limite da atribuição suave quando a variância vai a zero ou quando aplicamos \(\arg\max\).</p>
-  </div>
-</section>
-
-<!-- ============================== SLIDE 21 ============================== -->
-<section class="slide" id="slide-21" data-member-id="1" data-time="01:30" data-type="nucleo"
-         data-ref="Bishop, PRML (Cap. 15.2)">
-  <h2 class="s-title">Síntese do Bloco 1 — e a pergunta que abre o K-Means</h2>
-  <div class="s-body">
-    <div class="c7 stack">
-      <div class="eyebrow accent">Conquistas teóricas do bloco</div>
-      <ul class="points sm">
-        <li>O aprendizado não supervisionado busca <strong>densidades e regularidades latentes</strong>.</li>
-        <li>A latente <strong>1-de-\(K\)</strong> expressa a incerteza de pertencimento em notação tratável.</li>
-        <li>O Teorema de Bayes converte prior × verossimilhança em <strong>responsabilidades \(\gamma_{nk}\)</strong>.</li>
-      </ul>
-      <div class="formula sm">
-        <span class="tex">\[ p(\mathbf{x}) = \sum_{k=1}^{K} \pi_k\, p(\mathbf{x}\mid\boldsymbol\theta_k) \qquad\text{e}\qquad \gamma_{nk} = \frac{\pi_k\, p(\mathbf{x}_n\mid\boldsymbol\theta_k)}{\sum_j \pi_j\, p(\mathbf{x}_n\mid\boldsymbol\theta_j)} \]</span>
-        <span class="plain">p(x) = Σ_k π_k p(x | θ_k)    γ_nk = π_k p(x_n|θ_k) / Σ_j π_j p(x_n|θ_j)</span>
-      </div>
-    </div>
-    <div class="c5 stack center">
-      <div class="node accent">
-        <div class="n-title">Pergunta motivadora</div>
-        E se eliminarmos as probabilidades e resolvermos o agrupamento de forma <b>puramente geométrica e determinística</b> no espaço euclidiano?
-      </div>
-      <div class="arrow-down" aria-hidden="true">↓</div>
-      <div class="node" style="border-color:var(--m2)">
-        <div class="n-title" style="color:var(--m2)">A seguir · Bloco 2</div>
-        <b style="font-size:15px">Lucas Nogueira</b><br>
-        <span style="font-family:var(--mono);font-size:11.5px;color:var(--fg-dim)">K-Means Clustering — Lloyd, escolha de \(K\) e limitações</span>
-      </div>
-    </div>
-    <div class="c12">
-      <div class="quick-check">
-        <div class="quick-check-title">⚡ Checagem rápida de fixação</div>
-        <div class="qc-grid">
-          <div class="qc-card">
-            <div class="qc-q">1. O que acontece com a soma \(\sum_k \gamma_{nk}\) para qualquer amostra?</div>
-            <button type="button" class="qc-btn">Ver resposta</button>
-            <div class="qc-ans">Vale estritamente 1.0, pois o denominador normaliza a soma das probabilidades a posteriori.</div>
-          </div>
-          <div class="qc-card">
-            <div class="qc-q">2. Qual a diferença fundamental entre \(\mathbf{x}\) e \(\mathbf{z}\)?</div>
-            <button type="button" class="qc-btn">Ver resposta</button>
-            <div class="qc-ans">\(\mathbf{x}\) é mensurado diretamente (observado); \(\mathbf{z}\) é a causa oculta que inferimos por Bayes.</div>
-          </div>
-          <div class="qc-card">
-            <div class="qc-q">3. Por que usar a codificação 1-de-K?</div>
-            <button type="button" class="qc-btn">Ver resposta</button>
-            <div class="qc-ans">Porque permite escrever \(p(\mathbf{z}) = \prod \pi_k^{z_k}\), facilitando derivações analíticas.</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="slide-notes" hidden>
-    <h4>Passagem de bastão [13:00 – 15:00]</h4>
-    <p class="fala">"Para apresentar o K-Means Clustering, passo a palavra ao meu colega Lucas Nogueira. Muito obrigado!"</p>
-  </div>
-</section>
 
 <!-- ====================================================================== -->
-<!-- BLOCO 2 — LUCAS NOGUEIRA                                               -->
+<!-- BLOCO 1 (cont.) — K-MEANS · LUCAS NOGUEIRA                             -->
 <!-- ====================================================================== -->
 
 <!-- ============================== SLIDE 22 ============================== -->
-<section class="slide" id="slide-22" data-member-id="2" data-time="02:00" data-type="nucleo"
+<section class="slide" id="slide-22" data-member-id="1" data-time="02:00" data-type="nucleo"
          data-ref="Bishop, PRML (Cap. 15.2) · Murphy, PML (Cap. 21.3) · scikit-learn (2.3.2)">
   <h2 class="s-title">K-Means: retalhar o espaço em \(K\) células de Voronoi</h2>
   <div class="s-body">
@@ -1519,7 +1126,7 @@ body.notes-open #notes-panel { transform: translateX(0); }
 </section>
 
 <!-- ============================== SLIDE 23 ============================== -->
-<section class="slide" id="slide-23" data-member-id="2" data-time="02:30" data-type="nucleo"
+<section class="slide" id="slide-23" data-member-id="1" data-time="02:30" data-type="nucleo"
          data-ref="Bishop, PRML (Cap. 15.2, Eq. 15.1) · scikit-learn (2.3.2)">
   <h2 class="s-title">A função de distorção \(J\): o que exatamente está sendo minimizado</h2>
   <div class="s-body">
@@ -1552,23 +1159,9 @@ body.notes-open #notes-panel { transform: translateX(0); }
   </div>
 </section>
 
-<!-- ============================== SLIDE 24 ============================== -->
-<section class="slide" id="slide-24" data-member-id="2" data-time="02:00" data-type="aprofundamento"
-         data-ref="Cálculo Numérico de Inércia">
-  <h2 class="s-title">Laboratório: calculando a distorção \(J\) ponto a ponto na mão</h2>
-  <div class="s-body">
-    <div class="c12">
-      <div data-lab="lab-j-by-hand"></div>
-    </div>
-  </div>
-  <div class="slide-notes" hidden>
-    <h4>Como demonstrar</h4>
-    <p>Arraste os centróides \(\mu_1\) e \(\mu_2\): veja cada linha da tabela recalculando a distância e o quadrado, e como a inércia atinge o mínimo estrito quando os centróides coincidem com as médias dos dados.</p>
-  </div>
-</section>
 
 <!-- ============================== SLIDE 25 ============================== -->
-<section class="slide" id="slide-25" data-member-id="2" data-time="02:30" data-type="nucleo"
+<section class="slide" id="slide-25" data-member-id="1" data-time="02:30" data-type="nucleo"
          data-ref="Bishop, PRML (Cap. 15.2) · Murphy, PML (Cap. 21.3)">
   <h2 class="s-title">Algoritmo de Lloyd: descida alternada em duas coordenadas</h2>
   <div class="s-body">
@@ -1606,84 +1199,11 @@ body.notes-open #notes-panel { transform: translateX(0); }
   </div>
 </section>
 
-<!-- ============================== SLIDE 26 ============================== -->
-<section class="slide" id="slide-26" data-member-id="2" data-time="02:00" data-type="aprofundamento"
-         data-ref="Dedução Analítica da Derivada de J">
-  <h2 class="s-title">A prova matemática: por que a média minimiza a soma dos quadrados?</h2>
-  <div class="s-body">
-    <div class="c12">
-      <div class="micro-steps">
-        <div class="micro-step">
-          <span class="step-num">1</span>
-          <div class="step-content">
-            <b>1. Expressão da Inércia para um cluster isolado \(k\):</b><br>
-            Fixando as atribuições \(r_{nk}\), o custo depende apenas de \(\boldsymbol\mu_k\):
-            \( J_k = \sum_{n \in \mathcal{C}_k} \|\mathbf{x}_n - \boldsymbol\mu_k\|^2 = \sum_{n \in \mathcal{C}_k} (\mathbf{x}_n - \boldsymbol\mu_k)^\top (\mathbf{x}_n - \boldsymbol\mu_k) \).
-          </div>
-        </div>
-        <div class="micro-step">
-          <span class="step-num">2</span>
-          <div class="step-content">
-            <b>2. Expansão dos termos quadráticos:</b><br>
-            \( J_k = \sum_{n \in \mathcal{C}_k} \left( \mathbf{x}_n^\top \mathbf{x}_n - 2\boldsymbol\mu_k^\top \mathbf{x}_n + \boldsymbol\mu_k^\top \boldsymbol\mu_k \right) \).
-          </div>
-        </div>
-        <div class="micro-step">
-          <span class="step-num">3</span>
-          <div class="step-content">
-            <b>3. Derivada em relação ao vetor \(\boldsymbol\mu_k\) e igualação a zero:</b><br>
-            \( \frac{\partial J_k}{\partial \boldsymbol\mu_k} = \sum_{n \in \mathcal{C}_k} \left( -2\mathbf{x}_n + 2\boldsymbol\mu_k \right) = -2\sum_{n \in \mathcal{C}_k} \mathbf{x}_n + 2 N_k \boldsymbol\mu_k = \mathbf{0} \).
-          </div>
-        </div>
-        <div class="micro-step">
-          <span class="step-num">4</span>
-          <div class="step-content">
-            <b>4. Conclusão:</b><br>
-            Isolando \(\boldsymbol\mu_k\), obtemos estritamente a média aritmética:
-            \( 2 N_k \boldsymbol\mu_k = 2\sum_{n \in \mathcal{C}_k} \mathbf{x}_n \implies \boldsymbol\mu_k = \frac{1}{N_k}\sum_{n \in \mathcal{C}_k} \mathbf{x}_n \).
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="slide-notes" hidden>
-    <h4>Dedução passo a passo</h4>
-    <p>Pressione Espaço para avançar cada passo da prova analítica. Mostre como a derivada do termo quadrático gera uma equação linear cuja solução exata é o baricentro.</p>
-  </div>
-</section>
 
-<!-- ============================== SLIDE 27 ============================== -->
-<section class="slide" id="slide-27" data-member-id="2" data-time="02:00" data-type="aprofundamento"
-         data-ref="Otimização Quadrática e Propriedades da Média">
-  <h2 class="s-title">Laboratório: por que a média? A parábola de \(J(\mu)\) e a derivada zero</h2>
-  <div class="s-body">
-    <div class="c12">
-      <div data-lab="lab-parabola-mean"></div>
-    </div>
-  </div>
-  <div class="slide-notes" hidden>
-    <h4>Como demonstrar</h4>
-    <p>Mova o controle do centróide \(\mu\): veja que o valor mínimo da parábola \(J(\mu)\) ocorre exatamente no vértice \(\mu = \bar{x} = 5.0\), onde a reta tangente tem inclinação zero.</p>
-  </div>
-</section>
 
-<!-- ============================== SLIDE 28 ============================== -->
-<section class="slide" id="slide-28" data-member-id="2" data-time="02:00" data-type="aprofundamento"
-         data-ref="Dinâmica do Algoritmo de Lloyd">
-  <h2 class="s-title">Laboratório: Lloyd meio-passo a meio-passo (*Atribuir* vs *Atualizar*)</h2>
-  <div class="s-body">
-    <div class="c12">
-      <div data-lab="lab-lloyd-half"></div>
-    </div>
-  </div>
-  <div class="slide-notes" hidden>
-    <h4>Como demonstrar</h4>
-    <p>Clique nos botões "1. Atribuir" e "2. Atualizar" separadamente. Veja as linhas mudando de cor na atribuição e os centros deslizando para a média na atualização, com \(J\) caindo a cada clique.</p>
-  </div>
-</section>
 
 <!-- ============================== SLIDE 29 ============================== -->
-<section class="slide" id="slide-29" data-member-id="2" data-time="02:30" data-type="nucleo"
+<section class="slide" id="slide-29" data-member-id="1" data-time="02:30" data-type="nucleo"
          data-ref="Murphy, PML (Cap. 21.3) · Bishop, PRML (Cap. 15.2)">
   <h2 class="s-title">Lloyd em execução: quatro iterações e a queda monótona de \(J\)</h2>
   <div class="s-body">
@@ -1702,7 +1222,7 @@ body.notes-open #notes-panel { transform: translateX(0); }
 </section>
 
 <!-- ============================== SLIDE 30 ============================== -->
-<section class="slide" id="slide-30" data-member-id="2" data-time="02:00" data-type="nucleo"
+<section class="slide" id="slide-30" data-member-id="1" data-time="02:00" data-type="nucleo"
          data-ref="scikit-learn (2.3.2) · Rousseeuw (1987), silhueta">
   <h2 class="s-title">Escolher \(K\): o cotovelo da inércia e o pico da silhueta</h2>
   <div class="s-body">
@@ -1735,57 +1255,10 @@ body.notes-open #notes-panel { transform: translateX(0); }
   </div>
 </section>
 
-<!-- ============================== SLIDE 31 ============================== -->
-<section class="slide" id="slide-31" data-member-id="2" data-time="02:00" data-type="aprofundamento"
-         data-ref="Rousseeuw (1987) · Análise Geométrica da Silhueta">
-  <h2 class="s-title">A matemática da Silhueta: coesão \(a(i)\), separação \(b(i)\) e interpretação</h2>
-  <div class="s-body">
-    <div class="c6 stack">
-      <div class="formula sm">
-        <span class="formula-label">1. Coesão Intra-cluster \(a(i)\)</span>
-        <span class="tex">\[ a(i) = \frac{1}{|\mathcal{C}_I| - 1} \sum_{j \in \mathcal{C}_I, j \neq i} \|\mathbf{x}_i - \mathbf{x}_j\| \]</span>
-        <span class="plain">Distância média do ponto i a todos os outros pontos do seu próprio cluster.</span>
-      </div>
-      <div class="formula sm">
-        <span class="formula-label">2. Separação Inter-cluster \(b(i)\)</span>
-        <span class="tex">\[ b(i) = \min_{J \neq I} \frac{1}{|\mathcal{C}_J|} \sum_{j \in \mathcal{C}_J} \|\mathbf{x}_i - \mathbf{x}_j\| \]</span>
-        <span class="plain">Distância média do ponto i aos pontos do cluster vizinho mais próximo.</span>
-      </div>
-    </div>
-    <div class="c6 stack">
-      <div class="node accent">
-        <div class="n-title">Interpretação do Escalar \(s(i) \in [-1, +1]\)</div>
-        <ul class="points sm" style="margin-top:6px">
-          <li><b>\(s(i) \approx +1\):</b> Ponto fortemente agregado ao seu grupo e bem longe dos vizinhos (\(a \ll b\)).</li>
-          <li><b>\(s(i) \approx 0\):</b> Ponto exatamente na fronteira entre dois clusters (\(a \approx b\)).</li>
-          <li><b>\(s(i) < 0\):</b> Ponto mal atribuído; está mais perto do grupo vizinho do que do seu próprio (\(a > b\)).</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-  <div class="slide-notes" hidden>
-    <h4>Intuição</h4>
-    <p>Diferente da inércia \(J\) (que sempre decresce com \(K\)), a silhueta penaliza tanto clusters divididos em excesso quanto clusters misturados.</p>
-  </div>
-</section>
 
-<!-- ============================== SLIDE 32 ============================== -->
-<section class="slide" id="slide-32" data-member-id="2" data-time="02:00" data-type="aprofundamento"
-         data-ref="Diagnóstico Interativo de Número de Clusters">
-  <h2 class="s-title">Laboratório: ajustando \(K\) de 1 a 8 com inércia e silhueta ao vivo</h2>
-  <div class="s-body">
-    <div class="c12">
-      <div data-lab="lab-k-explorer"></div>
-    </div>
-  </div>
-  <div class="slide-notes" hidden>
-    <h4>Como demonstrar</h4>
-    <p>Deslize o controle de \(K\) de 1 a 8: veja a partição do espaço se dividindo e como a silhueta média atinge o máximo estrito exatamente no número correto de grupos (\(K=4\)).</p>
-  </div>
-</section>
 
 <!-- ============================== SLIDE 33 ============================== -->
-<section class="slide" id="slide-33" data-member-id="2" data-time="02:00" data-type="nucleo"
+<section class="slide" id="slide-33" data-member-id="1" data-time="02:00" data-type="nucleo"
          data-ref="Arthur &amp; Vassilvitskii (2007) · scikit-learn (2.3.2)">
   <h2 class="s-title">Inicialização e escala: dois modos silenciosos de estragar o resultado</h2>
   <div class="s-body">
@@ -1818,150 +1291,13 @@ body.notes-open #notes-panel { transform: translateX(0); }
   </div>
 </section>
 
-<!-- ============================== SLIDE 34 ============================== -->
-<section class="slide" id="slide-34" data-member-id="2" data-time="02:00" data-type="aprofundamento"
-         data-ref="Arthur &amp; Vassilvitskii (2007) — Análise Teórica do k-means++">
-  <h2 class="s-title">A matemática do k-means++: por que a probabilidade \(\propto D(\mathbf{x})^2\)?</h2>
-  <div class="s-body">
-    <div class="c6 stack">
-      <div class="eyebrow accent">O Algoritmo de Semeadura em 3 Passos</div>
-      <ul class="points sm">
-        <li><b>Passo 1:</b> Escolha o primeiro centróide \(\boldsymbol\mu_1\) uniformemente ao acaso entre os \(N\) pontos.</li>
-        <li><b>Passo 2:</b> Para cada ponto \(\mathbf{x}_n\), calcule a menor distância euclidiana ao centróide já escolhido mais próximo: \(D(\mathbf{x}_n) = \min_{j} \|\mathbf{x}_n - \boldsymbol\mu_j\|\).</li>
-        <li><b>Passo 3:</b> Escolha o próximo centróide \(\boldsymbol\mu_k\) sorteando uma amostra com probabilidade \(p(\mathbf{x}_n) = \frac{D(\mathbf{x}_n)^2}{\sum_i D(\mathbf{x}_i)^2}\). Repita até ter \(K\) centros.</li>
-      </ul>
-    </div>
-    <div class="c6 stack">
-      <div class="node accent">
-        <div class="n-title">Teorema de Cota Competitiva</div>
-        Se \(J_{\mathrm{opt}}\) é a inércia do mínimo global impossível de calcular, a semeadura k-means++ garante em valor esperado:
-        <div class="formula sm" style="margin:8px 0">
-          <span class="tex">\[ \mathbb{E}[J] \le 8(\ln K + 2)\, J_{\mathrm{opt}} \]</span>
-        </div>
-        <p style="font-size:12px;color:var(--fg-muted)">Garante matematicamente que o algoritmo não começará em armadilhas de mínimos locais catastróficos.</p>
-      </div>
-    </div>
-  </div>
-  <div class="slide-notes" hidden>
-    <h4>Intuição</h4>
-    <p>A probabilidade quadrática \(D^2\) penaliza drasticamente escolher dois centros que estejam próximos no mesmo cluster, forçando os centros a explorarem clusters distintos.</p>
-  </div>
-</section>
 
-<!-- ============================== SLIDE 35 ============================== -->
-<section class="slide" id="slide-35" data-member-id="2" data-time="02:00" data-type="aprofundamento"
-         data-ref="Semeadura Probabilística k-means++">
-  <h2 class="s-title">Laboratório: a roleta do k-means++ semeando centros com probabilidade \(\propto D^2\)</h2>
-  <div class="s-body">
-    <div class="c12">
-      <div data-lab="lab-kmeans-plusplus"></div>
-    </div>
-  </div>
-  <div class="slide-notes" hidden>
-    <h4>Como demonstrar</h4>
-    <p>Clique em "Sortear Próximo Centróide" passo a passo. Observe como as regiões iluminadas (mais distantes dos centros já existentes) têm chance quase exclusiva de serem sorteadas.</p>
-  </div>
-</section>
 
-<!-- ============================== SLIDE 36 ============================== -->
-<section class="slide" id="slide-36" data-member-id="2" data-time="02:00" data-type="aprofundamento"
-         data-ref="Pré-processamento e Escalas de Atributos">
-  <h2 class="s-title">O perigo da escala: por que padronizar atributos é obrigatório</h2>
-  <div class="s-body">
-    <div class="c6 stack">
-      <div class="formula sm">
-        <span class="formula-label">Distância Euclidiana Multidimensional</span>
-        <span class="tex">\[ \|\mathbf{x}_a - \mathbf{x}_b\|^2 = (x_{a,1} - x_{b,1})^2 + (x_{a,2} - x_{b,2})^2 \]</span>
-      </div>
-      <div class="note-box" style="border-color:var(--m3)">
-        <span class="tag aviso">o perigo das grandezas</span>
-        Se a variável 1 for <b>Salário Anual em Reais</b> (variação de \(50.000\)) e a variável 2 for <b>Idade em Anos</b> (variação de \(40\)), o termo do salário será \((50.000)^2 = 2.5 \times 10^9\), esmagando completamente a idade!
-      </div>
-    </div>
-    <div class="c6 stack">
-      <div class="node accent">
-        <div class="n-title">A Solução: Z-Score (`StandardScaler`)</div>
-        Transforma cada dimensão para ter média zero e variância unitária:
-        <div class="formula sm" style="margin:8px 0">
-          <span class="tex">\[ z_{nd} = \frac{x_{nd} - \bar{x}_d}{s_d} \]</span>
-        </div>
-        <p style="font-size:12px;color:var(--fg-muted)">Garante que todas as variáveis tenham o mesmo peso geométrico no cálculo das distâncias euclidianas.</p>
-      </div>
-    </div>
-  </div>
-  <div class="slide-notes" hidden>
-    <h4>Advertência</h4>
-    <p>O K-Means é isotropicamente cego a unidades de medida: aplicar o algoritmo em dados não escalados produz agrupamentos que refletem apenas a escolha das unidades e não o padrão real.</p>
-  </div>
-</section>
 
-<!-- ============================== SLIDE 37 ============================== -->
-<section class="slide" id="slide-37" data-member-id="2" data-time="02:00" data-type="aprofundamento"
-         data-ref="Implementação Completa do Algoritmo de Lloyd em Python">
-  <h2 class="s-title">Código Python: K-Means do zero em 25 linhas de NumPy</h2>
-  <div class="s-body">
-    <div class="c12">
-      <div class="codeblock" style="max-height:460px;overflow-y:auto">
-<pre><span class="kw">import</span> numpy <span class="kw">as</span> np
 
-<span class="kw">class</span> <span class="fn">KMeansScratch</span>:
-    <span class="kw">def</span> <span class="fn">__init__</span>(self, n_clusters=<span class="nu">3</span>, max_iter=<span class="nu">100</span>, tol=<span class="nu">1e-4</span>):
-        self.K = n_clusters
-        self.max_iter = max_iter
-        self.tol = tol
-
-    <span class="kw">def</span> <span class="fn">fit</span>(self, X):
-        N, D = X.shape
-        <span class="cm"># 1. Inicialização aleatória dos centróides</span>
-        rng = np.random.default_rng(<span class="nu">42</span>)
-        self.centroids = X[rng.choice(N, self.K, replace=<span class="kw">False</span>)]
-        
-        <span class="kw">for</span> it <span class="kw">in</span> range(self.max_iter):
-            <span class="cm"># PASSO 1 (Atribuição): calcula distâncias de todos os pontos aos K centróides</span>
-            <span class="cm"># diff tem formato (N, K, D) via broadcasting</span>
-            diff = X[:, np.newaxis, :] - self.centroids[np.newaxis, :, :]
-            dist_sq = np.sum(diff ** <span class="nu">2</span>, axis=<span class="nu">2</span>)  <span class="cm"># (N, K)</span>
-            self.labels = np.argmin(dist_sq, axis=<span class="nu">1</span>)  <span class="cm"># r_nk rígido</span>
-            
-            <span class="cm"># PASSO 2 (Atualização): recalcula cada centróide como a média aritmética</span>
-            new_centroids = np.array([
-                X[self.labels == k].mean(axis=<span class="nu">0</span>) <span class="kw">if</span> np.any(self.labels == k) <span class="kw">else</span> self.centroids[k]
-                <span class="kw">for</span> k <span class="kw">in</span> range(self.K)
-            ])
-            
-            <span class="cm"># Critério de convergência: se os centróides não se moverem além de tol</span>
-            shift = np.linalg.norm(new_centroids - self.centroids)
-            self.centroids = new_centroids
-            <span class="kw">if</span> shift < self.tol:
-                <span class="kw">break</span>
-        <span class="kw">return</span> self
-</pre>
-      </div>
-    </div>
-  </div>
-  <div class="slide-notes" hidden>
-    <h4>NumPy Broadcasting</h4>
-    <p>Destaque o truque `X[:, np.newaxis, :] - centroids` que calcula as distâncias de todas as \(N\) amostras para todos os \(K\) centróides em uma única instrução vetorial veloz em C.</p>
-  </div>
-</section>
-
-<!-- ============================== SLIDE 38 ============================== -->
-<section class="slide" id="slide-38" data-member-id="2" data-time="02:00" data-type="aprofundamento"
-         data-ref="Quantização Vetorial e Compressão de Imagens">
-  <h2 class="s-title">Laboratório: K-Means em imagens (quantização e compressão de cores)</h2>
-  <div class="s-body">
-    <div class="c12">
-      <div data-lab="lab-image-quantization"></div>
-    </div>
-  </div>
-  <div class="slide-notes" hidden>
-    <h4>Como demonstrar</h4>
-    <p>Ajuste o número de cores \(K\) de 2 a 16: veja a imagem contínua em RGB sendo reconstruída por uma paleta discreta de \(K\) cores centróides, reduzindo drasticamente o tamanho em bits por pixel.</p>
-  </div>
-</section>
 
 <!-- ============================== SLIDE 39 ============================== -->
-<section class="slide" id="slide-39" data-member-id="2" data-time="01:30" data-type="nucleo"
+<section class="slide" id="slide-39" data-member-id="1" data-time="01:30" data-type="nucleo"
          data-ref="Bishop, PRML (Cap. 15.2) · Murphy, PML (Cap. 21.4)">
   <h2 class="s-title">Onde o K-Means falha — e por que isso motiva os modelos de mistura</h2>
   <div class="s-body">
@@ -1983,7 +1319,7 @@ body.notes-open #notes-panel { transform: translateX(0); }
         <li><strong>Dados binários:</strong> a distância euclidiana perde o sentido em \(\{0,1\}^D\).</li>
       </ul>
       <div class="node" style="border-color:var(--m3)">
-        <div class="n-title" style="color:var(--m3)">A seguir · Bloco 3</div>
+        <div class="n-title" style="color:var(--m3)">A seguir · Bloco 2</div>
         <b style="font-size:15px">Antonio Carlos</b><br>
         <span style="font-family:var(--mono);font-size:11.5px;color:var(--fg-dim)">Misturas de Bernoulli e o algoritmo EM</span>
       </div>
@@ -1996,14 +1332,15 @@ body.notes-open #notes-panel { transform: translateX(0); }
 </section>
 
 <!-- ============================== SLIDE 40 ============================== -->
-<section class="slide" id="slide-40" data-member-id="2" data-time="01:30" data-type="nucleo"
-         data-ref="Síntese do Bloco 2 · K-Means">
-  <h2 class="s-title">Síntese do Bloco 2 — e a transição para dados discretos</h2>
+<section class="slide" id="slide-40" data-member-id="1" data-time="01:30" data-type="nucleo"
+         data-ref="Síntese do Bloco 1 · Variáveis latentes e K-Means">
+  <h2 class="s-title">Síntese do Bloco 1 — e a transição para dados discretos</h2>
   <div class="s-body">
     <div class="c7 stack">
-      <div class="eyebrow accent">O que fica do K-Means</div>
+      <div class="eyebrow accent">O que fica do Bloco 1</div>
       <ul class="points sm">
-        <li>O <strong>algoritmo de Lloyd</strong> minimiza a inércia \(J\) por descida alternada em \(O(N K D)\).</li>
+        <li>A variável latente <strong>1-de-\(K\)</strong> nomeia o componente de origem; a responsabilidade \(\gamma_{nk}\) é o posterior que Bayes devolve.</li>
+        <li>O <strong>algoritmo de Lloyd</strong> minimiza a inércia \(J\) por descida alternada em \(O(N K D)\), com atribuição rígida \(r_{nk}\).</li>
         <li>A escolha de \(K\) exige critérios combinados: <strong>cotovelo da inércia</strong> e <strong>pico de silhueta</strong>.</li>
         <li>A semeadura <strong>k-means++</strong> evita mínimos locais ruins com garantia \(O(\log K)\).</li>
       </ul>
@@ -2018,7 +1355,7 @@ body.notes-open #notes-panel { transform: translateX(0); }
       </div>
       <div class="arrow-down" aria-hidden="true">↓</div>
       <div class="node" style="border-color:var(--m3)">
-        <div class="n-title" style="color:var(--m3)">Bloco 3</div>
+        <div class="n-title" style="color:var(--m3)">Bloco 2</div>
         <b style="font-size:15px">Antonio Carlos</b><br>
         <span style="font-family:var(--mono);font-size:11.5px;color:var(--fg-dim)">Misturas de Bernoulli &amp; Algoritmo EM</span>
       </div>
@@ -2053,7 +1390,7 @@ body.notes-open #notes-panel { transform: translateX(0); }
 </section>
 
 <!-- ====================================================================== -->
-<!-- BLOCO 3 — ANTONIO CARLOS                                               -->
+<!-- BLOCO 2 — ANTONIO CARLOS                                               -->
 <!-- ====================================================================== -->
 
 <!-- ============================== SLIDE 41 ============================== -->
@@ -2563,7 +1900,7 @@ body.notes-open #notes-panel { transform: translateX(0); }
 <!-- ============================== SLIDE 58 ============================== -->
 <section class="slide" id="slide-58" data-member-id="3" data-time="01:30" data-type="nucleo"
          data-ref="Bishop, PRML (Cap. 15.1 e 15.3)">
-  <h2 class="s-title">Síntese do Bloco 3 — do hipercubo binário ao espaço contínuo</h2>
+  <h2 class="s-title">Síntese do Bloco 2 — do hipercubo binário ao espaço contínuo</h2>
   <div class="s-body">
     <div class="c7 stack">
       <div class="eyebrow accent">O que fica do bloco</div>
@@ -2584,7 +1921,7 @@ body.notes-open #notes-panel { transform: translateX(0); }
       </div>
       <div class="arrow-down" aria-hidden="true">↓</div>
       <div class="node" style="border-color:var(--m4)">
-        <div class="n-title" style="color:var(--m4)">A seguir · Bloco 4</div>
+        <div class="n-title" style="color:var(--m4)">A seguir · Bloco 3</div>
         <b style="font-size:15px">Bianca Visco</b><br>
         <span style="font-family:var(--mono);font-size:11.5px;color:var(--fg-dim)">Gaussian Mixture Models e comparação final</span>
       </div>
@@ -2619,7 +1956,7 @@ body.notes-open #notes-panel { transform: translateX(0); }
 </section>
 
 <!-- ====================================================================== -->
-<!-- BLOCO 4 — BIANCA VISCO                                                 -->
+<!-- BLOCO 3 — BIANCA VISCO                                                 -->
 <!-- ====================================================================== -->
 
 <!-- ============================== SLIDE 59 ============================== -->
@@ -3104,9 +2441,9 @@ proba = gmm.<span class="fn">predict_proba</span>(X)
 <div class="overlay" id="overview" role="dialog" aria-modal="true" aria-label="Visão geral dos slides">
   <button class="btn ov-close" type="button" data-close="overview">Fechar (Esc)</button>
   <h2>Visão geral dos slides</h2>
-  <p class="ov-sub">Clique em qualquer cartão para saltar. Use o filtro abaixo para visualizar a rota completa de 73 slides ou o roteiro de 60 minutos.</p>
+  <p class="ov-sub">Clique em qualquer cartão para saltar. Use o filtro abaixo para visualizar os 47 slides ou apenas a rota de núcleo.</p>
   <div class="ov-filter-bar">
-    <button type="button" class="ov-filter-btn active" data-filter="all">Todos os 73 Slides (Material Completo)</button>
+    <button type="button" class="ov-filter-btn active" data-filter="all">Todos os 47 Slides</button>
     <button type="button" class="ov-filter-btn" data-filter="nucleo">Caminho de 60 minutos (28 Slides de Núcleo)</button>
     <button type="button" class="ov-filter-btn" data-filter="aprof">Apenas Laboratórios e Aprofundamentos (45 Slides)</button>
   </div>
@@ -3162,7 +2499,7 @@ proba = gmm.<span class="fn">predict_proba</span>(X)
 <div class="overlay" id="help" role="dialog" aria-modal="true" aria-label="Atalhos de teclado">
   <button class="btn ov-close" type="button" data-close="help">Fechar (Esc)</button>
   <h2>Atalhos de Teclado e Navegação</h2>
-  <p class="ov-sub">Deck único e linear em 73 slides. Funciona abrindo <code>index.html</code> ou <code>apresentacao.html</code> diretamente no navegador.</p>
+  <p class="ov-sub">Deck único e linear em 47 slides, em três blocos. Funciona abrindo <code>index.html</code> ou <code>apresentacao.html</code> diretamente no navegador.</p>
   <div id="help-grid">
     <div><span>Próximo passo / Próximo slide</span><span><kbd>Espaço</kbd> · <kbd>→</kbd> · <kbd>PageDown</kbd></span></div>
     <div><span>Slide anterior</span><span><kbd>←</kbd> · <kbd>PageUp</kbd></span></div>
@@ -3175,16 +2512,14 @@ proba = gmm.<span class="fn">predict_proba</span>(X)
     <div><span>Ocultar barra de navegação</span><span><kbd>C</kbd></span></div>
     <div><span>Esta tela de ajuda</span><span><kbd>?</kbd> ou <kbd>H</kbd></span></div>
     <div><span>Fechar sobreposição ou painel</span><span><kbd>Esc</kbd></span></div>
-    <div><span>Link direto para slide</span><span>sufixo <kbd>#slide-22</kbd> na URL</span></div>
+    <div><span>Link direto para slide</span><span>sufixo <kbd>#slide-41</kbd> na URL</span></div>
   </div>
-  <h2 style="margin-top:24px">O Caminho de 60 Minutos (Roteiro dos 28 Slides de Núcleo)</h2>
+  <h2 style="margin-top:24px">Os Três Blocos</h2>
   <p class="ov-sub" style="max-width:85ch">
-    Caso necessitem apresentar estritamente em 60 minutos sem os aprofundamentos práticos, a sequência exata de núcleo é:<br>
     <b>Capa:</b> 01 &nbsp;·&nbsp;
-    <b>Henrique (Bloco 1):</b> 08, 10, 13, 15, 17, 21 &nbsp;·&nbsp;
-    <b>Lucas (Bloco 2):</b> 22, 23, 25, 29, 30, 33, 39, 40 &nbsp;·&nbsp;
-    <b>Antonio (Bloco 3):</b> 41, 42, 45, 47, 48, 52, 53, 58 &nbsp;·&nbsp;
-    <b>Bianca (Bloco 4):</b> 59, 60, 65, 68, 70, 72, 73.
+    <b>Bloco 1 — Henrique e Lucas:</b> 02–14, variáveis latentes e K-Means (todos de núcleo) &nbsp;·&nbsp;
+    <b>Bloco 2 — Antonio:</b> 15–32, misturas de Bernoulli e EM (núcleo: 15, 16, 19, 21, 22, 26, 27, 32) &nbsp;·&nbsp;
+    <b>Bloco 3 — Bianca:</b> 33–47, Gaussian Mixture Models (núcleo: 33, 34, 39, 42, 44, 46, 47).
   </p>
 </div>
 
@@ -6858,11 +6193,9 @@ proba = gmm.<span class="fn">predict_proba</span>(X)
   'use strict';
 
   var MEMBERS = {
-    0: { nome: 'Preparação', bloco: 'Bloco 0 · Nivelamento e fundamentos', janela: 'Introdução' },
-    1: { nome: 'Henrique Matheus', bloco: 'Bloco 1 · Fundamentos e variáveis latentes', janela: '00:00–15:00' },
-    2: { nome: 'Lucas Nogueira', bloco: 'Bloco 2 · K-Means clustering', janela: '15:00–30:00' },
-    3: { nome: 'Antonio Carlos', bloco: 'Bloco 3 · Misturas de Bernoulli e EM', janela: '30:00–45:00' },
-    4: { nome: 'Bianca Visco', bloco: 'Bloco 4 · GMM, demonstração e comparação', janela: '45:00–60:00' }
+    1: { nome: 'Henrique Matheus e Lucas Nogueira', bloco: 'Bloco 1 · Variáveis latentes e K-Means', janela: '00:00–29:30' },
+    3: { nome: 'Antonio Carlos', bloco: 'Bloco 2 · Misturas de Bernoulli e EM', janela: '29:30–46:30' },
+    4: { nome: 'Bianca Visco', bloco: 'Bloco 3 · GMM, demonstração e comparação', janela: '46:30–61:30' }
   };
 
   var slides = [], current = 0, stage, wrap;

@@ -1,16 +1,14 @@
 # Variáveis Latentes Discretas, K-Means e Modelos de Mistura
 
-Material didático interativo e apresentação acadêmica em **73 slides HTML** sobre modelos de variáveis latentes discretas, K-Means, Misturas de Bernoulli, algoritmo EM e Gaussian Mixture Models.
+Material didático interativo e apresentação acadêmica em **47 slides HTML** sobre modelos de variáveis latentes discretas, K-Means, Misturas de Bernoulli, algoritmo EM e Gaussian Mixture Models.
 
 **Disciplina:** Aprendizado de Máquina Não Supervisionado — Bacharelado em IA  
-**Formato:** Deck único linear com 73 slides (28 de Núcleo + 45 Laboratórios/Aprofundamentos)  
+**Formato:** Deck único linear com 47 slides em três blocos (29 de Núcleo + 18 Laboratórios/Aprofundamentos)  
 **Rota de 60 minutos:** Marcada com a insígnia `[NÚCLEO]` para a banca avaliadora  
 **Integrantes:**
-- **Bloco 0 · Nivelamento e Fundamentos:** Álgebra linear, decodificador de notação e Bayes (slides 01–07)
-- **Bloco 1 · Henrique Matheus:** Fundamentos, variáveis latentes e 1-de-K (slides 08–21)
-- **Bloco 2 · Lucas Nogueira:** K-Means, Lloyd, escolha de K e limitações (slides 22–40)
-- **Bloco 3 · Antonio Carlos:** Misturas de Bernoulli, gargalo do log e algoritmo EM (slides 41–58)
-- **Bloco 4 · Bianca Visco:** Gaussian Mixture Models, covariâncias e comparação (slides 59–73)
+- **Bloco 1 · Henrique Matheus e Lucas Nogueira:** Variáveis latentes, 1-de-K, responsabilidades, K-Means e algoritmo de Lloyd (slides 02–14)
+- **Bloco 2 · Antonio Carlos:** Misturas de Bernoulli, gargalo do log e algoritmo EM (slides 15–32)
+- **Bloco 3 · Bianca Visco:** Gaussian Mixture Models, covariâncias e comparação (slides 33–47)
 
 ---
 
@@ -39,72 +37,55 @@ node build.js      # lê os fontes e regera apresentacao.html
 | **Primeiro / último slide** | `Home` / `End` |
 | **Ir para um slide direto** | digite o **número** e `Enter` (ex.: `2` `2` `Enter`) |
 | **Notas do apresentador** | `N` |
-| **Visão geral dos 73 slides** | `O` (com filtros: Todos / Núcleo / Aprofundamento) |
+| **Visão geral dos 47 slides** | `O` (com filtros: Todos / Núcleo / Aprofundamento) |
 | **Glossário de símbolos e termos** | `G` |
 | **Tela cheia** | `F` |
 | **Ocultar barra de controles** | `C` |
 | **Tela de ajuda** | `?` ou `H` |
 | **Fechar painel / sobreposição** | `Esc` |
 
-### O Caminho de 60 Minutos (28 Slides de Núcleo)
+### O Caminho de 60 Minutos (29 Slides de Núcleo)
 
 Para apresentar estritamente no tempo regulamentar de 60 minutos sem os laboratórios extensos:
 - **Capa:** Slide 01
-- **Henrique (Bloco 1):** 08, 10, 13, 15, 17, 21
-- **Lucas (Bloco 2):** 22, 23, 25, 29, 30, 33, 39, 40
-- **Antonio (Bloco 3):** 41, 42, 45, 47, 48, 52, 53, 58
-- **Bianca (Bloco 4):** 59, 60, 65, 68, 70, 72, 73
+- **Bloco 1 (Henrique e Lucas):** 02 a 14 — o bloco inteiro é de núcleo (00:00–29:30)
+- **Bloco 2 (Antonio):** 15, 16, 19, 21, 22, 26, 27, 32 (29:30–46:30)
+- **Bloco 3 (Bianca):** 33, 34, 39, 42, 44, 46, 47 (46:30–61:30)
 
-Os 45 slides de aprofundamento e laboratórios trazem a insígnia `[APROFUNDAMENTO]` e servem para fixação individual, estudo autodidático e respostas aprofundadas a perguntas da banca.
-
----
-
-## Os 24 Laboratórios Interativos e Simuladores (`labs.js`)
-
-Todos os laboratórios rodam no próprio navegador com semente reproduzível, controles reativos e renderização KaTeX:
-
-1. **Decodificador de Notação (Slide 02):** Tradução interativa em KaTeX de \(\Sigma, \Pi, \mathbf{z}, \gamma, \boldsymbol\Sigma, \ln, \arg\min, \mathbf{x}^\top\).
-2. **Álgebra Linear 101 (Slide 03):** Vetores 2-D, transposta \(\mathbf{x}^\top\), produto interno \(\mathbf{x}^\top\mathbf{y}\), normas euclidianas e ângulo \(\theta\).
-3. **Revisão Relâmpago (Slide 04):** Média, variância e curva normal reativa com arraste de pontos.
-4. **Probabilidade Condicional & Bayes (Slide 05):** Cálculo visual da probabilidade total e inversão de Bayes.
-5. **Bayes com Números (Slide 06 e 18):** Tabela do cálculo de \(\gamma_{nk}\) com prior e verossimilhança.
-6. **Máquina Geradora (Slide 07):** Sorteio generativo acumulando na densidade marginal teórica.
-7. **1-de-K na Prática (Slide 14):** Colapso mecânico do produto \(\prod \pi_k^{z_k}\).
-8. **\(J\) na Mão (Slide 24):** Cálculo da inércia com arraste de centróides.
-9. **Por que a Média? (Slide 27):** Parábola do erro quadrático e derivada nula no vértice.
-10. **Lloyd Meio-Passo (Slide 28):** Execução isolada dos botões *Atribuir* e *Atualizar*.
-11. **Laboratório do \(K\) (Slide 32):** Varredura de \(K=1\ldots8\) com silhueta e inércia simultâneas.
-12. **Roleta do k-means++ (Slide 35):** Semeadura probabilística com peso proporcional a \(D^2\).
-13. **Quantização de Imagens (Slide 38):** Compressão de cores 24-bits em RGB com K-Means para paleta de \(K\) cores.
-14. **Pinte um Dígito (Slide 44):** Grade 8×8 desenhável com classificação instantânea por Bernoulli.
-15. **Por que o Log Atrapalha (Slide 46):** Comparação numérica entre \(\ln(a+b)\) e \(\ln a + \ln b\).
-16. **EM em 6 Amostras (Slide 49):** Ciclo de matrizes \(\gamma\) e protótipos \(\boldsymbol\mu\).
-17. **Decomposição ELBO + KL (Slide 51):** Visualização de por que \(\ln p(X)\) nunca diminui.
-18. **Underflow ao Vivo (Slide 56):** Subfluxo de float64 colapsando a zero vs espaço logarítmico.
-19. **Laboratório da Covariância (Slide 62):** Sliders de \(\sigma_1, \sigma_2, \rho\) girando elipses 2-D ao vivo.
-20. **Mahalanobis vs Euclidiana (Slide 64):** Comparação de distâncias considerando a dispersão estatística.
-21. **EM-GMM Animado (Slide 66):** Translação e rotação contínua das gaussianas com curva de \(\ln L\).
-22. **Varredura BIC (Slide 69):** Curvas de BIC para os 4 tipos de covariância.
-23. **Demonstração K-Means vs GMM (Slide 70):** Comparação lado a lado sobre dados anisotrópicos.
-24. **Detecção de Anomalias (Slide 71):** Limiar de densidade \(p(\mathbf{x}) < \tau\) com alerta visual.
+Os 18 slides de aprofundamento e laboratórios, todos nos Blocos 2 e 3, trazem a insígnia `[APROFUNDAMENTO]` e servem para fixação individual, estudo autodidático e respostas aprofundadas a perguntas da banca.
 
 ---
+
+## Os 10 Laboratórios Interativos (`labs.js`)
+
+Todos rodam no próprio navegador com semente reproduzível, controles reativos e renderização KaTeX. Após o enxugamento do deck, os laboratórios remanescentes estão todos nos Blocos 2 e 3:
+
+| # | Laboratório | Slide |
+| :--- | :--- | :--- |
+| 1 | **Pinte um Dígito** — grade 8×8 desenhável com classificação instantânea por Bernoulli | 18 |
+| 2 | **Por que o Log Atrapalha** — comparação numérica entre \(\ln(a+b)\) e \(\ln a + \ln b\) | 20 |
+| 3 | **EM em 6 Amostras** — ciclo de matrizes \(\gamma\) e protótipos \(\boldsymbol\mu\) | 23 |
+| 4 | **Decomposição ELBO + KL** — por que \(\ln p(X)\) nunca diminui | 25 |
+| 5 | **Underflow ao Vivo** — subfluxo de float64 vs espaço logarítmico | 30 |
+| 6 | **Laboratório da Covariância** — sliders de \(\sigma_1, \sigma_2, \rho\) girando elipses 2-D | 36 |
+| 7 | **Mahalanobis vs Euclidiana** — distâncias considerando a dispersão estatística | 38 |
+| 8 | **EM-GMM Animado** — convergência contínua das gaussianas com curva de \(\ln L\) | 40 |
+| 9 | **Varredura BIC** — curvas de BIC para os 4 tipos de covariância | 43 |
+| 10 | **Detecção de Anomalias** — limiar de densidade \(p(\mathbf{x}) < \tau\) | 45 |
+
+> Os 14 laboratórios do antigo Bloco 0 e dos blocos de fundamentos/K-Means (decodificador de notação, álgebra linear, Bayes, 1-de-K, inércia na mão, Lloyd meio-passo, k-means++, quantização de imagens, entre outros) continuam implementados em `labs.js` e podem ser reativados criando um slide com o `data-lab` correspondente.
 
 ## Implementações em Python (NumPy e scikit-learn)
 
-- **Slide 19:** Cálculo de responsabilidades \(\gamma_{nk}\) e Teorema de Bayes do zero em NumPy.
-- **Slide 37:** K-Means completo com descida alternada de Lloyd em 25 linhas de NumPy.
-- **Slide 57:** Mistura de Bernoulli com algoritmo EM e estabilidade *Log-Sum-Exp* do zero em NumPy.
-- **Slide 70:** GMM e K-Means comparados com `scikit-learn` (`fit`, `predict_proba`, `score_samples`).
-
----
+- **Slide 31:** Mistura de Bernoulli com algoritmo EM e estabilidade *Log-Sum-Exp* do zero em NumPy.
+- **Slide 44:** GMM e K-Means comparados com `scikit-learn` (`fit`, `predict_proba`, `score_samples`).
 
 ## Arquivos do Projeto
 
 | Arquivo | Descrição |
 | :--- | :--- |
 | **`apresentacao.html`** | **Versão de arquivo único independente (gerada por `build.js`).** |
-| `index.html` | Código-fonte dos 73 slides, notas, modais e estrutura semântica. |
+| `index.html` | Código-fonte dos 47 slides, notas, modais e estrutura semântica. |
 | `styles.css` | Design system: variáveis de cor, tipografia IBM Plex, layouts de labs e temas. |
 | `viz.js` | Motor de machine learning (`MLCore`): K-Means, EM-Bernoulli, EM-GMM, Mahalanobis, Silhueta, BIC. |
 | `figures.js` | Camada de renderização gráfica em Canvas 2D (`FigCore`, `VIZ`). |

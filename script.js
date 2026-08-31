@@ -5,11 +5,9 @@
   'use strict';
 
   var MEMBERS = {
-    0: { nome: 'Preparação', bloco: 'Bloco 0 · Nivelamento e fundamentos', janela: 'Introdução' },
-    1: { nome: 'Henrique Matheus', bloco: 'Bloco 1 · Fundamentos e variáveis latentes', janela: '00:00–15:00' },
-    2: { nome: 'Lucas Nogueira', bloco: 'Bloco 2 · K-Means clustering', janela: '15:00–30:00' },
-    3: { nome: 'Antonio Carlos', bloco: 'Bloco 3 · Misturas de Bernoulli e EM', janela: '30:00–45:00' },
-    4: { nome: 'Bianca Visco', bloco: 'Bloco 4 · GMM, demonstração e comparação', janela: '45:00–60:00' }
+    1: { nome: 'Henrique Matheus e Lucas Nogueira', bloco: 'Bloco 1 · Variáveis latentes e K-Means', janela: '00:00–29:30' },
+    3: { nome: 'Antonio Carlos', bloco: 'Bloco 2 · Misturas de Bernoulli e EM', janela: '29:30–46:30' },
+    4: { nome: 'Bianca Visco', bloco: 'Bloco 3 · GMM, demonstração e comparação', janela: '46:30–61:30' }
   };
 
   var slides = [], current = 0, stage, wrap;
