@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Variáveis Latentes Discretas, K-Means e Modelos de Mistura</title>
-<meta name="description" content="Apresentação acadêmica interativa e auto-didática em 73 slides sobre variáveis latentes discretas, K-Means, Misturas de Bernoulli, algoritmo EM e Gaussian Mixture Models.">
+<meta name="description" content="Apresentação acadêmica interativa e auto-didática em 67 slides sobre variáveis latentes discretas, K-Means, Misturas de Bernoulli, algoritmo EM e Gaussian Mixture Models.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -30,14 +30,14 @@
 <section class="slide cover is-active" id="slide-01" data-member-id="1" data-time="01:30" data-type="nucleo"
          data-ref="Bishop, PRML (Cap. 15) · Murphy, PML (Cap. 21)">
   <div class="cover-main">
-    <div class="eyebrow accent">Bacharelado em IA · Aprendizado de Máquina Não Supervisionado</div>
+    <div class="eyebrow accent">Bacharelado em IA · Aprendizado de Máquina Não Supervisionado (2026.2)</div>
     <h1 class="s-title">Variáveis Latentes Discretas, <span class="hl nb">K-Means</span> e Modelos de Mistura</h1>
     <div class="rule" aria-hidden="true"></div>
-    <p class="sub">Material autodidático completo em 73 slides: dos fundamentos de álgebra linear e probabilidade ao particionamento geométrico e à inferência estatística com o algoritmo EM.</p>
+    <p class="sub">Material autodidático completo em 67 slides: do particionamento geométrico à inferência estatística com o algoritmo EM.</p>
     <div style="flex:1 1 auto"></div>
     <div class="cover-stats" aria-label="Conteúdo do material">
-      <div class="cstat"><b>73</b><span>slides<br>(28 de núcleo)</span></div>
-      <div class="cstat"><b>24</b><span>laboratórios<br>interativos</span></div>
+      <div class="cstat"><b>67</b><span>slides<br>(30 de núcleo)</span></div>
+      <div class="cstat"><b>19</b><span>laboratórios<br>interativos</span></div>
       <div class="cstat"><b>4</b><span>implementações<br>em Python</span></div>
       <div class="cstat"><b>60</b><span>minutos<br>de rota núcleo</span></div>
     </div>
@@ -46,134 +46,21 @@
     <div>
       <div class="eyebrow">Percurso da apresentação</div>
       <ul class="team">
-        <li><i class="bar" style="background:var(--m0)"></i><span class="nm">Bloco 0 · Nivelamento<em>Álgebra linear, notação e Bayes</em></span><span class="tm">01–07</span></li>
-        <li><i class="bar" style="background:var(--m1)"></i><span class="nm">Henrique Matheus Mendonça de Miranda<em>Bloco 1 · Variáveis latentes e 1-de-K</em></span><span class="tm">08–21</span></li>
-        <li><i class="bar" style="background:var(--m2)"></i><span class="nm">Luiany Gonçalves Carvalho<em>Bloco 2 · K-Means, Lloyd e escolha de K</em></span><span class="tm">22–40</span></li>
-        <li><i class="bar" style="background:var(--m3)"></i><span class="nm">Antonio Carlos de Barcelos Fernandes<em>Bloco 3 · Bernoulli e algoritmo EM</em></span><span class="tm">41–58</span></li>
-        <li><i class="bar" style="background:var(--m4)"></i><span class="nm">Bianca Fernandes Visco<em>Bloco 4 · GMM, covariâncias e BIC</em></span><span class="tm">59–73</span></li>
+        <li><i class="bar" style="background:var(--m1)"></i><span class="nm">Henrique Matheus Mendonça de Miranda<em>Bloco 1 · Variáveis latentes e 1-de-K</em></span><span class="tm">02–15</span></li>
+        <li><i class="bar" style="background:var(--m2)"></i><span class="nm">Luiany Gonçalves Carvalho<em>Bloco 2 · K-Means, Lloyd e escolha de K</em></span><span class="tm">16–34</span></li>
+        <li><i class="bar" style="background:var(--m3)"></i><span class="nm">Antonio Carlos de Barcelos Fernandes<em>Bloco 3 · Bernoulli e algoritmo EM</em></span><span class="tm">35–52</span></li>
+        <li><i class="bar" style="background:var(--m4)"></i><span class="nm">Bianca Fernandes Visco<em>Bloco 4 · GMM, covariâncias e BIC</em></span><span class="tm">53–67</span></li>
       </ul>
     </div>
     <div class="meta">
+      Prof. Lucas Araújo Pereira<br>
       Bishop · Murphy · scikit-learn<br>
       <span style="color:var(--fg-dim)">Pressione <b style="color:var(--accent)">?</b> para ajuda ou <b style="color:var(--accent)">G</b> para o Glossário</span>
     </div>
   </div>
   <div class="slide-notes" hidden>
     <h4>Fala sugerida [00:00 – 01:30]</h4>
-    <p class="fala">"Bom dia a todos os professores, membros da banca e colegas. Apresentamos nosso trabalho sobre Variáveis Latentes Discretas, K-Means, Misturas de Bernoulli e Gaussian Mixture Models. Estruturamos este ambiente interativo com 73 slides: além dos 28 slides fundamentais de núcleo para nossa apresentação oral de 60 minutos, o material traz 24 laboratórios práticos e códigos em Python que constroem a intuição de cada fórmula matemática passo a passo."</p>
-  </div>
-</section>
-
-<!-- ====================================================================== -->
-<!-- BLOCO 0 — NIVELAMENTO E FUNDAMENTOS MATEMÁTICOS                        -->
-<!-- ====================================================================== -->
-
-<!-- ============================== SLIDE 02 ============================== -->
-<section class="slide" id="slide-02" data-member-id="0" data-time="Nivelamento" data-type="aprofundamento"
-         data-ref="Guia de Notação Matemática · Bishop (Apêndices)">
-  <h2 class="s-title">Decodificador: como ler a matemática deste trabalho</h2>
-  <div class="s-body">
-    <div class="c12">
-      <div data-lab="lab-decoder"></div>
-    </div>
-  </div>
-  <div class="slide-notes" hidden>
-    <h4>Objetivo do slide</h4>
-    <p>Desarmar o medo da notação matemática. Clique em cada símbolo no menu para ver sua tipografia formal renderizada em KaTeX, sua tradução em português simples, um exemplo numérico e onde ele reaparece no trabalho.</p>
-  </div>
-</section>
-
-<!-- ============================== SLIDE 03 ============================== -->
-<section class="slide" id="slide-03" data-member-id="0" data-time="Nivelamento" data-type="aprofundamento"
-         data-ref="Álgebra Linear Básica para Machine Learning">
-  <h2 class="s-title">Álgebra Linear 101: vetores, transposta \(\mathbf{x}^\top\), produto interno e normas</h2>
-  <div class="s-body">
-    <div class="c12">
-      <div data-lab="lab-linear-algebra"></div>
-    </div>
-  </div>
-  <div class="slide-notes" hidden>
-    <h4>Como demonstrar</h4>
-    <p>Ajuste os sliders dos vetores \(\mathbf{x}\) e \(\mathbf{y}\): veja o produto interno \(\mathbf{x}^\top\mathbf{y}\), a norma euclidiana \(\|\mathbf{x}\|\), a distância \(\|\mathbf{x}-\mathbf{y}\|\) e o ângulo \(\theta\) sendo recalculados ao vivo no plano cartesiano.</p>
-  </div>
-</section>
-
-<!-- ============================== SLIDE 04 ============================== -->
-<section class="slide" id="slide-04" data-member-id="0" data-time="Nivelamento" data-type="aprofundamento"
-         data-ref="Estatística Descritiva Básica">
-  <h2 class="s-title">Revisão relâmpago: média \(\mu\), variância \(\sigma^2\) e a curva normal</h2>
-  <div class="s-body">
-    <div class="c12">
-      <div data-lab="lab-review-stats"></div>
-    </div>
-  </div>
-  <div class="slide-notes" hidden>
-    <h4>Como demonstrar</h4>
-    <p>Arraste os pontos 1-D com os sliders: a média \(\mu\) desloca o centro da curva gaussiana e a variância \(\sigma^2\) controla sua largura e dispersão.</p>
-  </div>
-</section>
-
-<!-- ============================== SLIDE 05 ============================== -->
-<section class="slide" id="slide-05" data-member-id="0" data-time="Nivelamento" data-type="aprofundamento"
-         data-ref="Probabilidade Condicional e Regra da Soma">
-  <h2 class="s-title">Probabilidade conjunta, condicional e a lei da probabilidade total</h2>
-  <div class="s-body">
-    <div class="c12">
-      <div class="eyebrow accent" style="margin-bottom:8px">Regras fundamentais da probabilidade</div>
-      <div class="formula-row">
-        <div class="formula sm">
-          <span class="formula-label">1. Regra do produto</span>
-          <span class="tex">\[ p(\mathbf{x}, z) = p(z)\, p(\mathbf{x}\mid z) \]</span>
-          <span class="plain">p(x, z) = p(z) · p(x | z)</span>
-        </div>
-        <div class="formula sm">
-          <span class="formula-label">2. Regra da soma (marginalização)</span>
-          <span class="tex">\[ p(\mathbf{x}) = \sum_{z} p(\mathbf{x}, z) = \sum_{z} p(z)\, p(\mathbf{x}\mid z) \]</span>
-          <span class="plain">p(x) = Σ_z p(x, z) = Σ_z p(z) · p(x | z)</span>
-        </div>
-        <div class="note-box intuicao">
-          <span class="tag intuicao">intuição</span>
-          Para descobrir a probabilidade de observar \(\mathbf{x}\), somamos sobre todos os cenários possíveis da causa oculta \(z\).
-        </div>
-      </div>
-    </div>
-    <div class="c12">
-      <div data-lab="lab-bayes-intro"></div>
-    </div>
-  </div>
-  <div class="slide-notes" hidden>
-    <h4>Objetivo</h4>
-    <p>Relembrar a regra do produto e a marginalização, que são a base formal de todos os modelos de mistura.</p>
-  </div>
-</section>
-
-<!-- ============================== SLIDE 06 ============================== -->
-<section class="slide" id="slide-06" data-member-id="0" data-time="Nivelamento" data-type="aprofundamento"
-         data-ref="Teorema de Bayes e Inferência Inversa">
-  <h2 class="s-title">Teorema de Bayes: invertendo causas e efeitos com números</h2>
-  <div class="s-body">
-    <div class="c12">
-      <div data-lab="lab-bayes-numbers"></div>
-    </div>
-  </div>
-  <div class="slide-notes" hidden>
-    <h4>Como demonstrar</h4>
-    <p>Mova a amostra \(x_n\): veja a tabela calcular o Prior \(\pi_k\), a Verossimilhança \(p(x_n|\theta_k)\), o Produto Numerador e a divisão pelo denominador comum, gerando a responsabilidade \(\gamma_{nk}\).</p>
-  </div>
-</section>
-
-<!-- ============================== SLIDE 07 ============================== -->
-<section class="slide" id="slide-07" data-member-id="0" data-time="Nivelamento" data-type="aprofundamento"
-         data-ref="Processo Generativo de Misturas">
-  <h2 class="s-title">A máquina geradora: gerando dados sintéticos a partir de misturas</h2>
-  <div class="s-body">
-    <div class="c12">
-      <div data-lab="lab-generative-machine"></div>
-    </div>
-  </div>
-  <div class="slide-notes" hidden>
-    <h4>Como demonstrar</h4>
-    <p>Clique em "Sortear 1 ponto" ou "Animar": veja o sorteio em duas etapas acumulando amostras e convergindo para a densidade marginal teórica \(p(\mathbf{x})\).</p>
+    <p class="fala">"Bom dia a todos os professores, membros da banca e colegas. Apresentamos nosso trabalho sobre Variáveis Latentes Discretas, K-Means, Misturas de Bernoulli e Gaussian Mixture Models. Estruturamos este ambiente interativo com 67 slides: além dos 30 slides fundamentais de núcleo para nossa apresentação oral de 60 minutos, o material traz 19 laboratórios práticos e códigos em Python que constroem a intuição de cada fórmula matemática passo a passo."</p>
   </div>
 </section>
 
@@ -181,8 +68,8 @@
 <!-- BLOCO 1 — HENRIQUE MATHEUS                                             -->
 <!-- ====================================================================== -->
 
-<!-- ============================== SLIDE 08 ============================== -->
-<section class="slide" id="slide-08" data-member-id="1" data-time="02:00" data-type="nucleo"
+<!-- ============================== SLIDE 02 ============================== -->
+<section class="slide" id="slide-02" data-member-id="1" data-time="02:00" data-type="nucleo"
          data-ref="Murphy, PML (Cap. 21.3) · Bishop, PRML (Cap. 15.1)">
   <h2 class="s-title">Sem rótulos, o objetivo deixa de ser prever e passa a ser <em>descobrir</em></h2>
   <div class="s-body">
@@ -213,8 +100,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 09 ============================== -->
-<section class="slide" id="slide-09" data-member-id="1" data-time="02:00" data-type="aprofundamento"
+<!-- ============================== SLIDE 03 ============================== -->
+<section class="slide" id="slide-03" data-member-id="1" data-time="02:00" data-type="aprofundamento"
          data-ref="Murphy, PML (Cap. 21.1–21.3)">
   <h2 class="s-title">Os três grandes objetivos do Aprendizado Não Supervisionado</h2>
   <div class="s-body">
@@ -246,8 +133,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 10 ============================== -->
-<section class="slide" id="slide-10" data-member-id="1" data-time="02:30" data-type="nucleo"
+<!-- ============================== SLIDE 04 ============================== -->
+<section class="slide" id="slide-04" data-member-id="1" data-time="02:30" data-type="nucleo"
          data-ref="Bishop, PRML (Cap. 15.1) · Murphy, PML (Cap. 21.4)">
   <h2 class="s-title">Variável observada \(\mathbf{x}\), variável latente \(\mathbf{z}\): o que se mede e o que se infere</h2>
   <div class="s-body">
@@ -317,8 +204,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 11 ============================== -->
-<section class="slide" id="slide-11" data-member-id="1" data-time="02:00" data-type="aprofundamento"
+<!-- ============================== SLIDE 05 ============================== -->
+<section class="slide" id="slide-05" data-member-id="1" data-time="02:00" data-type="aprofundamento"
          data-ref="Exemplos Práticos de Variáveis Latentes">
   <h2 class="s-title">Variáveis latentes no mundo real: 4 casos concretos</h2>
   <div class="s-body">
@@ -349,8 +236,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 12 ============================== -->
-<section class="slide" id="slide-12" data-member-id="1" data-time="02:00" data-type="aprofundamento"
+<!-- ============================== SLIDE 06 ============================== -->
+<section class="slide" id="slide-06" data-member-id="1" data-time="02:00" data-type="aprofundamento"
          data-ref="Modelos Gráficos Probabilísticos (PGM) · Bishop (Cap. 8)">
   <h2 class="s-title">O Modelo Gráfico Probabilístico e as independências condicionais</h2>
   <div class="s-body">
@@ -369,7 +256,7 @@
     <div class="c6 stack">
       <figure>
         <svg class="pgm pgm-focus" viewBox="0 0 470 250" width="100%" height="212" role="img"
-             aria-label="O mesmo modelo gráfico do slide 10, agora com a placa em destaque: a caixa tracejada que envolve z_n e x_n, com o índice N no canto inferior direito. Os nós pi e theta ficam fora da caixa.">
+             aria-label="O mesmo modelo gráfico do slide 04, agora com a placa em destaque: a caixa tracejada que envolve z_n e x_n, com o índice N no canto inferior direito. Os nós pi e theta ficam fora da caixa.">
           <defs>
             <marker id="ah12" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto">
               <path class="head" d="M0,0 L8,3 L0,6 z"/>
@@ -404,7 +291,7 @@
           <path class="call" d="M428,206 L398,228"/>
           <text class="t-call" x="392" y="232" text-anchor="end">índice da placa</text>
         </svg>
-        <figcaption><b>A placa em destaque.</b> É o mesmo grafo do slide 10 — aqui só a caixa importa.</figcaption>
+        <figcaption><b>A placa em destaque.</b> É o mesmo grafo do slide 04 — aqui só a caixa importa.</figcaption>
       </figure>
       <div class="note-box" style="border-left-color:var(--accent)">
         <span class="tag intuicao">por que a placa importa?</span>
@@ -418,8 +305,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 13 ============================== -->
-<section class="slide" id="slide-13" data-member-id="1" data-time="02:00" data-type="nucleo"
+<!-- ============================== SLIDE 07 ============================== -->
+<section class="slide" id="slide-07" data-member-id="1" data-time="02:00" data-type="nucleo"
          data-ref="Bishop, PRML (Cap. 15.1) · Murphy, PML (Cap. 21.4)">
   <h2 class="s-title">Codificação 1-de-\(K\): um vetor binário para nomear o componente</h2>
   <div class="s-body">
@@ -465,8 +352,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 14 ============================== -->
-<section class="slide" id="slide-14" data-member-id="1" data-time="01:30" data-type="aprofundamento"
+<!-- ============================== SLIDE 08 ============================== -->
+<section class="slide" id="slide-08" data-member-id="1" data-time="01:30" data-type="aprofundamento"
          data-ref="Notação de Vetores Categóricos 1-de-K">
   <h2 class="s-title">Laboratório: a mecânica 1-de-\(K\) e o colapso do produto</h2>
   <div class="s-body">
@@ -480,8 +367,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 15 ============================== -->
-<section class="slide" id="slide-15" data-member-id="1" data-time="02:30" data-type="nucleo"
+<!-- ============================== SLIDE 09 ============================== -->
+<section class="slide" id="slide-09" data-member-id="1" data-time="02:30" data-type="nucleo"
          data-ref="Bishop, PRML (Cap. 15.1 e 15.2) · Murphy, PML (Cap. 21.3 e 21.4)">
   <h2 class="s-title">Três modelos, uma só estrutura: a hipótese sobre \(p(\mathbf{x}\mid\mathbf{z})\)</h2>
   <div class="s-body">
@@ -518,8 +405,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 16 ============================== -->
-<section class="slide" id="slide-16" data-member-id="1" data-time="02:00" data-type="aprofundamento"
+<!-- ============================== SLIDE 10 ============================== -->
+<section class="slide" id="slide-10" data-member-id="1" data-time="02:00" data-type="aprofundamento"
          data-ref="Família Exponencial e Modelos de Mistura">
   <h2 class="s-title">A árvore genealógica completa dos Modelos de Mistura</h2>
   <div class="s-body">
@@ -566,8 +453,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 17 ============================== -->
-<section class="slide" id="slide-17" data-member-id="1" data-time="02:30" data-type="nucleo"
+<!-- ============================== SLIDE 11 ============================== -->
+<section class="slide" id="slide-11" data-member-id="1" data-time="02:30" data-type="nucleo"
          data-ref="Bishop, PRML (Cap. 15.1) · Murphy, PML (Cap. 21.4)">
   <h2 class="s-title">Responsabilidade \(\gamma_{nk}\): o posterior que Bayes devolve</h2>
   <div class="s-body">
@@ -605,8 +492,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 18 ============================== -->
-<section class="slide" id="slide-18" data-member-id="1" data-time="02:00" data-type="aprofundamento"
+<!-- ============================== SLIDE 12 ============================== -->
+<section class="slide" id="slide-12" data-member-id="1" data-time="02:00" data-type="aprofundamento"
          data-ref="Cálculo Tabular de Responsabilidades">
   <h2 class="s-title">Laboratório: cálculo de \(\gamma_{nk}\) passo a passo na mão</h2>
   <div class="s-body">
@@ -620,8 +507,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 19 ============================== -->
-<section class="slide" id="slide-19" data-member-id="1" data-time="02:00" data-type="aprofundamento"
+<!-- ============================== SLIDE 13 ============================== -->
+<section class="slide" id="slide-13" data-member-id="1" data-time="02:00" data-type="aprofundamento"
          data-ref="Implementação em Python puro (NumPy)">
   <h2 class="s-title">Código Python: calculando responsabilidades \(\gamma_{nk}\) do zero</h2>
   <div class="s-body">
@@ -688,8 +575,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 20 ============================== -->
-<section class="slide" id="slide-20" data-member-id="1" data-time="02:00" data-type="aprofundamento"
+<!-- ============================== SLIDE 14 ============================== -->
+<section class="slide" id="slide-14" data-member-id="1" data-time="02:00" data-type="aprofundamento"
          data-ref="Atribuição Suave vs Rígida">
   <h2 class="s-title">Soft vs Hard Assignment: incerteza probabilística vs decisão binária</h2>
   <div class="s-body">
@@ -724,8 +611,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 21 ============================== -->
-<section class="slide" id="slide-21" data-member-id="1" data-time="01:30" data-type="nucleo"
+<!-- ============================== SLIDE 15 ============================== -->
+<section class="slide" id="slide-15" data-member-id="1" data-time="01:30" data-type="nucleo"
          data-ref="Bishop, PRML (Cap. 15.2)">
   <h2 class="s-title">Síntese do Bloco 1 — e a pergunta que abre o K-Means</h2>
   <div class="s-body">
@@ -764,8 +651,8 @@
 <!-- BLOCO 2 — K-MEANS CLUSTERING                                           -->
 <!-- ====================================================================== -->
 
-<!-- ============================== SLIDE 22 ============================== -->
-<section class="slide" id="slide-22" data-member-id="2" data-time="02:00" data-type="nucleo"
+<!-- ============================== SLIDE 16 ============================== -->
+<section class="slide" id="slide-16" data-member-id="2" data-time="02:00" data-type="nucleo"
          data-ref="Bishop, PRML (Cap. 15.2) · Murphy, PML (Cap. 21.3) · scikit-learn (2.3.2)">
   <h2 class="s-title">K-Means: retalhar o espaço em \(K\) células de Voronoi</h2>
   <div class="s-body">
@@ -795,8 +682,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 23 ============================== -->
-<section class="slide" id="slide-23" data-member-id="2" data-time="02:30" data-type="nucleo"
+<!-- ============================== SLIDE 17 ============================== -->
+<section class="slide" id="slide-17" data-member-id="2" data-time="02:30" data-type="nucleo"
          data-ref="Bishop, PRML (Cap. 15.2, Eq. 15.1) · scikit-learn (2.3.2)">
   <h2 class="s-title">A função de distorção \(J\): o que exatamente está sendo minimizado</h2>
   <div class="s-body">
@@ -829,8 +716,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 24 ============================== -->
-<section class="slide" id="slide-24" data-member-id="2" data-time="02:00" data-type="aprofundamento"
+<!-- ============================== SLIDE 18 ============================== -->
+<section class="slide" id="slide-18" data-member-id="2" data-time="02:00" data-type="aprofundamento"
          data-ref="Cálculo Numérico de Inércia">
   <h2 class="s-title">Laboratório: calculando a distorção \(J\) ponto a ponto na mão</h2>
   <div class="s-body">
@@ -844,8 +731,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 25 ============================== -->
-<section class="slide" id="slide-25" data-member-id="2" data-time="02:30" data-type="nucleo"
+<!-- ============================== SLIDE 19 ============================== -->
+<section class="slide" id="slide-19" data-member-id="2" data-time="02:30" data-type="nucleo"
          data-ref="Bishop, PRML (Cap. 15.2) · Murphy, PML (Cap. 21.3)">
   <h2 class="s-title">Algoritmo de Lloyd: descida alternada em duas coordenadas</h2>
   <div class="s-body">
@@ -886,8 +773,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 26 ============================== -->
-<section class="slide" id="slide-26" data-member-id="2" data-time="02:00" data-type="aprofundamento"
+<!-- ============================== SLIDE 20 ============================== -->
+<section class="slide" id="slide-20" data-member-id="2" data-time="02:00" data-type="aprofundamento"
          data-ref="Dedução Analítica da Derivada de J">
   <h2 class="s-title">A prova matemática: por que a média minimiza a soma dos quadrados?</h2>
   <div class="s-body">
@@ -932,8 +819,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 27 ============================== -->
-<section class="slide" id="slide-27" data-member-id="2" data-time="02:00" data-type="aprofundamento"
+<!-- ============================== SLIDE 21 ============================== -->
+<section class="slide" id="slide-21" data-member-id="2" data-time="02:00" data-type="aprofundamento"
          data-ref="Otimização Quadrática e Propriedades da Média">
   <h2 class="s-title">Laboratório: por que a média? A parábola de \(J(\mu)\) e a derivada zero</h2>
   <div class="s-body">
@@ -947,8 +834,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 28 ============================== -->
-<section class="slide" id="slide-28" data-member-id="2" data-time="02:00" data-type="aprofundamento"
+<!-- ============================== SLIDE 22 ============================== -->
+<section class="slide" id="slide-22" data-member-id="2" data-time="02:00" data-type="aprofundamento"
          data-ref="Dinâmica do Algoritmo de Lloyd">
   <h2 class="s-title">Laboratório: Lloyd meio-passo a meio-passo — <em>Atribuir</em> vs <em>Atualizar</em></h2>
   <div class="s-body">
@@ -962,8 +849,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 29 ============================== -->
-<section class="slide" id="slide-29" data-member-id="2" data-time="02:30" data-type="nucleo"
+<!-- ============================== SLIDE 23 ============================== -->
+<section class="slide" id="slide-23" data-member-id="2" data-time="02:30" data-type="nucleo"
          data-ref="Murphy, PML (Cap. 21.3) · Bishop, PRML (Cap. 15.2)">
   <h2 class="s-title">Lloyd em execução: quatro iterações e a queda monótona de \(J\)</h2>
   <div class="s-body">
@@ -981,8 +868,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 30 ============================== -->
-<section class="slide" id="slide-30" data-member-id="2" data-time="02:00" data-type="nucleo"
+<!-- ============================== SLIDE 24 ============================== -->
+<section class="slide" id="slide-24" data-member-id="2" data-time="02:00" data-type="nucleo"
          data-ref="scikit-learn (2.3.2) · Rousseeuw (1987), silhueta">
   <h2 class="s-title">Escolher \(K\): o cotovelo da inércia e o pico da silhueta</h2>
   <div class="s-body">
@@ -1015,8 +902,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 31 ============================== -->
-<section class="slide" id="slide-31" data-member-id="2" data-time="02:00" data-type="aprofundamento"
+<!-- ============================== SLIDE 25 ============================== -->
+<section class="slide" id="slide-25" data-member-id="2" data-time="02:00" data-type="aprofundamento"
          data-ref="Rousseeuw (1987) · Análise Geométrica da Silhueta">
   <h2 class="s-title">A matemática da Silhueta: coesão \(a(i)\), separação \(b(i)\) e interpretação</h2>
   <div class="s-body">
@@ -1049,8 +936,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 32 ============================== -->
-<section class="slide" id="slide-32" data-member-id="2" data-time="02:00" data-type="aprofundamento"
+<!-- ============================== SLIDE 26 ============================== -->
+<section class="slide" id="slide-26" data-member-id="2" data-time="02:00" data-type="aprofundamento"
          data-ref="Diagnóstico Interativo de Número de Clusters">
   <h2 class="s-title">Laboratório: ajustando \(K\) de 1 a 8 com inércia e silhueta ao vivo</h2>
   <div class="s-body">
@@ -1064,8 +951,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 33 ============================== -->
-<section class="slide" id="slide-33" data-member-id="2" data-time="02:00" data-type="nucleo"
+<!-- ============================== SLIDE 27 ============================== -->
+<section class="slide" id="slide-27" data-member-id="2" data-time="02:00" data-type="nucleo"
          data-ref="Arthur &amp; Vassilvitskii (2007) · scikit-learn (2.3.2)">
   <h2 class="s-title">Inicialização e escala: dois modos silenciosos de estragar o resultado</h2>
   <div class="s-body">
@@ -1098,8 +985,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 34 ============================== -->
-<section class="slide" id="slide-34" data-member-id="2" data-time="02:00" data-type="aprofundamento"
+<!-- ============================== SLIDE 28 ============================== -->
+<section class="slide" id="slide-28" data-member-id="2" data-time="02:00" data-type="aprofundamento"
          data-ref="Arthur &amp; Vassilvitskii (2007) — Análise Teórica do k-means++">
   <h2 class="s-title">A matemática do k-means++: por que a probabilidade \(\propto D(\mathbf{x})^2\)?</h2>
   <div class="s-body">
@@ -1128,8 +1015,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 35 ============================== -->
-<section class="slide" id="slide-35" data-member-id="2" data-time="02:00" data-type="aprofundamento"
+<!-- ============================== SLIDE 29 ============================== -->
+<section class="slide" id="slide-29" data-member-id="2" data-time="02:00" data-type="aprofundamento"
          data-ref="Semeadura Probabilística k-means++">
   <h2 class="s-title">Laboratório: a roleta do k-means++ semeando centros com probabilidade \(\propto D^2\)</h2>
   <div class="s-body">
@@ -1143,8 +1030,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 36 ============================== -->
-<section class="slide" id="slide-36" data-member-id="2" data-time="02:00" data-type="aprofundamento"
+<!-- ============================== SLIDE 30 ============================== -->
+<section class="slide" id="slide-30" data-member-id="2" data-time="02:00" data-type="aprofundamento"
          data-ref="Pré-processamento e Escalas de Atributos">
   <h2 class="s-title">O perigo da escala: por que padronizar atributos é obrigatório</h2>
   <div class="s-body">
@@ -1175,8 +1062,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 37 ============================== -->
-<section class="slide" id="slide-37" data-member-id="2" data-time="02:00" data-type="aprofundamento"
+<!-- ============================== SLIDE 31 ============================== -->
+<section class="slide" id="slide-31" data-member-id="2" data-time="02:00" data-type="aprofundamento"
          data-ref="Implementação Completa do Algoritmo de Lloyd em Python">
   <h2 class="s-title">Código Python: K-Means do zero em 25 linhas de NumPy</h2>
   <div class="s-body">
@@ -1249,8 +1136,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 38 ============================== -->
-<section class="slide" id="slide-38" data-member-id="2" data-time="02:00" data-type="aprofundamento"
+<!-- ============================== SLIDE 32 ============================== -->
+<section class="slide" id="slide-32" data-member-id="2" data-time="02:00" data-type="aprofundamento"
          data-ref="Quantização Vetorial e Compressão de Imagens">
   <h2 class="s-title">Laboratório: K-Means em imagens (quantização e compressão de cores)</h2>
   <div class="s-body">
@@ -1264,8 +1151,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 39 ============================== -->
-<section class="slide" id="slide-39" data-member-id="2" data-time="01:30" data-type="nucleo"
+<!-- ============================== SLIDE 33 ============================== -->
+<section class="slide" id="slide-33" data-member-id="2" data-time="01:30" data-type="nucleo"
          data-ref="Bishop, PRML (Cap. 15.2) · Murphy, PML (Cap. 21.4)">
   <h2 class="s-title">Onde o K-Means falha — e por que isso motiva os modelos de mistura</h2>
   <div class="s-body">
@@ -1299,8 +1186,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 40 ============================== -->
-<section class="slide" id="slide-40" data-member-id="2" data-time="01:30" data-type="nucleo"
+<!-- ============================== SLIDE 34 ============================== -->
+<section class="slide" id="slide-34" data-member-id="2" data-time="01:30" data-type="nucleo"
          data-ref="Síntese do Bloco 2 · K-Means">
   <h2 class="s-title">Síntese do Bloco 2 — e a transição para dados discretos</h2>
   <div class="s-body">
@@ -1338,8 +1225,8 @@
 <!-- BLOCO 3 — ANTONIO CARLOS                                               -->
 <!-- ====================================================================== -->
 
-<!-- ============================== SLIDE 41 ============================== -->
-<section class="slide" id="slide-41" data-member-id="3" data-time="02:00" data-type="nucleo"
+<!-- ============================== SLIDE 35 ============================== -->
+<section class="slide" id="slide-35" data-member-id="3" data-time="02:00" data-type="nucleo"
          data-ref="Bishop, PRML (Cap. 15.3) · Murphy, PML (Cap. 21.4.2)">
   <h2 class="s-title">Dados binários vivem num hipercubo — e ali a média euclidiana falha</h2>
   <div class="s-body">
@@ -1380,8 +1267,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 42 ============================== -->
-<section class="slide" id="slide-42" data-member-id="3" data-time="02:30" data-type="nucleo"
+<!-- ============================== SLIDE 36 ============================== -->
+<section class="slide" id="slide-36" data-member-id="3" data-time="02:30" data-type="nucleo"
          data-ref="Bishop, PRML (Cap. 15.3, Eq. 15.42–15.45) · Murphy, PML (Cap. 21.4.2)">
   <h2 class="s-title">Bernoulli multivariada: \(D\) moedas independentes por componente</h2>
   <div class="s-body">
@@ -1413,8 +1300,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 43 ============================== -->
-<section class="slide" id="slide-43" data-member-id="3" data-time="02:00" data-type="aprofundamento"
+<!-- ============================== SLIDE 37 ============================== -->
+<section class="slide" id="slide-37" data-member-id="3" data-time="02:00" data-type="aprofundamento"
          data-ref="Análise do Vetor de Parâmetros de Bernoulli">
   <h2 class="s-title">A imagem de probabilidades: o que é exatamente o vetor \(\boldsymbol\mu_k\)?</h2>
   <div class="s-body">
@@ -1443,8 +1330,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 44 ============================== -->
-<section class="slide" id="slide-44" data-member-id="3" data-time="02:00" data-type="aprofundamento"
+<!-- ============================== SLIDE 38 ============================== -->
+<section class="slide" id="slide-38" data-member-id="3" data-time="02:00" data-type="aprofundamento"
          data-ref="Classificação Interativa com Mistura de Bernoulli">
   <h2 class="s-title">Laboratório: pinte um dígito 8×8 e veja o reconhecimento ao vivo</h2>
   <div class="s-body">
@@ -1458,8 +1345,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 45 ============================== -->
-<section class="slide" id="slide-45" data-member-id="3" data-time="02:30" data-type="nucleo"
+<!-- ============================== SLIDE 39 ============================== -->
+<section class="slide" id="slide-39" data-member-id="3" data-time="02:30" data-type="nucleo"
          data-ref="Bishop, PRML (Cap. 15.3, Eq. 15.46–15.48) · Murphy, PML (Cap. 21.4.2)">
   <h2 class="s-title">O somatório preso dentro do logaritmo: por que não há solução fechada</h2>
   <div class="s-body">
@@ -1493,8 +1380,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 46 ============================== -->
-<section class="slide" id="slide-46" data-member-id="3" data-time="02:00" data-type="aprofundamento"
+<!-- ============================== SLIDE 40 ============================== -->
+<section class="slide" id="slide-40" data-member-id="3" data-time="02:00" data-type="aprofundamento"
          data-ref="Análise Numérica da Não-Linearidade do Logaritmo">
   <h2 class="s-title">Laboratório: por que o log atrapalha (\(\ln(a+b) \neq \ln a + \ln b\))</h2>
   <div class="s-body">
@@ -1508,8 +1395,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 47 ============================== -->
-<section class="slide" id="slide-47" data-member-id="3" data-time="02:00" data-type="nucleo"
+<!-- ============================== SLIDE 41 ============================== -->
+<section class="slide" id="slide-41" data-member-id="3" data-time="02:00" data-type="nucleo"
          data-ref="Dempster, Laird &amp; Rubin (1977) · História e Filosofia do EM">
   <h2 class="s-title">O Algoritmo EM: uma estratégia elegante para dados incompletos</h2>
   <div class="s-body">
@@ -1536,8 +1423,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 48 ============================== -->
-<section class="slide" id="slide-48" data-member-id="3" data-time="02:30" data-type="nucleo"
+<!-- ============================== SLIDE 42 ============================== -->
+<section class="slide" id="slide-42" data-member-id="3" data-time="02:30" data-type="nucleo"
          data-ref="Bishop, PRML (Cap. 15.3, Eq. 15.49–15.52) · Dempster, Laird &amp; Rubin (1977)">
   <h2 class="s-title">EM para Misturas de Bernoulli: duas equações fechadas, alternadas</h2>
   <div class="s-body">
@@ -1572,8 +1459,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 49 ============================== -->
-<section class="slide" id="slide-49" data-member-id="3" data-time="02:00" data-type="aprofundamento"
+<!-- ============================== SLIDE 43 ============================== -->
+<section class="slide" id="slide-43" data-member-id="3" data-time="02:00" data-type="aprofundamento"
          data-ref="Execução Passo a Passo do Algoritmo EM">
   <h2 class="s-title">Laboratório: EM passo a passo em 6 amostras binárias</h2>
   <div class="s-body">
@@ -1587,8 +1474,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 50 ============================== -->
-<section class="slide" id="slide-50" data-member-id="3" data-time="02:00" data-type="aprofundamento"
+<!-- ============================== SLIDE 44 ============================== -->
+<section class="slide" id="slide-44" data-member-id="3" data-time="02:00" data-type="aprofundamento"
          data-ref="Bishop, PRML (Cap. 15.4) · A Cota ELBO">
   <h2 class="s-title">A prova da convergência: a decomposição \(\mathcal{L}(q, \boldsymbol\theta) + \mathrm{KL}(q \| p)\)</h2>
   <div class="s-body">
@@ -1632,8 +1519,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 51 ============================== -->
-<section class="slide" id="slide-51" data-member-id="3" data-time="02:00" data-type="aprofundamento"
+<!-- ============================== SLIDE 45 ============================== -->
+<section class="slide" id="slide-45" data-member-id="3" data-time="02:00" data-type="aprofundamento"
          data-ref="Bishop, PRML (Cap. 15.4) — Decomposição ELBO e KL">
   <h2 class="s-title">Laboratório: por que \(\ln p(X)\) nunca cai — visualizando a cota ELBO</h2>
   <div class="s-body">
@@ -1647,8 +1534,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 52 ============================== -->
-<section class="slide" id="slide-52" data-member-id="3" data-time="02:00" data-type="nucleo"
+<!-- ============================== SLIDE 46 ============================== -->
+<section class="slide" id="slide-46" data-member-id="3" data-time="02:00" data-type="nucleo"
          data-ref="Bishop, PRML (Cap. 15.3, Fig. 15.8)">
   <h2 class="s-title">Protótipos emergem do ruído: EM sobre dígitos binarizados</h2>
   <div class="s-body">
@@ -1675,8 +1562,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 53 ============================== -->
-<section class="slide" id="slide-53" data-member-id="3" data-time="02:00" data-type="nucleo"
+<!-- ============================== SLIDE 47 ============================== -->
+<section class="slide" id="slide-47" data-member-id="3" data-time="02:00" data-type="nucleo"
          data-ref="Bishop, PRML (Cap. 15.3) · Murphy, PML (Cap. 21.4.2)">
   <h2 class="s-title">Dois modos de quebrar o EM: verossimilhança nula e subfluxo numérico</h2>
   <div class="s-body">
@@ -1703,8 +1590,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 54 ============================== -->
-<section class="slide" id="slide-54" data-member-id="3" data-time="02:00" data-type="aprofundamento"
+<!-- ============================== SLIDE 48 ============================== -->
+<section class="slide" id="slide-48" data-member-id="3" data-time="02:00" data-type="aprofundamento"
          data-ref="Suavização Bayesiana de Laplace">
   <h2 class="s-title">Solução 1: Suavização de Laplace e Priores Beta para evitar \(\mu \to 0\)</h2>
   <div class="s-body">
@@ -1732,8 +1619,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 55 ============================== -->
-<section class="slide" id="slide-55" data-member-id="3" data-time="02:00" data-type="aprofundamento"
+<!-- ============================== SLIDE 49 ============================== -->
+<section class="slide" id="slide-49" data-member-id="3" data-time="02:00" data-type="aprofundamento"
          data-ref="Álgebra Numérica Estável · Log-Sum-Exp">
   <h2 class="s-title">Solução 2: O truque numérico <em>Log-Sum-Exp</em> (LSE)</h2>
   <div class="s-body">
@@ -1775,8 +1662,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 56 ============================== -->
-<section class="slide" id="slide-56" data-member-id="3" data-time="02:00" data-type="aprofundamento"
+<!-- ============================== SLIDE 50 ============================== -->
+<section class="slide" id="slide-50" data-member-id="3" data-time="02:00" data-type="aprofundamento"
          data-ref="Estabilidade Numérica em Ponto Flutuante IEEE-754">
   <h2 class="s-title">Laboratório: underflow ao vivo (float64 colapsando vs espaço logarítmico)</h2>
   <div class="s-body">
@@ -1790,8 +1677,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 57 ============================== -->
-<section class="slide" id="slide-57" data-member-id="3" data-time="02:00" data-type="aprofundamento"
+<!-- ============================== SLIDE 51 ============================== -->
+<section class="slide" id="slide-51" data-member-id="3" data-time="02:00" data-type="aprofundamento"
          data-ref="Implementação de Mistura de Bernoulli em NumPy Puro">
   <h2 class="s-title">Código Python: mistura de Bernoulli com EM estável</h2>
   <div class="s-body">
@@ -1862,8 +1749,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 58 ============================== -->
-<section class="slide" id="slide-58" data-member-id="3" data-time="01:30" data-type="nucleo"
+<!-- ============================== SLIDE 52 ============================== -->
+<section class="slide" id="slide-52" data-member-id="3" data-time="01:30" data-type="nucleo"
          data-ref="Bishop, PRML (Cap. 15.1 e 15.3)">
   <h2 class="s-title">Síntese do Bloco 3 — do hipercubo binário ao espaço contínuo</h2>
   <div class="s-body">
@@ -1902,8 +1789,8 @@
 <!-- BLOCO 4 — BIANCA VISCO                                                 -->
 <!-- ====================================================================== -->
 
-<!-- ============================== SLIDE 59 ============================== -->
-<section class="slide" id="slide-59" data-member-id="4" data-time="02:30" data-type="nucleo"
+<!-- ============================== SLIDE 53 ============================== -->
+<section class="slide" id="slide-53" data-member-id="4" data-time="02:30" data-type="nucleo"
          data-ref="scikit-learn (2.1) · Bishop, PRML (Cap. 15.1) · Murphy, PML (Cap. 21.4)">
   <h2 class="s-title">GMM: combinação convexa de elipsóides gaussianos</h2>
   <div class="s-body">
@@ -1937,8 +1824,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 60 ============================== -->
-<section class="slide" id="slide-60" data-member-id="4" data-time="02:00" data-type="nucleo"
+<!-- ============================== SLIDE 54 ============================== -->
+<section class="slide" id="slide-54" data-member-id="4" data-time="02:00" data-type="nucleo"
          data-ref="Bishop, PRML (Cap. 2.3) · Densidade Gaussiana Multivariada">
   <h2 class="s-title">A anatomia da Gaussiana Multivariada: expoente quadrático e normalização</h2>
   <div class="s-body">
@@ -1967,8 +1854,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 61 ============================== -->
-<section class="slide" id="slide-61" data-member-id="4" data-time="02:00" data-type="aprofundamento"
+<!-- ============================== SLIDE 55 ============================== -->
+<section class="slide" id="slide-55" data-member-id="4" data-time="02:00" data-type="aprofundamento"
          data-ref="Geometria da Matriz de Covariância 2×2">
   <h2 class="s-title">A Matriz de Covariância 2×2 desmistificada: variâncias e correlação \(\rho\)</h2>
   <div class="s-body">
@@ -1998,8 +1885,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 62 ============================== -->
-<section class="slide" id="slide-62" data-member-id="4" data-time="02:00" data-type="aprofundamento"
+<!-- ============================== SLIDE 56 ============================== -->
+<section class="slide" id="slide-56" data-member-id="4" data-time="02:00" data-type="aprofundamento"
          data-ref="Geometria da Matriz de Covariância 2×2">
   <h2 class="s-title">Laboratório da covariância: o que a matriz \(\boldsymbol\Sigma\) realmente faz</h2>
   <div class="s-body">
@@ -2013,8 +1900,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 63 ============================== -->
-<section class="slide" id="slide-63" data-member-id="4" data-time="02:00" data-type="aprofundamento"
+<!-- ============================== SLIDE 57 ============================== -->
+<section class="slide" id="slide-57" data-member-id="4" data-time="02:00" data-type="aprofundamento"
          data-ref="Distância Estatística de Mahalanobis">
   <h2 class="s-title">Distância de Mahalanobis: a métrica que enxerga a geometria dos dados</h2>
   <div class="s-body">
@@ -2044,8 +1931,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 64 ============================== -->
-<section class="slide" id="slide-64" data-member-id="4" data-time="02:00" data-type="aprofundamento"
+<!-- ============================== SLIDE 58 ============================== -->
+<section class="slide" id="slide-58" data-member-id="4" data-time="02:00" data-type="aprofundamento"
          data-ref="Distância Estatística de Mahalanobis">
   <h2 class="s-title">Laboratório: Mahalanobis vs Euclidiana (a métrica que enxerga correlações)</h2>
   <div class="s-body">
@@ -2059,8 +1946,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 65 ============================== -->
-<section class="slide" id="slide-65" data-member-id="4" data-time="02:30" data-type="nucleo"
+<!-- ============================== SLIDE 59 ============================== -->
+<section class="slide" id="slide-59" data-member-id="4" data-time="02:30" data-type="nucleo"
          data-ref="Bishop, PRML (Cap. 15.1, Eq. 15.14–15.19) · scikit-learn (2.1.1)">
   <h2 class="s-title">EM para GMM: agora o Passo M também ajusta a forma</h2>
   <div class="s-body">
@@ -2095,8 +1982,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 66 ============================== -->
-<section class="slide" id="slide-66" data-member-id="4" data-time="02:00" data-type="aprofundamento"
+<!-- ============================== SLIDE 60 ============================== -->
+<section class="slide" id="slide-60" data-member-id="4" data-time="02:00" data-type="aprofundamento"
          data-ref="Animação Iterativa do Algoritmo EM-GMM">
   <h2 class="s-title">Laboratório: animação interativa da convergência do EM-GMM</h2>
   <div class="s-body">
@@ -2110,8 +1997,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 67 ============================== -->
-<section class="slide" id="slide-67" data-member-id="4" data-time="02:00" data-type="aprofundamento"
+<!-- ============================== SLIDE 61 ============================== -->
+<section class="slide" id="slide-61" data-member-id="4" data-time="02:00" data-type="aprofundamento"
          data-ref="Bishop, PRML (Cap. 15.1) · Singularidades de Verossimilhança">
   <h2 class="s-title">Singularidades da Gaussiana e a regularização <code>reg_covar</code></h2>
   <div class="s-body">
@@ -2137,8 +2024,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 68 ============================== -->
-<section class="slide" id="slide-68" data-member-id="4" data-time="02:00" data-type="nucleo"
+<!-- ============================== SLIDE 62 ============================== -->
+<section class="slide" id="slide-62" data-member-id="4" data-time="02:00" data-type="nucleo"
          data-ref="scikit-learn (2.1 e 2.1.1) · critérios BIC/AIC">
   <h2 class="s-title">As quatro geometrias de <code>covariance_type</code> — e o preço de cada uma</h2>
   <div class="s-body">
@@ -2169,8 +2056,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 69 ============================== -->
-<section class="slide" id="slide-69" data-member-id="4" data-time="02:00" data-type="aprofundamento"
+<!-- ============================== SLIDE 63 ============================== -->
+<section class="slide" id="slide-63" data-member-id="4" data-time="02:00" data-type="aprofundamento"
          data-ref="Seleção de Modelos via BIC e AIC">
   <h2 class="s-title">Laboratório: varredura de \(K\) e tipos de covariância com curva de BIC</h2>
   <div class="s-body">
@@ -2184,8 +2071,8 @@
   </div>
 </section>
 
-<!-- ============================== SLIDE 70 ============================== -->
-<section class="slide" id="slide-70" data-member-id="4" data-time="02:30" data-type="nucleo"
+<!-- ============================== SLIDE 64 ============================== -->
+<section class="slide" id="slide-64" data-member-id="4" data-time="02:30" data-type="nucleo"
          data-ref="Demonstração prática do projeto · scikit-learn (2.1 e 2.3.2)">
   <h2 class="s-title">Demonstração: K-Means e GMM sobre o mesmo conjunto anisotrópico</h2>
   <div class="s-body">
@@ -2229,8 +2116,8 @@ proba = gmm.<span class="fn">predict_proba</span>(X)
   </div>
 </section>
 
-<!-- ============================== SLIDE 71 ============================== -->
-<section class="slide" id="slide-71" data-member-id="4" data-time="02:00" data-type="aprofundamento"
+<!-- ============================== SLIDE 65 ============================== -->
+<section class="slide" id="slide-65" data-member-id="4" data-time="02:00" data-type="aprofundamento"
          data-ref="Detecção Não Supervisionada de Anomalias">
   <h2 class="s-title">Laboratório: detecção de anomalia por limiar de densidade \(p(\mathbf{x}) < \tau\)</h2>
   <div class="s-body">
@@ -2244,8 +2131,8 @@ proba = gmm.<span class="fn">predict_proba</span>(X)
   </div>
 </section>
 
-<!-- ============================== SLIDE 72 ============================== -->
-<section class="slide" id="slide-72" data-member-id="4" data-time="02:00" data-type="nucleo"
+<!-- ============================== SLIDE 66 ============================== -->
+<section class="slide" id="slide-66" data-member-id="4" data-time="02:00" data-type="nucleo"
          data-ref="Quadro Comparativo Global dos Três Métodos">
   <h2 class="s-title">Quadro comparativo dos três métodos</h2>
   <div class="s-body">
@@ -2283,8 +2170,8 @@ proba = gmm.<span class="fn">predict_proba</span>(X)
   </div>
 </section>
 
-<!-- ============================== SLIDE 73 ============================== -->
-<section class="slide" id="slide-73" data-member-id="4" data-time="01:30" data-type="nucleo"
+<!-- ============================== SLIDE 67 ============================== -->
+<section class="slide" id="slide-67" data-member-id="4" data-time="01:30" data-type="nucleo"
          data-ref="Bishop (2006) · Murphy (2022) · scikit-learn · Arthur (2007) · Dempster (1977)">
   <h2 class="s-title">Conclusões, referências e abertura para perguntas</h2>
   <div class="s-body">
@@ -2363,11 +2250,11 @@ proba = gmm.<span class="fn">predict_proba</span>(X)
 <div class="overlay" id="overview" role="dialog" aria-modal="true" aria-label="Visão geral dos slides">
   <button class="btn ov-close" type="button" data-close="overview">Fechar (Esc)</button>
   <h2>Visão geral dos slides</h2>
-  <p class="ov-sub">Clique em qualquer cartão para saltar. Use o filtro abaixo para visualizar a rota completa de 73 slides ou o roteiro de 60 minutos.</p>
+  <p class="ov-sub">Clique em qualquer cartão para saltar. Use o filtro abaixo para visualizar a rota completa de 67 slides ou o roteiro de 60 minutos.</p>
   <div class="ov-filter-bar">
-    <button type="button" class="ov-filter-btn active" data-filter="all">Todos os 73 Slides (Material Completo)</button>
-    <button type="button" class="ov-filter-btn" data-filter="nucleo">Caminho de 60 minutos (28 Slides de Núcleo)</button>
-    <button type="button" class="ov-filter-btn" data-filter="aprof">Apenas Laboratórios e Aprofundamentos (45 Slides)</button>
+    <button type="button" class="ov-filter-btn active" data-filter="all">Todos os 67 Slides (Material Completo)</button>
+    <button type="button" class="ov-filter-btn" data-filter="nucleo">Caminho de 60 minutos (30 Slides de Núcleo)</button>
+    <button type="button" class="ov-filter-btn" data-filter="aprof">Apenas Laboratórios e Aprofundamentos (37 Slides)</button>
   </div>
   <div id="ov-grid"></div>
 </div>
@@ -2421,7 +2308,7 @@ proba = gmm.<span class="fn">predict_proba</span>(X)
 <div class="overlay" id="help" role="dialog" aria-modal="true" aria-label="Atalhos de teclado">
   <button class="btn ov-close" type="button" data-close="help">Fechar (Esc)</button>
   <h2>Atalhos de Teclado e Navegação</h2>
-  <p class="ov-sub">Deck único e linear em 73 slides. Funciona abrindo <code>index.html</code> ou <code>apresentacao.html</code> diretamente no navegador.</p>
+  <p class="ov-sub">Deck único e linear em 67 slides. Funciona abrindo <code>index.html</code> ou <code>apresentacao.html</code> diretamente no navegador.</p>
   <div id="help-grid">
     <div><span>Próximo passo / Próximo slide</span><span><kbd>Espaço</kbd> · <kbd>→</kbd> · <kbd>PageDown</kbd></span></div>
     <div><span>Slide anterior</span><span><kbd>←</kbd> · <kbd>PageUp</kbd></span></div>
@@ -2435,16 +2322,16 @@ proba = gmm.<span class="fn">predict_proba</span>(X)
     <div><span>Ocultar barra de navegação</span><span><kbd>C</kbd></span></div>
     <div><span>Esta tela de ajuda</span><span><kbd>?</kbd> ou <kbd>H</kbd></span></div>
     <div><span>Fechar sobreposição ou painel</span><span><kbd>Esc</kbd></span></div>
-    <div><span>Link direto para slide</span><span>sufixo <kbd>#slide-22</kbd> na URL</span></div>
+    <div><span>Link direto para slide</span><span>sufixo <kbd>#slide-16</kbd> na URL</span></div>
   </div>
-  <h2 style="margin-top:24px">O Caminho de 60 Minutos (Roteiro dos 28 Slides de Núcleo)</h2>
+  <h2 style="margin-top:24px">O Caminho de 60 Minutos (Roteiro dos 30 Slides de Núcleo)</h2>
   <p class="ov-sub" style="max-width:85ch">
     Caso necessitem apresentar estritamente em 60 minutos sem os aprofundamentos práticos, a sequência exata de núcleo é:<br>
     <b>Capa:</b> 01 &nbsp;·&nbsp;
-    <b>Bloco 1 · Henrique:</b> 08, 10, 13, 15, 17, 21 &nbsp;·&nbsp;
-    <b>Bloco 2 · Luiany:</b> 22, 23, 25, 29, 30, 33, 39, 40 &nbsp;·&nbsp;
-    <b>Bloco 3 · Antonio:</b> 41, 42, 45, 47, 48, 52, 53, 58 &nbsp;·&nbsp;
-    <b>Bloco 4 · Bianca:</b> 59, 60, 65, 68, 70, 72, 73.
+    <b>Bloco 1 · Henrique:</b> 02, 04, 07, 09, 11, 15 &nbsp;·&nbsp;
+    <b>Bloco 2 · Luiany:</b> 16, 17, 19, 23, 24, 27, 33, 34 &nbsp;·&nbsp;
+    <b>Bloco 3 · Antonio:</b> 35, 36, 39, 41, 42, 46, 47, 52 &nbsp;·&nbsp;
+    <b>Bloco 4 · Bianca:</b> 53, 54, 59, 62, 64, 66, 67.
   </p>
 </div>
 

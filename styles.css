@@ -30,7 +30,6 @@
   --accent-hover:#96450A;
 
   /* Marcadores de bloco (uso funcional: identificar a seção) */
-  --m0: #6D3FC4;   /* Bloco 0 · Nivelamento */
   --m1: #B4530A;   /* Bloco 1 */
   --m2: #0C7C7A;   /* Bloco 2 */
   --m3: #BC2A53;   /* Bloco 3 */
@@ -98,7 +97,6 @@ html[data-theme="dark"] {
   --accent-ink:  #131013;
   --accent-hover:#F2C570;
 
-  --m0: #B388FF;
   --m1: #E9B44C;
   --m2: #5BC0BE;
   --m3: #D96C82;
@@ -190,7 +188,6 @@ html, body {
   background: var(--m1);
   flex: 0 0 auto;
 }
-[data-member-id="0"] .member-bar { background: var(--m0); }
 [data-member-id="1"] .member-bar { background: var(--m1); }
 [data-member-id="2"] .member-bar { background: var(--m2); }
 [data-member-id="3"] .member-bar { background: var(--m3); }
@@ -822,7 +819,6 @@ body.notes-open #notes-panel { transform: translateX(0); }
 .ov-card .n { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; color: var(--fg-dim); }
 .ov-card .t { font-size: 12.5px; line-height: 1.32; color: var(--fg); }
 .ov-card .w { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.06em; color: var(--fg-dim); margin-top: auto; }
-.ov-card[data-member-id="0"] { border-top-color: var(--m0); }
 .ov-card[data-member-id="1"] { border-top-color: var(--m1); }
 .ov-card[data-member-id="2"] { border-top-color: var(--m2); }
 .ov-card[data-member-id="3"] { border-top-color: var(--m3); }

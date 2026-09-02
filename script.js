@@ -5,7 +5,6 @@
   'use strict';
 
   var MEMBERS = {
-    0: { nome: 'Bloco 0', pessoa: '', bloco: 'Nivelamento e fundamentos matemáticos', janela: 'Introdução' },
     1: { nome: 'Bloco 1', pessoa: 'Henrique Matheus Mendonça de Miranda',
          bloco: 'Fundamentos e variáveis latentes', janela: '00:00–15:00' },
     2: { nome: 'Bloco 2', pessoa: 'Luiany Gonçalves Carvalho',
@@ -15,8 +14,7 @@
     4: { nome: 'Bloco 4', pessoa: 'Bianca Fernandes Visco',
          bloco: 'GMM, demonstração e comparação', janela: '45:00–60:00' }
   };
-  /* "Bloco 2 · Luiany Gonçalves Carvalho" no cabeçalho; sem nome no Bloco 0,
-     que é material de nivelamento e não tem apresentador designado. */
+  /* "Bloco 2 · Luiany Gonçalves Carvalho" no cabeçalho. */
   function quem(m) { return m.pessoa ? m.nome + ' · ' + m.pessoa : m.nome; }
 
   var slides = [], current = 0, stage, wrap;

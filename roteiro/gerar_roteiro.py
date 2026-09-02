@@ -3,7 +3,7 @@
 
 Os títulos, o bloco e o tipo de cada slide são lidos do próprio index.html, de
 modo que o roteiro nunca sai de sincronia com a apresentação. O texto falado
-vive em b0.py … b4.py, um dicionário FALAS por bloco.
+vive em b1.py … b4.py, um dicionário FALAS por bloco.
 
     python3 roteiro/gerar_roteiro.py            # escreve roteiro/roteiro.html
     node    roteiro/gerar_pdf.js                # imprime roteiro-apresentacao.pdf
@@ -18,12 +18,11 @@ AQUI = os.path.dirname(os.path.abspath(__file__))
 RAIZ = os.path.dirname(AQUI)
 sys.path.insert(0, AQUI)
 
-import b0, b1, b2, b3, b4  # noqa: E402
+import b1, b2, b3, b4  # noqa: E402
 
 PPM = 135  # palavras por minuto — ritmo de fala usado no planejamento
 
 BLOCOS = [
-    (0, b0, 'Bloco 0', 'Nivelamento (opcional)', 'Fundamentos matemáticos'),
     (1, b1, 'Bloco 1', 'Henrique Matheus Mendonça de Miranda', 'Fundamentos e variáveis latentes'),
     (2, b2, 'Bloco 2', 'Luiany Gonçalves Carvalho', 'K-Means clustering'),
     (3, b3, 'Bloco 3', 'Antonio Carlos de Barcelos Fernandes', 'Misturas de Bernoulli e EM'),
@@ -176,9 +175,7 @@ def gerar():
     Cada entrada abaixo é o texto falado do slide correspondente, escrito em linguagem
     coloquial de apresentação. As durações são estimadas a %d palavras por minuto, ritmo
     confortável de fala em português para conteúdo técnico — quem fala mais devagar deve
-    somar cerca de 10%%. Os quatro blocos apresentados ficam entre 12 e 15 minutos cada.
-    O Bloco 0 é material de nivelamento opcional, sem apresentador designado: use se
-    houver tempo de abertura, ou pule direto para o Bloco 1.
+    somar cerca de 10%%. Os quatro blocos ficam entre 12 e 15 minutos cada.
   </div>
 </div>""" % (resumo, sum(r[3] for r in linhas_resumo), total_palavras,
              mmss(total_palavras), PPM))
