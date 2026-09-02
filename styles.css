@@ -394,6 +394,31 @@ figcaption b { color: var(--fg-muted); font-weight: 600; }
   color: var(--fg-dim); opacity: 0.85;
 }
 
+/* Modelo gráfico em notação de placa (slides 10 e 12).
+   As cores saem dos tokens, e não de literais, para o diagrama acompanhar os
+   dois temas. Convenção padrão de PGM: nó sombreado = observado. */
+.pgm { display: block; width: 100%; height: auto; }
+.pgm text { font-family: var(--mono); }
+.pgm .pl        { fill: rgba(var(--ink-rgb), 0.03); stroke: var(--line-strong); stroke-dasharray: 5 4; }
+.pgm .pl-n      { fill: var(--fg-muted); font-size: 15px; font-weight: 600; }
+.pgm .nd-lat    { fill: var(--bg); stroke: var(--accent); stroke-width: 1.8; }
+.pgm .nd-obs    { fill: rgba(var(--ink-rgb), 0.17); stroke: var(--fg-muted); stroke-width: 1.6; }
+.pgm .t-lat     { fill: var(--accent); font-size: 17px; }
+.pgm .t-obs     { fill: var(--fg); font-size: 17px; }
+.pgm .t-role    { fill: var(--fg-dim); font-family: var(--sans); font-size: 10.5px; }
+.pgm .par       { fill: none; stroke: var(--line-strong); }
+.pgm .t-par     { fill: var(--fg-muted); font-size: 14px; }
+.pgm .edge      { fill: none; stroke: var(--fg-dim); stroke-width: 1.5; }
+.pgm .head      { fill: var(--fg-dim); }
+.pgm .t-note    { fill: var(--fg-dim); font-size: 10px; }
+.pgm .sub       { font-size: 11px; }
+
+/* Variante do slide 12, onde a própria placa é o assunto da explicação. */
+.pgm.pgm-focus .pl     { stroke: var(--accent); stroke-width: 1.8; fill: var(--accent-soft); }
+.pgm.pgm-focus .pl-n   { fill: var(--accent); font-size: 18px; }
+.pgm .t-call           { fill: var(--accent); font-size: 10px; }
+.pgm .call             { fill: none; stroke: var(--accent-line); stroke-width: 1.2; stroke-dasharray: 3 3; }
+
 .legend { display: flex; flex-wrap: wrap; gap: 5px 16px; font-size: 12px; color: var(--fg-muted); }
 .legend span { display: inline-flex; align-items: center; gap: 6px; }
 .legend i { width: 10px; height: 10px; display: inline-block; flex: 0 0 auto; }

@@ -413,6 +413,31 @@ figcaption b { color: var(--fg-muted); font-weight: 600; }
   color: var(--fg-dim); opacity: 0.85;
 }
 
+/* Modelo gráfico em notação de placa (slides 10 e 12).
+   As cores saem dos tokens, e não de literais, para o diagrama acompanhar os
+   dois temas. Convenção padrão de PGM: nó sombreado = observado. */
+.pgm { display: block; width: 100%; height: auto; }
+.pgm text { font-family: var(--mono); }
+.pgm .pl        { fill: rgba(var(--ink-rgb), 0.03); stroke: var(--line-strong); stroke-dasharray: 5 4; }
+.pgm .pl-n      { fill: var(--fg-muted); font-size: 15px; font-weight: 600; }
+.pgm .nd-lat    { fill: var(--bg); stroke: var(--accent); stroke-width: 1.8; }
+.pgm .nd-obs    { fill: rgba(var(--ink-rgb), 0.17); stroke: var(--fg-muted); stroke-width: 1.6; }
+.pgm .t-lat     { fill: var(--accent); font-size: 17px; }
+.pgm .t-obs     { fill: var(--fg); font-size: 17px; }
+.pgm .t-role    { fill: var(--fg-dim); font-family: var(--sans); font-size: 10.5px; }
+.pgm .par       { fill: none; stroke: var(--line-strong); }
+.pgm .t-par     { fill: var(--fg-muted); font-size: 14px; }
+.pgm .edge      { fill: none; stroke: var(--fg-dim); stroke-width: 1.5; }
+.pgm .head      { fill: var(--fg-dim); }
+.pgm .t-note    { fill: var(--fg-dim); font-size: 10px; }
+.pgm .sub       { font-size: 11px; }
+
+/* Variante do slide 12, onde a própria placa é o assunto da explicação. */
+.pgm.pgm-focus .pl     { stroke: var(--accent); stroke-width: 1.8; fill: var(--accent-soft); }
+.pgm.pgm-focus .pl-n   { fill: var(--accent); font-size: 18px; }
+.pgm .t-call           { fill: var(--accent); font-size: 10px; }
+.pgm .call             { fill: none; stroke: var(--accent-line); stroke-width: 1.2; stroke-dasharray: 3 3; }
+
 .legend { display: flex; flex-wrap: wrap; gap: 5px 16px; font-size: 12px; color: var(--fg-muted); }
 .legend span { display: inline-flex; align-items: center; gap: 6px; }
 .legend i { width: 10px; height: 10px; display: inline-block; flex: 0 0 auto; }
@@ -1290,30 +1315,38 @@ body.notes-open #notes-panel { transform: translateX(0); }
     </div>
     <div class="c6 stack center">
       <figure>
-        <svg viewBox="0 0 470 250" width="100%" height="250" role="img"
-             aria-label="Modelo gráfico probabilístico em notação de placa. Os nós pi e theta, fora da placa, apontam respectivamente para z_n e x_n. Dentro da placa, o nó claro z_n aponta para o nó sombreado x_n.">
+        <svg class="pgm" viewBox="0 0 470 250" width="100%" height="250" role="img"
+             aria-label="Modelo gráfico probabilístico em notação de placa. Os nós pi e theta, fora da placa, apontam respectivamente para z_n e x_n. Dentro da placa, o nó claro z_n aponta para o nó sombreado x_n. A placa é uma caixa tracejada com o índice N no canto inferior direito.">
           <defs>
-            <marker id="ah" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto">
-              <path d="M0,0 L8,3 L0,6 z" fill="#A99FA2"/>
+            <marker id="ah10" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto">
+              <path class="head" d="M0,0 L8,3 L0,6 z"/>
             </marker>
           </defs>
-          <rect x="118" y="42" width="330" height="160" fill="none" stroke="rgba(238,232,229,0.24)" stroke-dasharray="5 4"/>
-          <text x="432" y="192" fill="#7B7276" font-family="IBM Plex Mono, monospace" font-size="11" text-anchor="end">N observações i.i.d.</text>
-          <circle cx="196" cy="122" r="38" fill="rgba(233,180,76,0.13)" stroke="#E9B44C" stroke-width="1.6"/>
-          <text x="196" y="118" fill="#E9B44C" font-family="IBM Plex Mono, monospace" font-size="17" text-anchor="middle">z_n</text>
-          <text x="196" y="136" fill="#A99FA2" font-family="IBM Plex Sans, sans-serif" font-size="10.5" text-anchor="middle">latente</text>
-          <circle cx="360" cy="122" r="38" fill="rgba(238,232,229,0.20)" stroke="#EFE9E6" stroke-width="1.6"/>
-          <text x="360" y="118" fill="#EFE9E6" font-family="IBM Plex Mono, monospace" font-size="17" text-anchor="middle">x_n</text>
-          <text x="360" y="136" fill="#A99FA2" font-family="IBM Plex Sans, sans-serif" font-size="10.5" text-anchor="middle">observada</text>
-          <line x1="236" y1="122" x2="314" y2="122" stroke="#A99FA2" stroke-width="1.6" marker-end="url(#ah)"/>
-          <rect x="16" y="42" width="74" height="34" fill="none" stroke="rgba(238,232,229,0.30)"/>
-          <text x="53" y="64" fill="#A99FA2" font-family="IBM Plex Mono, monospace" font-size="13" text-anchor="middle">π</text>
-          <rect x="16" y="172" width="74" height="34" fill="none" stroke="rgba(238,232,229,0.30)"/>
-          <text x="53" y="194" fill="#A99FA2" font-family="IBM Plex Mono, monospace" font-size="13" text-anchor="middle">θ</text>
-          <path d="M90,59 C140,59 150,92 168,108" fill="none" stroke="#A99FA2" stroke-width="1.4" marker-end="url(#ah)"/>
-          <path d="M90,189 C210,189 300,180 336,150" fill="none" stroke="#A99FA2" stroke-width="1.4" marker-end="url(#ah)"/>
-          <text x="128" y="30" fill="#7B7276" font-family="IBM Plex Mono, monospace" font-size="10">pesos da mistura</text>
-          <text x="128" y="232" fill="#7B7276" font-family="IBM Plex Mono, monospace" font-size="10">parâmetros das componentes</text>
+
+          <rect class="pl" x="118" y="40" width="330" height="166" rx="3"/>
+          <text class="pl-n" x="434" y="197" text-anchor="middle">N</text>
+          <text class="t-note" x="128" y="58">uma cópia por observação</text>
+
+          <circle class="nd-lat" cx="200" cy="126" r="38"/>
+          <text class="t-lat" x="200" y="122" text-anchor="middle">z<tspan class="sub" dy="4">n</tspan></text>
+          <text class="t-role" x="200" y="141" text-anchor="middle">latente</text>
+
+          <circle class="nd-obs" cx="360" cy="126" r="38"/>
+          <text class="t-obs" x="360" y="122" text-anchor="middle">x<tspan class="sub" dy="4">n</tspan></text>
+          <text class="t-role" x="360" y="141" text-anchor="middle">observada</text>
+
+          <line class="edge" x1="240" y1="126" x2="318" y2="126" marker-end="url(#ah10)"/>
+
+          <rect class="par" x="16" y="44" width="74" height="34" rx="2"/>
+          <text class="t-par" x="53" y="66" text-anchor="middle">&#960;</text>
+          <rect class="par" x="16" y="172" width="74" height="34" rx="2"/>
+          <text class="t-par" x="53" y="194" text-anchor="middle">&#952;</text>
+
+          <path class="edge" d="M90,61 C140,61 152,96 170,112" marker-end="url(#ah10)"/>
+          <path class="edge" d="M90,189 C210,189 302,182 337,155" marker-end="url(#ah10)"/>
+
+          <text class="t-note" x="16" y="34">pesos da mistura</text>
+          <text class="t-note" x="16" y="228">parâmetros das componentes</text>
         </svg>
         <figcaption><b>Notação de placa.</b> O nó sombreado \(x_n\) é o único observado; \(z_n\) permanece oculto. Os parâmetros \(\boldsymbol\pi\) e \(\boldsymbol\theta\) são compartilhados por todas as \(N\) amostras.</figcaption>
       </figure>
@@ -1375,6 +1408,45 @@ body.notes-open #notes-panel { transform: translateX(0); }
       </ul>
     </div>
     <div class="c6 stack">
+      <figure>
+        <svg class="pgm pgm-focus" viewBox="0 0 470 250" width="100%" height="212" role="img"
+             aria-label="O mesmo modelo gráfico do slide 10, agora com a placa em destaque: a caixa tracejada que envolve z_n e x_n, com o índice N no canto inferior direito. Os nós pi e theta ficam fora da caixa.">
+          <defs>
+            <marker id="ah12" markerWidth="9" markerHeight="9" refX="8" refY="3" orient="auto">
+              <path class="head" d="M0,0 L8,3 L0,6 z"/>
+            </marker>
+          </defs>
+
+          <rect class="pl" x="118" y="40" width="330" height="166" rx="3"/>
+          <text class="pl-n" x="434" y="197" text-anchor="middle">N</text>
+          <text class="t-call" x="128" y="58">dentro: replicado N vezes</text>
+
+          <circle class="nd-lat" cx="200" cy="126" r="38"/>
+          <text class="t-lat" x="200" y="122" text-anchor="middle">z<tspan class="sub" dy="4">n</tspan></text>
+          <text class="t-role" x="200" y="141" text-anchor="middle">latente</text>
+
+          <circle class="nd-obs" cx="360" cy="126" r="38"/>
+          <text class="t-obs" x="360" y="122" text-anchor="middle">x<tspan class="sub" dy="4">n</tspan></text>
+          <text class="t-role" x="360" y="141" text-anchor="middle">observada</text>
+
+          <line class="edge" x1="240" y1="126" x2="318" y2="126" marker-end="url(#ah12)"/>
+
+          <rect class="par" x="16" y="44" width="74" height="34" rx="2"/>
+          <text class="t-par" x="53" y="66" text-anchor="middle">&#960;</text>
+          <rect class="par" x="16" y="172" width="74" height="34" rx="2"/>
+          <text class="t-par" x="53" y="194" text-anchor="middle">&#952;</text>
+
+          <path class="edge" d="M90,61 C140,61 152,96 170,112" marker-end="url(#ah12)"/>
+          <path class="edge" d="M90,189 C210,189 302,182 337,155" marker-end="url(#ah12)"/>
+
+          <text class="t-note" x="16" y="34">fora da placa</text>
+          <text class="t-note" x="16" y="228">globais: um só para as N amostras</text>
+
+          <path class="call" d="M428,206 L398,228"/>
+          <text class="t-call" x="392" y="232" text-anchor="end">índice da placa</text>
+        </svg>
+        <figcaption><b>A placa em destaque.</b> É o mesmo grafo do slide 10 — aqui só a caixa importa.</figcaption>
+      </figure>
       <div class="note-box" style="border-left-color:var(--accent)">
         <span class="tag intuicao">por que a placa importa?</span>
         A caixa retangular com o índice \(N\) no canto inferior direito representa \(N\) cópias independentes dos nós internos \(\mathbf{z}_n\) e \(\mathbf{x}_n\). Os nós fora da placa (\(\boldsymbol\pi, \boldsymbol\theta\)) são parâmetros globais compartilhados por todas as amostras.
