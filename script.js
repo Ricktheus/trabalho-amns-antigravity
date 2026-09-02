@@ -5,12 +5,19 @@
   'use strict';
 
   var MEMBERS = {
-    0: { nome: 'Bloco 0', bloco: 'Nivelamento e fundamentos matemáticos', janela: 'Introdução' },
-    1: { nome: 'Bloco 1', bloco: 'Fundamentos e variáveis latentes', janela: '00:00–15:00' },
-    2: { nome: 'Bloco 2', bloco: 'K-Means clustering', janela: '15:00–30:00' },
-    3: { nome: 'Bloco 3', bloco: 'Misturas de Bernoulli e EM', janela: '30:00–45:00' },
-    4: { nome: 'Bloco 4', bloco: 'GMM, demonstração e comparação', janela: '45:00–60:00' }
+    0: { nome: 'Bloco 0', pessoa: '', bloco: 'Nivelamento e fundamentos matemáticos', janela: 'Introdução' },
+    1: { nome: 'Bloco 1', pessoa: 'Henrique Matheus Mendonça de Miranda',
+         bloco: 'Fundamentos e variáveis latentes', janela: '00:00–15:00' },
+    2: { nome: 'Bloco 2', pessoa: 'Luiany Gonçalves Carvalho',
+         bloco: 'K-Means clustering', janela: '15:00–30:00' },
+    3: { nome: 'Bloco 3', pessoa: 'Antonio Carlos de Barcelos Fernandes',
+         bloco: 'Misturas de Bernoulli e EM', janela: '30:00–45:00' },
+    4: { nome: 'Bloco 4', pessoa: 'Bianca Fernandes Visco',
+         bloco: 'GMM, demonstração e comparação', janela: '45:00–60:00' }
   };
+  /* "Bloco 2 · Luiany Gonçalves Carvalho" no cabeçalho; sem nome no Bloco 0,
+     que é material de nivelamento e não tem apresentador designado. */
+  function quem(m) { return m.pessoa ? m.nome + ' · ' + m.pessoa : m.nome; }
 
   var slides = [], current = 0, stage, wrap;
 
@@ -35,7 +42,7 @@
         var k = document.createElement('div');
         k.className = 'kicker';
         k.innerHTML = '<span class="member-bar" aria-hidden="true"></span>' +
-          '<span class="who">' + m.nome + '</span>' +
+          '<span class="who">' + quem(m) + '</span>' +
           '<span class="sep">/</span><span>' + m.bloco + '</span>' +
           '<span class="sep">/</span><span class="time">' + (sl.dataset.time || '') + '</span>' +
           '<span class="badge-slide ' + (isAprof ? 'badge-aprof' : 'badge-nucleo') + '">' +
@@ -184,7 +191,7 @@
     document.getElementById('progressfill').style.width = (n / slides.length * 100) + '%';
     var mid = slides[current].dataset.memberId || '1';
     var m = MEMBERS[mid] || MEMBERS[1];
-    document.getElementById('member-now').textContent = m.nome + ' · ' + m.janela;
+    document.getElementById('member-now').textContent = quem(m) + ' · ' + m.janela;
     document.getElementById('btn-prev').disabled = current === 0;
     document.getElementById('btn-next').disabled = current === slides.length - 1;
     document.getElementById('live').textContent = 'Slide ' + n + ' de ' + slides.length + ': ' + title(slides[current]);
@@ -210,7 +217,7 @@
     var mid = sl.dataset.memberId || '1';
     var m = MEMBERS[mid] || MEMBERS[1];
     document.getElementById('np-head').textContent =
-      'Slide ' + (current + 1) + ' · ' + m.nome + ' · ' + (sl.dataset.time || '');
+      'Slide ' + (current + 1) + ' · ' + quem(m) + ' · ' + (sl.dataset.time || '');
     document.getElementById('np-title').textContent = title(sl);
     document.getElementById('notes-body').innerHTML = src ? src.innerHTML : '<p>Sem notas.</p>';
     var nb = document.getElementById('notes-body');
@@ -242,7 +249,7 @@
       b.innerHTML = '<span class="n">' + String(i + 1).padStart(2, '0') +
         ' <span style="opacity:0.75;font-size:9px">[' + (isAprof ? 'APROF' : 'NÚCLEO') + ']</span></span>' +
         '<span class="t">' + title(sl) + '</span>' +
-        '<span class="w">' + m.nome + ' · ' + (sl.dataset.time || '') + '</span>';
+        '<span class="w">' + quem(m) + ' · ' + (sl.dataset.time || '') + '</span>';
       b.addEventListener('click', function () { show(i); overlay('overview', false); });
       grid.appendChild(b);
     });

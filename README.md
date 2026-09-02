@@ -6,11 +6,11 @@ Material didático interativo e apresentação acadêmica em **73 slides HTML** 
 **Formato:** deck único linear com 73 slides (28 de núcleo + 45 laboratórios/aprofundamentos), com tema claro e escuro alternáveis  
 **Rota de 60 minutos:** Marcada com a insígnia `[NÚCLEO]` para a banca avaliadora  
 **Percurso:**
-- **Bloco 0 · Nivelamento e fundamentos:** álgebra linear, decodificador de notação e Bayes (slides 01–07)
-- **Bloco 1 · Fundamentos:** variáveis latentes e codificação 1-de-K (slides 08–21)
-- **Bloco 2 · K-Means:** algoritmo de Lloyd, escolha de K e limitações (slides 22–40)
-- **Bloco 3 · Misturas de Bernoulli:** gargalo do log e algoritmo EM (slides 41–58)
-- **Bloco 4 · Gaussian Mixture Models:** covariâncias, BIC e comparação (slides 59–73)
+- **Bloco 0 · Nivelamento e fundamentos:** álgebra linear, decodificador de notação e Bayes (slides 02–07) — material de apoio, sem apresentador designado
+- **Bloco 1 · Fundamentos** — *Henrique Matheus Mendonça de Miranda*: variáveis latentes e codificação 1-de-K (slides 01, 08–21)
+- **Bloco 2 · K-Means** — *Luiany Gonçalves Carvalho*: algoritmo de Lloyd, escolha de K e limitações (slides 22–40)
+- **Bloco 3 · Misturas de Bernoulli** — *Antonio Carlos de Barcelos Fernandes*: gargalo do log e algoritmo EM (slides 41–58)
+- **Bloco 4 · Gaussian Mixture Models** — *Bianca Fernandes Visco*: covariâncias, BIC e comparação (slides 59–73)
 
 ---
 
@@ -57,12 +57,23 @@ A apresentação abre em **tema claro**. O botão **Tema** na barra inferior —
 
 Para apresentar estritamente no tempo regulamentar de 60 minutos sem os laboratórios extensos:
 - **Capa:** Slide 01
-- **Bloco 1:** 08, 10, 13, 15, 17, 21
-- **Bloco 2:** 22, 23, 25, 29, 30, 33, 39, 40
-- **Bloco 3:** 41, 42, 45, 47, 48, 52, 53, 58
-- **Bloco 4:** 59, 60, 65, 68, 70, 72, 73
+- **Bloco 1 · Henrique:** 08, 10, 13, 15, 17, 21
+- **Bloco 2 · Luiany:** 22, 23, 25, 29, 30, 33, 39, 40
+- **Bloco 3 · Antonio:** 41, 42, 45, 47, 48, 52, 53, 58
+- **Bloco 4 · Bianca:** 59, 60, 65, 68, 70, 72, 73
 
 Os 45 slides de aprofundamento e laboratórios trazem a insígnia `[APROFUNDAMENTO]` e servem para fixação individual, estudo autodidático e respostas aprofundadas a perguntas da banca.
+
+### Roteiro de fala (`roteiro-apresentacao.pdf`)
+
+O PDF traz, para cada um dos 73 slides, o texto falado completo em linguagem coloquial de apresentação — não um resumo, e sim o que a pessoa diz em cima do slide. Cada bloco apresentado soma entre 12 e 15 minutos de fala (≈ 14,5 min, estimados a 135 palavras por minuto); o Bloco 0 é um adicional opcional de ≈ 5,7 min.
+
+Para regenerar depois de editar os textos em `roteiro/b0.py`–`b4.py` (os títulos e blocos são lidos direto do `index.html`, então nunca saem de sincronia):
+
+```bash
+python3 roteiro/gerar_roteiro.py   # escreve roteiro/roteiro.html
+node    roteiro/gerar_pdf.js       # imprime roteiro-apresentacao.pdf (requer playwright)
+```
 
 ---
 
@@ -122,6 +133,8 @@ Os slides 19, 37 e 57 mostram, ao lado da listagem, a **saída real do console**
 | `labs.js` | Controladores dos 24 laboratórios interativos com ciclo de vida e KaTeX integrado. |
 | `script.js` | Controle de navegação, micro-passos reveláveis, glossário e atalhos de teclado. |
 | `build.js` | Compilador que embute estilos e scripts em `apresentacao.html`. |
+| **`roteiro-apresentacao.pdf`** | **Roteiro de fala: o texto falado de cada um dos 73 slides, bloco a bloco.** |
+| `roteiro/` | Fonte do roteiro: `b0.py`–`b4.py` (falas por bloco) e os geradores de HTML e PDF. |
 
 ---
 
