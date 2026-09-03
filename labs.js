@@ -11,10 +11,20 @@
   var M = global.MLCore;
   var F = global.FigCore;
   var C = F ? F.C : {
-    fg: '#EFE9E6', muted: '#A99FA2', dim: '#7B7276',
-    line: 'rgba(238,232,229,0.13)', lineStrong: 'rgba(238,232,229,0.30)',
-    accent: '#E9B44C', bg: '#131013', deep: '#0D0A0D',
-    d: ['#E9B44C', '#5BC0BE', '#D96C82', '#9BA9E8']
+    fg: '#1B1917', muted: '#45403B', dim: '#756E68',
+    line: 'rgba(28,25,23,0.14)', lineStrong: 'rgba(28,25,23,0.30)',
+    accent: '#B4530A', bg: '#FFFFFF', deep: '#FFFFFF',
+    d: ['#B4530A', '#0C7C7A', '#BC2A53', '#3B4CA6'],
+    dSoft: ['rgba(180,83,10,0.13)', 'rgba(12,124,122,0.13)',
+            'rgba(188,42,83,0.13)', 'rgba(59,76,166,0.13)'],
+    track: 'rgba(28,25,23,0.09)', dashed: 'rgba(28,25,23,0.22)',
+    catRGB: [[180, 83, 10], [12, 124, 122], [188, 42, 83], [59, 76, 166]],
+    surfRGB: [247, 245, 240], dark: false
+  };
+  /* rgba() a partir de uma das cores da série categórica do tema ativo */
+  var series = (F && F.series) || function (i, alpha) {
+    var c = C.catRGB[i % C.catRGB.length];
+    return 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + alpha + ')';
   };
   var MONO = '"IBM Plex Mono", ui-monospace, Menlo, monospace';
 
@@ -26,6 +36,10 @@
       this.registry[name] = def;
     },
 
+    /* A instância vive no próprio elemento, não numa tabela indexada pelo nome
+       do laboratório: o mesmo laboratório pode aparecer em mais de um slide
+       (`lab-bayes-numbers`, nos slides 06 e 18) e uma tabela por nome deixava o
+       segundo container em branco para sempre. */
     onSlideEnter: function (slideEl) {
       if (!slideEl) return;
       var containers = slideEl.querySelectorAll('[data-lab]');
@@ -35,7 +49,7 @@
         var def = this.registry[name];
         if (!def) continue;
 
-        var inst = this.instances[name];
+        var inst = el.__labInst;
         if (!inst) {
           inst = {
             name: name,
@@ -46,7 +60,8 @@
             intervalId: null,
             listeners: []
           };
-          this.instances[name] = inst;
+          el.__labInst = inst;
+          this.instances[name] = inst;   // mantido para inspeção no console
           if (def.build) def.build(inst);
         }
         if (def.start) def.start(inst);
@@ -57,9 +72,7 @@
       if (!slideEl) return;
       var containers = slideEl.querySelectorAll('[data-lab]');
       for (var i = 0; i < containers.length; i++) {
-        var el = containers[i];
-        var name = el.dataset.lab;
-        var inst = this.instances[name];
+        var inst = containers[i].__labInst;
         if (inst) {
           if (inst.rafId) { cancelAnimationFrame(inst.rafId); inst.rafId = null; }
           if (inst.intervalId) { clearInterval(inst.intervalId); inst.intervalId = null; }
@@ -112,561 +125,13 @@
   }
 
   /* =========================================================================
-     1. LAB: DECODIFICADOR DE NOTAÇÃO (Slide 02)
-     ========================================================================= */
-  LAB.register('lab-decoder', {
-    build: function (inst) {
-      var symbols = [
-        {
-          rawSym: '\\sum_{n=1}^N',
-          nome: 'Somatório',
-          trad: 'Some os termos, com \\(n\\) variando de 1 até \\(N\\).',
-          ex: 'Se \\(\\mathbf{x} = [2, 5, 8]\\), \\(\\sum_{n=1}^3 x_n = 2 + 5 + 8 = 15\\).',
-          onde: 'Inércia \\(J\\), cálculo da média \\(\\boldsymbol\\mu\\), marginalização \\(p(\\mathbf{x})\\).'
-        },
-        {
-          rawSym: '\\prod_{d=1}^D',
-          nome: 'Produtório',
-          trad: 'Multiplique os termos, com \\(d\\) variando de 1 até \\(D\\).',
-          ex: 'Se \\(\\mathbf{p} = [0.8, 0.5]\\), \\(\\prod_{d=1}^2 p_d = 0.8 \\times 0.5 = 0.40\\).',
-          onde: 'Densidade conjunta de Bernoulli e Naive Bayes.'
-        },
-        {
-          rawSym: 'x_{nd} \\; / \\; \\mathbf{x}_n',
-          nome: 'Subscritos e Vetores',
-          trad: '\\(\\mathbf{x}_n\\) é o vetor da amostra \\(n\\); \\(x_{nd}\\) é a dimensão \\(d\\) dessa amostra.',
-          ex: '\\(\\mathbf{x}_4 = (1.75\\text{m}, 80\\text{kg}) \\implies x_{4,1} = 1.75\\), \\(x_{4,2} = 80\\).',
-          onde: 'Todas as matrizes de dados \\(X\\).'
-        },
-        {
-          rawSym: '\\mathbf{x} \\in \\mathbb{R}^D \\; / \\; \\{0,1\\}^D',
-          nome: 'Pertencimento ao Espaço',
-          trad: '\\(\\mathbf{x}\\) pertence a um espaço de dimensão \\(D\\): real contínuo (\\(\\mathbb{R}^D\\)) ou binário (\\(\\{0,1\\}^D\\)).',
-          ex: 'Em \\(\\mathbb{R}^2\\), \\(\\mathbf{x} = (3.14, -2.5)\\). Em \\(\\{0,1\\}^4\\), \\(\\mathbf{x} = (1, 0, 1, 1)\\).',
-          onde: 'Decide se usamos K-Means/GMM (contínuo) ou Bernoulli (discreto).'
-        },
-        {
-          rawSym: 'p(\\mathbf{x} \\mid \\mathbf{z})',
-          nome: 'Condicional (dado que)',
-          trad: 'Probabilidade de observar \\(\\mathbf{x}\\), dado que já sabemos que a latente é \\(\\mathbf{z}\\).',
-          ex: '\\(p(\\text{febre} \\mid \\text{gripe})\\): probabilidade de ter febre sabendo que o paciente tem gripe.',
-          onde: 'Verossimilhança de cada componente gerador.'
-        },
-        {
-          rawSym: '\\arg\\min_k f(k)',
-          nome: 'Argumento do Mínimo',
-          trad: 'Não devolve o valor numérico mínimo da função, mas sim o índice \\(k\\) que atinge esse mínimo.',
-          ex: 'Se \\(f(1)=10, f(2)=3, f(3)=8 \\implies \\min f = 3\\), mas \\(\\arg\\min_k f(k) = 2\\).',
-          onde: 'Atribuição do centróide mais próximo no K-Means: \\(r_{nk} = \\arg\\min_j \\|\\mathbf{x}_n - \\boldsymbol\\mu_j\\|^2\\).'
-        },
-        {
-          rawSym: '\\mathbf{x}^\\top \\text{ (Transposta)}',
-          symRender: '\\mathbf{x}^\\top',
-          nome: 'Vetor Linha vs Coluna',
-          trad: 'Transforma vetor coluna em vetor linha (ou vice-versa), permitindo produto escalar \\(\\mathbf{x}^\\top \\mathbf{y}\\).',
-          ex: 'Se \\(\\mathbf{x} = [2, 3]^\\top\\) e \\(\\mathbf{y} = [4, 5]^\\top \\implies \\mathbf{x}^\\top \\mathbf{y} = 2\\times 4 + 3\\times 5 = 23\\).',
-          onde: 'Formas quadráticas da Gaussiana e distância de Mahalanobis.'
-        },
-        {
-          rawSym: '\\mathbf{x}, \\boldsymbol\\mu, \\boldsymbol\\Sigma',
-          nome: 'Negrito: Vetores e Matrizes',
-          trad: 'Símbolos em negrito representam estruturas com múltiplos valores (vetores/matrizes), nunca um escalar simples.',
-          ex: '\\(x\\) escalar = 4.2; \\(\\mathbf{x}\\) vetor = (4.2, 1.8, 9.0); \\(\\boldsymbol\\Sigma\\) matriz de covariância.',
-          onde: 'Toda a álgebra linear e multivariada.'
-        }
-      ];
-
-      var wrap = inst.el;
-      wrap.innerHTML =
-        '<div class="decoder-layout">' +
-          '<div class="decoder-menu" role="tablist"></div>' +
-          '<div class="decoder-display">' +
-            '<div class="dec-sym"></div>' +
-            '<div class="dec-nome"></div>' +
-            '<div class="dec-box dec-trad"><b>Em português comum:</b> <span></span></div>' +
-            '<div class="dec-box dec-ex"><b>Exemplo com números:</b> <span></span></div>' +
-            '<div class="dec-box dec-onde"><b>Onde aparece neste trabalho:</b> <span></span></div>' +
-          '</div>' +
-        '</div>';
-
-      var menu = wrap.querySelector('.decoder-menu');
-      var symEl = wrap.querySelector('.dec-sym');
-      var nomeEl = wrap.querySelector('.dec-nome');
-      var tradSpan = wrap.querySelector('.dec-trad span');
-      var exSpan = wrap.querySelector('.dec-ex span');
-      var ondeSpan = wrap.querySelector('.dec-onde span');
-
-      function update(idx) {
-        var item = symbols[idx];
-        symEl.innerHTML = tex(item.symRender || item.rawSym, true);
-        nomeEl.textContent = item.nome;
-        tradSpan.innerHTML = item.trad;
-        exSpan.innerHTML = item.ex;
-        ondeSpan.innerHTML = item.onde;
-        renderMathEl(tradSpan);
-        renderMathEl(exSpan);
-        renderMathEl(ondeSpan);
-
-        var btns = menu.querySelectorAll('.dec-btn');
-        for (var i = 0; i < btns.length; i++) {
-          btns[i].classList.toggle('active', i === idx);
-          btns[i].setAttribute('aria-selected', i === idx ? 'true' : 'false');
-        }
-      }
-
-      symbols.forEach(function (item, idx) {
-        var b = document.createElement('button');
-        b.type = 'button';
-        b.className = 'dec-btn' + (idx === 0 ? ' active' : '');
-        b.setAttribute('role', 'tab');
-        b.innerHTML = '<span class="dec-btn-tex">' + tex(item.symRender || item.rawSym) + '</span>' +
-          '<span style="font-size:11px;font-family:var(--sans)">' + item.nome + '</span>';
-        b.addEventListener('click', function () { update(idx); });
-        menu.appendChild(b);
-      });
-
-      selectSymbol_or_update:
-      update(0);
-      inst.state.update = update;
-    },
-    start: function (inst) {
-      if (inst.state.update) inst.state.update(0);
-    }
-  });
-
-  /* =========================================================================
-     1b. LAB: ÁLGEBRA LINEAR 101 — PRODUTO INTERNO E NORMAS (Slide 03)
-     ========================================================================= */
-  LAB.register('lab-linear-algebra', {
-    build: function (inst) {
-      inst.el.innerHTML =
-        '<div class="lab-grid-2">' +
-          '<div class="lab-panel">' +
-            '<div class="lab-title">Vetores 2-D (ajuste as componentes com os sliders):</div>' +
-            '<div class="slider-row"><label>Vetor \\(\\mathbf{x}_1\\):</label><input type="range" class="s-x1" min="-4" max="4" step="0.5" value="3"><span class="v-x1">3.0</span></div>' +
-            '<div class="slider-row"><label>Vetor \\(\\mathbf{x}_2\\):</label><input type="range" class="s-x2" min="-4" max="4" step="0.5" value="2"><span class="v-x2">2.0</span></div>' +
-            '<div class="slider-row"><label>Vetor \\(\\mathbf{y}_1\\):</label><input type="range" class="s-y1" min="-4" max="4" step="0.5" value="1"><span class="v-y1">1.0</span></div>' +
-            '<div class="slider-row"><label>Vetor \\(\\mathbf{y}_2\\):</label><input type="range" class="s-y2" min="-4" max="4" step="0.5" value="3"><span class="v-y2">3.0</span></div>' +
-            '<div class="lab-stats-box la-stats">' +
-              '<div><b>Transposta \\(\\mathbf{x}^\\top\\):</b> <span class="out-xt">[3.0, 2.0]</span></div>' +
-              '<div><b>Produto Escalar \\(\\mathbf{x}^\\top \\mathbf{y}\\):</b> <span class="out-dot" style="color:var(--accent);font-weight:600">9.0</span></div>' +
-              '<div><b>Norma Euclidiana \\(\\|\\mathbf{x}\\|\\):</b> <span class="out-normx">3.61</span> &nbsp;|&nbsp; <b>\\(\\|\\mathbf{y}\\|\\):</b> <span class="out-normy">3.16</span></div>' +
-              '<div><b>Distância Euclidiana \\(\\|\\mathbf{x}-\\mathbf{y}\\|\\):</b> <span class="out-dist" style="color:var(--m2);font-weight:600">2.24</span></div>' +
-              '<div><b>Ângulo \\(\\cos \\theta\\):</b> <span class="out-cos">0.79</span> (\\(\\theta \\approx\\) <span class="out-ang">37.9°</span>)</div>' +
-            '</div>' +
-          '</div>' +
-          '<div class="lab-panel" style="align-items:center">' +
-            '<canvas width="460" height="260" class="la-canvas"></canvas>' +
-            '<div class="lab-caption">Plano 2-D: Vetor \\(\\mathbf{x}\\) (amarelo), Vetor \\(\\mathbf{y}\\) (ciano) e vetor diferença \\(\\mathbf{x}-\\mathbf{y}\\) (tracejado).</div>' +
-          '</div>' +
-        '</div>';
-
-      var cv = inst.el.querySelector('.la-canvas');
-      var ctx = setupCanvas(cv, 460, 260);
-
-      var sx1 = inst.el.querySelector('.s-x1');
-      var sx2 = inst.el.querySelector('.s-x2');
-      var sy1 = inst.el.querySelector('.s-y1');
-      var sy2 = inst.el.querySelector('.s-y2');
-
-      var vx1 = inst.el.querySelector('.v-x1');
-      var vx2 = inst.el.querySelector('.v-x2');
-      var vy1 = inst.el.querySelector('.v-y1');
-      var vy2 = inst.el.querySelector('.v-y2');
-
-      var outXt = inst.el.querySelector('.out-xt');
-      var outDot = inst.el.querySelector('.out-dot');
-      var outNormX = inst.el.querySelector('.out-normx');
-      var outNormY = inst.el.querySelector('.out-normy');
-      var outDist = inst.el.querySelector('.out-dist');
-      var outCos = inst.el.querySelector('.out-cos');
-      var outAng = inst.el.querySelector('.out-ang');
-
-      renderMathEl(inst.el.querySelector('.la-stats'));
-
-      function update() {
-        var x1 = parseFloat(sx1.value);
-        var x2 = parseFloat(sx2.value);
-        var y1 = parseFloat(sy1.value);
-        var y2 = parseFloat(sy2.value);
-
-        vx1.textContent = x1.toFixed(1);
-        vx2.textContent = x2.toFixed(1);
-        vy1.textContent = y1.toFixed(1);
-        vy2.textContent = y2.toFixed(1);
-
-        var dot = x1 * y1 + x2 * y2;
-        var normX = Math.sqrt(x1 * x1 + x2 * x2);
-        var normY = Math.sqrt(y1 * y1 + y2 * y2);
-        var dist = Math.sqrt((x1 - y1) * (x1 - y1) + (x2 - y2) * (x2 - y2));
-        var cosTheta = (normX > 0 && normY > 0) ? Math.max(-1, Math.min(1, dot / (normX * normY))) : 1;
-        var angleDeg = (Math.acos(cosTheta) * 180 / Math.PI);
-
-        outXt.textContent = '[' + x1.toFixed(1) + ', ' + x2.toFixed(1) + ']';
-        outDot.textContent = dot.toFixed(2) + ' (' + x1.toFixed(1) + '×' + y1.toFixed(1) + ' + ' + x2.toFixed(1) + '×' + y2.toFixed(1) + ')';
-        outNormX.textContent = normX.toFixed(2);
-        outNormY.textContent = normY.toFixed(2);
-        outDist.textContent = dist.toFixed(2);
-        outCos.textContent = cosTheta.toFixed(3);
-        outAng.textContent = angleDeg.toFixed(1) + '°';
-
-        ctx.clearRect(0, 0, 460, 260);
-        var p = new F.Plot(cv, { w: 460, h: 260, xlim: [-5, 5], ylim: [-5, 5], equal: true, pad: { l: 20, r: 10, t: 15, b: 20 } });
-        p.frame({ grid: true, zero: true });
-        p.clip();
-
-        // Linha tracejada diferença (x - y)
-        p.segment(y1, y2, x1, x2, C.dim, { width: 1.5, dash: [4, 4] });
-
-        // Vetor x (d1/accent)
-        p.arrow(0, 0, x1, x2, C.d[0], { width: 2.5 });
-        p.dot(x1, x2, 4.5, C.d[0]);
-        p.label(x1, x2, ' x (' + x1.toFixed(1) + ', ' + x2.toFixed(1) + ')', C.d[0], { size: 11, box: true, dx: 10 });
-
-        // Vetor y (d2/cyan)
-        p.arrow(0, 0, y1, y2, C.d[1], { width: 2.5 });
-        p.dot(y1, y2, 4.5, C.d[1]);
-        p.label(y1, y2, ' y (' + y1.toFixed(1) + ', ' + y2.toFixed(1) + ')', C.d[1], { size: 11, box: true, dx: 10 });
-
-        p.unclip();
-      }
-
-      sx1.addEventListener('input', update);
-      sx2.addEventListener('input', update);
-      sy1.addEventListener('input', update);
-      sy2.addEventListener('input', update);
-
-      inst.state.update = update;
-    },
-    start: function (inst) {
-      if (inst.state.update) inst.state.update();
-    }
-  });
-
-  /* =========================================================================
-     2. LAB: REVISÃO RELÂMPAGO DE ESTATÍSTICA (Slide 03)
-     ========================================================================= */
-  LAB.register('lab-review-stats', {
-    build: function (inst) {
-      inst.el.innerHTML =
-        '<div class="lab-grid-2">' +
-          '<div class="lab-panel">' +
-            '<div class="lab-title">Conjunto de 5 amostras 1-D (ajuste os valores):</div>' +
-            '<div class="slider-row"><label>x₁</label><input type="range" class="s-x" data-idx="0" min="0" max="10" step="0.5" value="2"><span class="v-x">2.0</span></div>' +
-            '<div class="slider-row"><label>x₂</label><input type="range" class="s-x" data-idx="1" min="0" max="10" step="0.5" value="3"><span class="v-x">3.0</span></div>' +
-            '<div class="slider-row"><label>x₃</label><input type="range" class="s-x" data-idx="2" min="0" max="10" step="0.5" value="5"><span class="v-x">5.0</span></div>' +
-            '<div class="slider-row"><label>x₄</label><input type="range" class="s-x" data-idx="3" min="0" max="10" step="0.5" value="7"><span class="v-x">7.0</span></div>' +
-            '<div class="slider-row"><label>x₅</label><input type="range" class="s-x" data-idx="4" min="0" max="10" step="0.5" value="8"><span class="v-x">8.0</span></div>' +
-            '<div class="lab-stats-box" style="margin-top:12px">' +
-              '<div>Média <b>μ = (∑x)/N</b>: <span class="out-mean" style="color:var(--accent)">5.00</span></div>' +
-              '<div>Variância <b>σ² = ∑(x−μ)²/N</b>: <span class="out-var" style="color:var(--m2)">5.60</span></div>' +
-              '<div>Desvio padrão <b>σ = √σ²</b>: <span class="out-std" style="color:var(--m4)">2.37</span></div>' +
-            '</div>' +
-          '</div>' +
-          '<div class="lab-panel" style="display:flex;flex-direction:column;align-items:center">' +
-            '<canvas class="stats-cv" width="460" height="230"></canvas>' +
-            '<p class="lab-caption">Pontos na reta (dourado), média central (linha vertical) e curva gaussiana correspondente 𝒩(μ, σ²).</p>' +
-          '</div>' +
-        '</div>';
-
-      var cv = inst.el.querySelector('.stats-cv');
-      var ctx = setupCanvas(cv, 460, 230);
-      var inputs = inst.el.querySelectorAll('.s-x');
-      var valsDisplay = inst.el.querySelectorAll('.v-x');
-      var outMean = inst.el.querySelector('.out-mean');
-      var outVar = inst.el.querySelector('.out-var');
-      var outStd = inst.el.querySelector('.out-std');
-
-      function update() {
-        var pts = [];
-        for (var i = 0; i < inputs.length; i++) {
-          var v = parseFloat(inputs[i].value);
-          pts.push(v);
-          valsDisplay[i].textContent = v.toFixed(1);
-        }
-        var N = pts.length;
-        var mean = pts.reduce(function (a, b) { return a + b; }, 0) / N;
-        var vari = pts.reduce(function (a, b) { var d = b - mean; return a + d * d; }, 0) / N;
-        vari = Math.max(vari, 0.05);
-        var std = Math.sqrt(vari);
-
-        outMean.textContent = mean.toFixed(2);
-        outVar.textContent = vari.toFixed(2);
-        outStd.textContent = std.toFixed(2);
-
-        // Desenhar no canvas
-        ctx.clearRect(0, 0, 460, 230);
-        var p = new F.Plot(cv, { w: 460, h: 230, xlim: [-1, 11], ylim: [0, 0.45], pad: { l: 30, r: 15, t: 20, b: 30 } });
-        p.frame({ xlabel: 'x', ylabel: 'densidade p(x)' });
-        p.clip();
-
-        // Curva Gaussiana
-        var curve = [];
-        var normConst = 1 / (std * Math.sqrt(2 * Math.PI));
-        for (var x = -1; x <= 11; x += 0.1) {
-          var y = normConst * Math.exp(-0.5 * Math.pow((x - mean) / std, 2));
-          curve.push([x, y]);
-        }
-        p.line(curve, C.d[1], 2.2);
-
-        // Linha da média
-        p.line([[mean, 0], [mean, 0.42]], C.accent, 1.8, [4, 4]);
-        p.label(mean, 0.42, 'μ = ' + mean.toFixed(1), C.accent, { align: 'center', box: true });
-
-        // Pontos na base
-        pts.forEach(function (x) {
-          p.dot(x, 0.02, 5.5, C.accent, 0.9);
-        });
-        p.unclip();
-      }
-
-      for (var i = 0; i < inputs.length; i++) {
-        inputs[i].addEventListener('input', update);
-      }
-      inst.state.update = update;
-    },
-    start: function (inst) {
-      if (inst.state.update) inst.state.update();
-    }
-  });
-
-  /* =========================================================================
-     3. LAB: PROBABILIDADE CONDICIONAL E BAYES (Slide 04)
-     ========================================================================= */
-  LAB.register('lab-bayes-intro', {
-    build: function (inst) {
-      inst.el.innerHTML =
-        '<div class="lab-grid-2">' +
-          '<div class="lab-panel">' +
-            '<div class="lab-title">Cenário: Paciente com Sintoma S (2 possíveis causas: z=1 Gripe, z=2 Alergia)</div>' +
-            '<div class="slider-row"><label>Prior π₁ = p(Gripe)</label><input type="range" class="s-pi" min="0.05" max="0.95" step="0.05" value="0.30"><span class="v-pi">0.30</span></div>' +
-            '<div class="slider-row"><label>p(Sintoma | Gripe)</label><input type="range" class="s-l1" min="0.1" max="0.99" step="0.05" value="0.80"><span class="v-l1">0.80</span></div>' +
-            '<div class="slider-row"><label>p(Sintoma | Alergia)</label><input type="range" class="s-l2" min="0.1" max="0.99" step="0.05" value="0.20"><span class="v-l2">0.20</span></div>' +
-            '<div class="lab-stats-box" style="margin-top:14px;font-size:12.5px">' +
-              '<div>Evidência Total <b>p(S) = π₁·p(S|Gripe) + π₂·p(S|Alergia)</b>: <br><span class="out-ev" style="color:var(--fg);font-family:var(--mono)">0.30×0.80 + 0.70×0.20 = 0.380</span></div>' +
-              '<div style="margin-top:8px">Posterior Bayesiano <b>p(Gripe | Sintoma)</b>: <br><span class="out-post" style="color:var(--accent);font-size:15px;font-weight:600">(0.30×0.80) / 0.380 = 63.2%</span></div>' +
-            '</div>' +
-          '</div>' +
-          '<div class="lab-panel" style="display:flex;flex-direction:column;align-items:center">' +
-            '<canvas class="bayes-cv" width="460" height="230"></canvas>' +
-            '<p class="lab-caption">Visualização da Partição: O sintoma seleciona uma fatia da população e inverte a probabilidade.</p>' +
-          '</div>' +
-        '</div>';
-
-      var cv = inst.el.querySelector('.bayes-cv');
-      var ctx = setupCanvas(cv, 460, 230);
-      var sPi = inst.el.querySelector('.s-pi');
-      var sL1 = inst.el.querySelector('.s-l1');
-      var sL2 = inst.el.querySelector('.s-l2');
-      var vPi = inst.el.querySelector('.v-pi');
-      var vL1 = inst.el.querySelector('.v-l1');
-      var vL2 = inst.el.querySelector('.v-l2');
-      var outEv = inst.el.querySelector('.out-ev');
-      var outPost = inst.el.querySelector('.out-post');
-
-      function update() {
-        var pi1 = parseFloat(sPi.value);
-        var pi2 = 1 - pi1;
-        var l1 = parseFloat(sL1.value);
-        var l2 = parseFloat(sL2.value);
-
-        vPi.textContent = pi1.toFixed(2);
-        vL1.textContent = l1.toFixed(2);
-        vL2.textContent = l2.toFixed(2);
-
-        var num1 = pi1 * l1;
-        var num2 = pi2 * l2;
-        var ev = num1 + num2;
-        var post1 = num1 / ev;
-        var post2 = num2 / ev;
-
-        outEv.innerHTML = pi1.toFixed(2) + '×' + l1.toFixed(2) + ' + ' + pi2.toFixed(2) + '×' + l2.toFixed(2) + ' = <b>' + ev.toFixed(3) + '</b>';
-        outPost.innerHTML = '(' + num1.toFixed(3) + ') / ' + ev.toFixed(3) + ' = <b>' + (post1 * 100).toFixed(1) + '% Gripe</b> (' + (post2 * 100).toFixed(1) + '% Alergia)';
-
-        // Desenho visual de barras
-        ctx.clearRect(0, 0, 460, 230);
-        ctx.font = '11px ' + MONO;
-
-        // Barra 1: População total
-        ctx.fillStyle = C.muted;
-        ctx.fillText('1. População inicial (Priors π₁ e π₂):', 20, 25);
-        ctx.fillStyle = C.d[0]; ctx.fillRect(20, 35, 420 * pi1, 26);
-        ctx.fillStyle = C.d[1]; ctx.fillRect(20 + 420 * pi1, 35, 420 * pi2, 26);
-        ctx.fillStyle = C.deep;
-        ctx.fillText('Gripe ' + (pi1 * 100).toFixed(0) + '%', 26, 52);
-        ctx.fillText('Alergia ' + (pi2 * 100).toFixed(0) + '%', 26 + 420 * pi1, 52);
-
-        // Barra 2: Quem apresenta o sintoma (Evidência)
-        ctx.fillStyle = C.muted;
-        ctx.fillText('2. Quem tem o sintoma (π_k × p(S|k)):', 20, 95);
-        ctx.fillStyle = 'rgba(238,232,229,0.1)'; ctx.fillRect(20, 105, 420, 26);
-        ctx.fillStyle = C.d[0]; ctx.fillRect(20, 105, 420 * num1, 26);
-        ctx.fillStyle = C.d[1]; ctx.fillRect(20 + 420 * num1, 105, 420 * num2, 26);
-        ctx.fillStyle = C.fg;
-        ctx.fillText((num1 * 100).toFixed(1) + '%', 26, 122);
-        ctx.fillText((num2 * 100).toFixed(1) + '%', 26 + 420 * num1, 122);
-
-        // Barra 3: Normalizado (Posterior γ)
-        ctx.fillStyle = C.muted;
-        ctx.fillText('3. Probabilidade a Posteriori p(Gripe | Sintoma) [= γ₁]:', 20, 165);
-        ctx.fillStyle = C.d[0]; ctx.fillRect(20, 175, 420 * post1, 30);
-        ctx.fillStyle = C.d[1]; ctx.fillRect(20 + 420 * post1, 175, 420 * post2, 30);
-        ctx.fillStyle = C.deep;
-        ctx.font = 'bold 12px ' + MONO;
-        ctx.fillText('Gripe: ' + (post1 * 100).toFixed(1) + '%', 26, 195);
-        ctx.fillText('Alergia: ' + (post2 * 100).toFixed(1) + '%', 26 + 420 * post1, 195);
-      }
-
-      sPi.addEventListener('input', update);
-      sL1.addEventListener('input', update);
-      sL2.addEventListener('input', update);
-      inst.state.update = update;
-    },
-    start: function (inst) {
-      if (inst.state.update) inst.state.update();
-    }
-  });
-
-  /* =========================================================================
-     4. LAB: MÁQUINA GERADORA (Slide 07)
-     ========================================================================= */
-  LAB.register('lab-generative-machine', {
-    build: function (inst) {
-      inst.el.innerHTML =
-        '<div class="lab-grid-2">' +
-          '<div class="lab-panel">' +
-            '<div class="lab-title">Processo Generativo: p(x) = ∑_z p(z) p(x|z)</div>' +
-            '<div class="node accent" style="margin-bottom:10px">' +
-              '<b>Passo 1:</b> Sorteia componente <code>z ~ Cat(π)</code><br>' +
-              '<b>Passo 2:</b> Sorteia amostra <code>x ~ 𝒩(μ_z, σ_z²)</code>' +
-            '</div>' +
-            '<div class="lab-btn-row">' +
-              '<button type="button" class="btn btn-gen-1">🎲 Sortear 1 ponto</button>' +
-              '<button type="button" class="btn btn-gen-50">⚡ Sortear 50 pontos</button>' +
-              '<button type="button" class="btn btn-gen-auto">▶ Animar</button>' +
-              '<button type="button" class="btn btn-gen-clear">Limpar</button>' +
-            '</div>' +
-            '<div class="lab-stats-box" style="margin-top:12px">' +
-              '<div>Total de pontos gerados: <b class="gen-count" style="color:var(--accent)">0</b></div>' +
-              '<div class="gen-last-log" style="font-size:12px;color:var(--fg-dim);margin-top:4px">Clique em "Sortear 1 ponto" para ver o passo a passo.</div>' +
-            '</div>' +
-          '</div>' +
-          '<div class="lab-panel" style="display:flex;flex-direction:column;align-items:center">' +
-            '<canvas class="gen-cv" width="460" height="240"></canvas>' +
-            '<p class="lab-caption">Conforme N cresce, o histograma empírico converge exatamente para a densidade contínua da mistura.</p>' +
-          '</div>' +
-        '</div>';
-
-      var cv = inst.el.querySelector('.gen-cv');
-      var ctx = setupCanvas(cv, 460, 240);
-      var btn1 = inst.el.querySelector('.btn-gen-1');
-      var btn50 = inst.el.querySelector('.btn-gen-50');
-      var btnAuto = inst.el.querySelector('.btn-gen-auto');
-      var btnClear = inst.el.querySelector('.btn-gen-clear');
-      var outCount = inst.el.querySelector('.gen-count');
-      var outLog = inst.el.querySelector('.gen-last-log');
-
-      var pis = [0.4, 0.6];
-      var mus = [-3.0, 3.0];
-      var sigmas = [1.2, 1.6];
-      var points = [];
-      var isRunning = false;
-      var rng = M.mulberry32(12345);
-
-      function sampleOne() {
-        var u = rng();
-        var z = u < pis[0] ? 0 : 1;
-        var r = M.randn(rng);
-        var x = mus[z] + r * sigmas[z];
-        points.push({ x: x, z: z });
-        outCount.textContent = points.length;
-        outLog.innerHTML = 'Último: z = <b>' + (z + 1) + '</b> (' + (z === 0 ? 'Cluster Amarelo' : 'Cluster Ciano') + ') ⟹ x = <b>' + x.toFixed(2) + '</b>';
-      }
-
-      function draw() {
-        ctx.clearRect(0, 0, 460, 240);
-        var p = new F.Plot(cv, { w: 460, h: 240, xlim: [-8, 8], ylim: [0, 0.25], pad: { l: 28, r: 10, t: 15, b: 25 } });
-        p.frame({ xlabel: 'x', ylabel: 'p(x)' });
-        p.clip();
-
-        // 1. Curva Teórica da Mistura p(x) = π₁𝒩₁ + π₂𝒩₂
-        var curve = [];
-        for (var x = -8; x <= 8; x += 0.1) {
-          var y1 = (1 / (sigmas[0] * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((x - mus[0]) / sigmas[0], 2));
-          var y2 = (1 / (sigmas[1] * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((x - mus[1]) / sigmas[1], 2));
-          var yTot = pis[0] * y1 + pis[1] * y2;
-          curve.push([x, yTot]);
-        }
-        p.line(curve, '#FFFFFF', 2.0);
-
-        // 2. Histograma dos pontos acumulados
-        if (points.length > 0) {
-          var bins = 32;
-          var bMin = -8, bMax = 8;
-          var bWidth = (bMax - bMin) / bins;
-          var counts = new Array(bins).fill(0);
-          points.forEach(function (pt) {
-            var bIdx = Math.floor((pt.x - bMin) / bWidth);
-            if (bIdx >= 0 && bIdx < bins) counts[bIdx]++;
-          });
-          var maxDensity = points.length * bWidth;
-          for (var b = 0; b < bins; b++) {
-            var density = counts[b] / maxDensity;
-            var bx = bMin + b * bWidth;
-            var px = p.X(bx);
-            var py = p.Y(density);
-            var pw = p.S(bWidth);
-            var ph = p.Y(0) - py;
-            ctx.fillStyle = 'rgba(233, 180, 76, 0.42)';
-            ctx.fillRect(px + 1, py, pw - 2, ph);
-          }
-
-          // Últimos pontos desenhados no rodapé
-          var recent = points.slice(-30);
-          recent.forEach(function (pt) {
-            p.dot(pt.x, 0.008, 3.5, C.d[pt.z], 0.85);
-          });
-        }
-        p.unclip();
-      }
-
-      btn1.addEventListener('click', function () { sampleOne(); draw(); });
-      btn50.addEventListener('click', function () { for (var i = 0; i < 50; i++) sampleOne(); draw(); });
-      btnClear.addEventListener('click', function () { points = []; outCount.textContent = '0'; outLog.textContent = 'Limpo.'; draw(); });
-
-      function loop() {
-        if (!isRunning) return;
-        sampleOne();
-        sampleOne();
-        draw();
-        inst.rafId = requestAnimationFrame(loop);
-      }
-
-      btnAuto.addEventListener('click', function () {
-        isRunning = !isRunning;
-        btnAuto.textContent = isRunning ? '⏸ Pausar' : '▶ Animar';
-        if (isRunning) loop();
-      });
-
-      inst.state.draw = draw;
-      inst.def.stop = function () {
-        isRunning = false;
-        btnAuto.textContent = '▶ Animar';
-      };
-    },
-    start: function (inst) {
-      if (inst.state.draw) inst.state.draw();
-    }
-  });
-
-  /* =========================================================================
      5. LAB: 1-DE-K NA PRÁTICA (Slide 09)
      ========================================================================= */
   LAB.register('lab-one-hot', {
     build: function (inst) {
       inst.el.innerHTML =
         '<div class="lab-panel" style="max-width:800px;margin:0 auto">' +
-          '<div class="lab-title">Clique num componente para ativar o vetor 1-de-K (z ∈ {0,1}⁴):</div>' +
+          '<div class="lab-title">Clique num componente para ativar o vetor 1-de-K &nbsp;' + tex('\\mathbf{z} \\in \\{0,1\\}^4') + '</div>' +
           '<div class="onehot-selector" style="display:flex;gap:16px;justify-content:center;margin:16px 0">' +
             '<button type="button" class="btn btn-oh active" data-k="0">Componente 1 (k=1)</button>' +
             '<button type="button" class="btn btn-oh" data-k="1">Componente 2 (k=2)</button>' +
@@ -729,21 +194,34 @@
   LAB.register('lab-bayes-numbers', {
     build: function (inst) {
       inst.el.innerHTML =
-        '<div class="lab-panel" style="max-width:860px;margin:0 auto">' +
-          '<div class="lab-title">Cálculo de γ_{nk} passo a passo para a amostra x_n:</div>' +
-          '<div class="slider-row" style="margin:12px 0">' +
-            '<label style="width:180px">Posição da amostra x_n:</label>' +
-            '<input type="range" class="s-xpos" min="-4" max="4" step="0.1" value="0.5" style="flex:1">' +
-            '<span class="v-xpos" style="width:60px;text-align:right">0.50</span>' +
+        '<div class="lab-grid-2" style="grid-template-columns:1fr 440px">' +
+          '<div class="lab-panel">' +
+            '<div class="lab-title">Cálculo de ' + tex('\\gamma_{nk}') + ' passo a passo para a amostra ' + tex('x_n') + '</div>' +
+            '<div class="slider-row" style="margin:6px 0 2px">' +
+              '<label style="flex:0 0 150px">Posição de x_n:</label>' +
+              '<input type="range" class="s-xpos" min="-4" max="4" step="0.1" value="0.5" style="flex:1">' +
+              '<span class="v-xpos" style="flex:0 0 54px;text-align:right">0.50</span>' +
+            '</div>' +
+            '<table class="binmat" style="width:100%;font-size:12.5px">' +
+              '<thead>' +
+                '<tr>' +
+                  '<th style="text-align:left">Componente</th>' +
+                  '<th>Prior ' + tex('\\pi_k') + '</th>' +
+                  '<th>Verossimilhança ' + tex('p(x_n \\mid \\theta_k)') + '</th>' +
+                  '<th>Numerador</th>' +
+                  '<th>Responsabilidade ' + tex('\\gamma_{nk}') + '</th>' +
+                '</tr>' +
+              '</thead>' +
+              '<tbody class="tb-bayes-body"></tbody>' +
+            '</table>' +
+            '<div class="formula sm" style="margin-top:2px">' +
+              '<span class="out-bayes-sum" style="font-family:var(--mono);font-size:12.5px;color:var(--fg);line-height:1.75"></span>' +
+            '</div>' +
           '</div>' +
-          '<table class="binmat" style="width:100%;margin-top:14px;font-size:13px">' +
-            '<thead>' +
-              '<tr><th>Componente k</th><th>Prior π_k</th><th>Verossimilhança p(x_n | θ_k)</th><th>Produto (Numerador)</th><th>Responsabilidade γ_{nk}</th></tr>' +
-            '</thead>' +
-            '<tbody class="tb-bayes-body"></tbody>' +
-          '</table>' +
-          '<div class="formula sm" style="margin-top:14px;text-align:center">' +
-            '<span class="out-bayes-sum" style="font-family:var(--mono);color:var(--fg)"></span>' +
+          '<div class="lab-panel" style="display:flex;flex-direction:column;align-items:center">' +
+            '<canvas class="bayes-num-cv" width="410" height="300"></canvas>' +
+            '<p class="lab-caption">Em cima, as duas densidades ponderadas ' + tex('\\pi_k\\, p(x \\mid \\theta_k)') +
+            ' lidas em ' + tex('x_n') + '. Embaixo, as mesmas duas alturas normalizadas para somar 1.</p>' +
           '</div>' +
         '</div>';
 
@@ -751,41 +229,87 @@
       var vX = inst.el.querySelector('.v-xpos');
       var tbody = inst.el.querySelector('.tb-bayes-body');
       var outSum = inst.el.querySelector('.out-bayes-sum');
+      var cv = inst.el.querySelector('.bayes-num-cv');
+      var ctx = setupCanvas(cv, 410, 300);
 
       var comps = [
-        { name: 'Componente 1 (Amarelo)', mu: -1.5, sigma: 1.0, pi: 0.5 },
-        { name: 'Componente 2 (Ciano)', mu: 1.5, sigma: 1.0, pi: 0.5 }
+        { mu: -1.5, sigma: 1.0, pi: 0.5 },
+        { mu: 1.5, sigma: 1.0, pi: 0.5 }
       ];
+      function weighted(k, x) {
+        var c = comps[k];
+        return c.pi * (1 / (c.sigma * Math.sqrt(2 * Math.PI))) *
+               Math.exp(-0.5 * Math.pow((x - c.mu) / c.sigma, 2));
+      }
+
+      function draw(x, num1, num2, g1, g2) {
+        ctx.clearRect(0, 0, 410, 300);
+
+        /* Painel de cima: as duas densidades ponderadas e a leitura em x_n */
+        var top = F.subPlot(ctx, { x: 0, y: 0, w: 410, h: 208 },
+          { xlim: [-4.6, 4.6], ylim: [0, 0.235], pad: { l: 48, r: 12, t: 14, b: 30 } });
+        top.frame({ xlabel: 'x', ylabel: 'densidade ponderada' });
+        top.clip();
+        for (var k = 0; k < 2; k++) {
+          var curve = [];
+          for (var xx = -4.6; xx <= 4.6; xx += 0.05) curve.push([xx, weighted(k, xx)]);
+          top.line(curve, C.d[k], 2);
+        }
+        top.segment(-4.6, num1, x, num1, C.d[0], { width: 1, dash: [3, 3] });
+        top.segment(-4.6, num2, x, num2, C.d[1], { width: 1, dash: [3, 3] });
+        top.segment(x, 0, x, 0.235, C.fg, { width: 1.4, dash: [4, 3] });
+        top.dot(x, num1, 5, C.d[0]);
+        top.dot(x, num2, 5, C.d[1]);
+        top.label(x, 0.222, 'x_n = ' + x.toFixed(2), C.fg,
+                  { size: 11, box: true, align: x > 1.2 ? 'right' : 'left', dx: x > 1.2 ? -6 : 6 });
+        top.unclip();
+
+        /* Painel de baixo: a normalização — as duas alturas viram uma barra 0–100% */
+        var bx = 44, bw = 410 - 44 - 12, by = 248, bh = 28;
+        ctx.save();
+        ctx.fillStyle = C.muted; ctx.font = '10.5px ' + MONO;
+        ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+        ctx.fillText('÷ p(x_n), o denominador comum:', bx, by - 10);
+        ctx.fillStyle = C.d[0]; ctx.fillRect(bx, by, bw * g1, bh);
+        ctx.fillStyle = C.d[1]; ctx.fillRect(bx + bw * g1, by, bw * g2, bh);
+        ctx.fillStyle = C.deep; ctx.font = '600 12px ' + MONO; ctx.textBaseline = 'middle';
+        ctx.fillText((g1 * 100).toFixed(1) + '%', bx + 9, by + bh / 2);
+        ctx.textAlign = 'right';
+        ctx.fillText((g2 * 100).toFixed(1) + '%', bx + bw - 9, by + bh / 2);
+        ctx.restore();
+      }
 
       function update() {
         var x = parseFloat(sX.value);
         vX.textContent = x.toFixed(2);
 
-        var num1 = comps[0].pi * (1 / (comps[0].sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((x - comps[0].mu) / comps[0].sigma, 2));
-        var num2 = comps[1].pi * (1 / (comps[1].sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * Math.pow((x - comps[1].mu) / comps[1].sigma, 2));
+        var num1 = weighted(0, x), num2 = weighted(1, x);
         var denom = num1 + num2;
-        var g1 = num1 / denom;
-        var g2 = num2 / denom;
+        var g1 = num1 / denom, g2 = num2 / denom;
 
         tbody.innerHTML =
           '<tr>' +
-            '<td class="rowlab" style="color:var(--d1)">k = 1 (μ₁ = −1.5)</td>' +
+            '<td class="rowlab" style="color:var(--d1)">k = 1 · μ₁ = −1.5</td>' +
             '<td>' + comps[0].pi.toFixed(2) + '</td>' +
             '<td>' + (num1 / comps[0].pi).toFixed(4) + '</td>' +
             '<td style="color:var(--d1)">' + num1.toFixed(4) + '</td>' +
-            '<td class="one" style="font-size:15px;font-weight:600">' + g1.toFixed(3) + ' (' + (g1 * 100).toFixed(1) + '%)</td>' +
+            '<td class="one" style="font-size:14px;font-weight:600">' + g1.toFixed(3) + ' (' + (g1 * 100).toFixed(1) + '%)</td>' +
           '</tr>' +
           '<tr>' +
-            '<td class="rowlab" style="color:var(--d2)">k = 2 (μ₂ = +1.5)</td>' +
+            '<td class="rowlab" style="color:var(--d2)">k = 2 · μ₂ = +1.5</td>' +
             '<td>' + comps[1].pi.toFixed(2) + '</td>' +
             '<td>' + (num2 / comps[1].pi).toFixed(4) + '</td>' +
             '<td style="color:var(--d2)">' + num2.toFixed(4) + '</td>' +
-            '<td class="one" style="font-size:15px;font-weight:600">' + g2.toFixed(3) + ' (' + (g2 * 100).toFixed(1) + '%)</td>' +
+            '<td class="one" style="font-size:14px;font-weight:600">' + g2.toFixed(3) + ' (' + (g2 * 100).toFixed(1) + '%)</td>' +
           '</tr>';
 
         outSum.innerHTML =
-          'Denominador (Soma dos numeradores = p(x_n)) = ' + num1.toFixed(4) + ' + ' + num2.toFixed(4) + ' = <b>' + denom.toFixed(4) + '</b><br>' +
-          'γ_{n1} + γ_{n2} = ' + g1.toFixed(3) + ' + ' + g2.toFixed(3) + ' = <b>1.000</b> (Soma unitária garantida)';
+          'p(x_n) = ' + num1.toFixed(4) + ' + ' + num2.toFixed(4) + ' = <b>' + denom.toFixed(4) + '</b>' +
+          '  <span style="color:var(--fg-dim)">← o denominador comum</span><br>' +
+          'γ_n1 + γ_n2 = ' + g1.toFixed(3) + ' + ' + g2.toFixed(3) + ' = <b>1.000</b>' +
+          '  <span style="color:var(--fg-dim)">← soma unitária garantida</span>';
+
+        draw(x, num1, num2, g1, g2);
       }
 
       sX.addEventListener('input', update);
@@ -796,9 +320,6 @@
     }
   });
 
-  /* =========================================================================
-     7. LAB: J NA MÃO (Slide 16)
-     ========================================================================= */
   LAB.register('lab-j-by-hand', {
     build: function (inst) {
       inst.el.innerHTML =
@@ -926,7 +447,7 @@
         // Linhas de conexão dos pontos ao centróide atribuído
         for (var i = 0; i < pts.length; i++) {
           var c = centers[labels[i]];
-          p.line([pts[i], c], 'rgba(238,232,229,0.15)', 1, [3, 3]);
+          p.line([pts[i], c], C.dashed, 1, [3, 3]);
           p.dot(pts[i][0], pts[i][1], 5, C.d[labels[i]], 0.9);
         }
 
@@ -996,7 +517,7 @@
       inst.el.innerHTML =
         '<div class="lab-grid-2">' +
           '<div class="lab-panel">' +
-            '<div class="lab-title">Derivação: Minimizando J(μ) = ∑_{i=1}^N (x_i − μ)²</div>' +
+            '<div class="lab-title">Minimizando ' + tex('J(\\mu) = \\sum_{i=1}^{N} (x_i - \\mu)^2') + '</div>' +
             '<div class="node accent" style="font-size:13px;line-height:1.6">' +
               '1. Derivada: <code>dJ/dμ = ∑ 2(x_i − μ)(−1) = −2 ∑ (x_i − μ)</code><br>' +
               '2. Igualando a zero: <code>−2 (∑ x_i − N·μ) = 0</code><br>' +
@@ -1036,7 +557,7 @@
         outGrad.textContent = grad.toFixed(2) + (Math.abs(grad) < 0.1 ? ' (Zero!)' : '');
 
         ctx.clearRect(0, 0, 460, 230);
-        var p = new F.Plot(cv, { w: 460, h: 230, xlim: [0, 10], ylim: [20, 120], pad: { l: 30, r: 15, t: 15, b: 25 } });
+        var p = new F.Plot(cv, { w: 460, h: 230, xlim: [0, 10], ylim: [20, 120], pad: { l: 46, r: 15, t: 15, b: 25 } });
         p.frame({ xlabel: 'μ', ylabel: 'J(μ)' });
         p.clip();
 
@@ -1053,8 +574,8 @@
         p.label(mean, 28, 'x̄ = 5.0', C.accent, { align: 'center', box: true });
 
         // Ponto atual testado
-        p.dot(mu, J, 6.5, '#FFFFFF');
-        p.label(mu, J + 10, 'μ = ' + mu.toFixed(1), '#FFFFFF', { align: 'center', box: true });
+        p.dot(mu, J, 6.5, C.fg);
+        p.label(mu, J + 10, 'μ = ' + mu.toFixed(1), C.fg, { align: 'center', box: true });
 
         p.unclip();
       }
@@ -1124,7 +645,7 @@
 
         // Centróides
         km.centers.forEach(function (c, k) {
-          p.cross(c[0], c[1], 7, '#FFFFFF');
+          p.cross(c[0], c[1], 7, C.fg);
         });
 
         p.unclip();
@@ -1146,7 +667,7 @@
       inst.el.innerHTML =
         '<div class="lab-grid-2">' +
           '<div class="lab-panel">' +
-            '<div class="lab-title">Semeadura Probabilística: p(x) ∝ D(x)²</div>' +
+            '<div class="lab-title">Semeadura probabilística: ' + tex('p(\\mathbf{x}) \\propto D(\\mathbf{x})^2') + '</div>' +
             '<div class="lab-btn-row">' +
               '<button type="button" class="btn btn-kmpp-spin">🎯 Sortear Próximo Centróide</button>' +
               '<button type="button" class="btn btn-kmpp-reset">Reiniciar</button>' +
@@ -1237,7 +758,7 @@
 
         // Desenha centróides
         centers.forEach(function (c, k) {
-          p.cross(c[0], c[1], 8, '#FFFFFF');
+          p.cross(c[0], c[1], 8, C.fg);
           p.ring(c[0], c[1], 12, C.d[k], 2);
         });
 
@@ -1536,7 +1057,7 @@
     build: function (inst) {
       inst.el.innerHTML =
         '<div class="lab-panel" style="max-width:800px;margin:0 auto">' +
-          '<div class="lab-title">A Obstrução Algébrica: ln(a + b) ≠ ln(a) + ln(b)</div>' +
+          '<div class="lab-title">A obstrução algébrica: ' + tex('\\ln(a + b) \\neq \\ln a + \\ln b') + '</div>' +
           '<div class="slider-row" style="margin:14px 0"><label>Termo a:</label><input type="range" class="s-log-a" min="1" max="20" step="1" value="2"><span class="v-log-a">2</span></div>' +
           '<div class="slider-row" style="margin:14px 0"><label>Termo b:</label><input type="range" class="s-log-b" min="1" max="20" step="1" value="8"><span class="v-log-b">8</span></div>' +
           '<div class="lab-grid-2" style="margin-top:16px">' +
@@ -1709,7 +1230,7 @@
     build: function (inst) {
       inst.el.innerHTML =
         '<div class="lab-panel" style="max-width:820px;margin:0 auto">' +
-          '<div class="lab-title">Decomposição Fundamental: ln p(X) = ℒ(q, θ) + KL(q ∥ p(Z|X, θ))</div>' +
+          '<div class="lab-title">Decomposição fundamental: ' + tex('\\ln p(X) = \\mathcal{L}(q, \\boldsymbol\\theta) + \\mathrm{KL}(q \\,\\|\\, p(Z \\mid X, \\boldsymbol\\theta))') + '</div>' +
           '<div class="lab-btn-row" style="justify-content:center;margin:14px 0">' +
             '<button type="button" class="btn btn-bound-step">▶ Próximo Passo do EM</button>' +
             '<button type="button" class="btn btn-bound-rst">Reiniciar</button>' +
@@ -1733,7 +1254,7 @@
         vis.innerHTML =
           '<div style="display:flex;align-items:center;gap:10px">' +
             '<span style="width:140px;font-family:var(--mono);font-size:12px;color:var(--fg)">ln p(X | θ): ' + total + '</span>' +
-            '<div style="flex:1;height:32px;background:rgba(238,232,229,0.08);display:flex;border:1px solid var(--line-strong);border-radius:3px;overflow:hidden">' +
+            '<div style="flex:1;height:32px;background:rgba(var(--ink-rgb),0.06);display:flex;border:1px solid var(--line-strong);border-radius:3px;overflow:hidden">' +
               '<div style="width:' + (lVal / 1.1) + '%;background:var(--accent);display:flex;align-items:center;justify-content:center;color:var(--deep);font-weight:600;font-size:12px;font-family:var(--mono)">ℒ(q, θ) = ' + lVal + '</div>' +
               '<div style="width:' + (klVal / 1.1) + '%;background:var(--m3);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:600;font-size:12px;font-family:var(--mono)">' + (klVal > 0 ? 'KL = ' + klVal : '') + '</div>' +
             '</div>' +
@@ -1832,7 +1353,7 @@
       inst.el.innerHTML =
         '<div class="lab-grid-2">' +
           '<div class="lab-panel">' +
-            '<div class="lab-title">Ajuste os parâmetros da matriz Σ:</div>' +
+            '<div class="lab-title">Ajuste os parâmetros da matriz ' + tex('\\boldsymbol\\Sigma') + '</div>' +
             '<div class="slider-row"><label>Desvio σ₁ (eixo X):</label><input type="range" class="s-cov-s1" min="0.5" max="3.0" step="0.1" value="2.0"><span class="v-cov-s1">2.0</span></div>' +
             '<div class="slider-row"><label>Desvio σ₂ (eixo Y):</label><input type="range" class="s-cov-s2" min="0.5" max="3.0" step="0.1" value="1.0"><span class="v-cov-s2">1.0</span></div>' +
             '<div class="slider-row"><label>Correlação ρ:</label><input type="range" class="s-cov-rho" min="-0.95" max="0.95" step="0.05" value="0.70"><span class="v-cov-rho">0.70</span></div>' +
@@ -1883,7 +1404,7 @@
         p.clip();
 
         var el = M.ellipseFromCov(S, 2.0);
-        p.ellipse(0, 0, el.rx, el.ry, el.theta, C.accent, 'rgba(233, 180, 76, 0.15)');
+        p.ellipse(0, 0, el.rx, el.ry, el.theta, C.accent, C.dSoft[0]);
 
         // Eixos principais (autovetores)
         var cos = Math.cos(-el.theta);
@@ -1891,7 +1412,7 @@
         p.arrow(0, 0, cos * el.rx, sin * el.rx, C.d[1], 2);
         p.arrow(0, 0, -sin * el.ry, cos * el.ry, C.d[2], 2);
 
-        p.dot(0, 0, 4, '#FFFFFF');
+        p.dot(0, 0, 4, C.fg);
         p.unclip();
       }
 
@@ -1913,7 +1434,7 @@
       inst.el.innerHTML =
         '<div class="lab-grid-2">' +
           '<div class="lab-panel">' +
-            '<div class="lab-title">Mova o ponto probe (x₁, x₂) e compare as distâncias:</div>' +
+            '<div class="lab-title">Mova o ponto probe ' + tex('(x_1, x_2)') + ' e compare as distâncias</div>' +
             '<div class="slider-row"><label>Posição x₁:</label><input type="range" class="s-mah-x" min="-4" max="4" step="0.2" value="2.5"><span class="v-mah-x">2.5</span></div>' +
             '<div class="slider-row"><label>Posição x₂:</label><input type="range" class="s-mah-y" min="-4" max="4" step="0.2" value="1.0"><span class="v-mah-y">1.0</span></div>' +
             '<div class="lab-stats-box" style="margin-top:14px">' +
@@ -1960,14 +1481,14 @@
         // Elipses de 1, 2 e 3 sigmas de Mahalanobis
         [1.0, 2.0, 3.0].forEach(function (ns) {
           var el = M.ellipseFromCov(S, ns);
-          p.ellipse(0, 0, el.rx, el.ry, el.theta, 'rgba(238,232,229,0.2)', ns === 1.0 ? 'rgba(233,180,76,0.1)' : null);
+          p.ellipse(0, 0, el.rx, el.ry, el.theta, C.lineStrong, ns === 1.0 ? C.dSoft[0] : null);
         });
 
         // Linha euclidiana reta
         p.line([[0, 0], pt], C.d[1], 1.5, [4, 4]);
 
         // Centro e Probe
-        p.dot(0, 0, 4, '#FFFFFF');
+        p.dot(0, 0, 4, C.fg);
         p.dot(x, y, 6, C.accent);
         p.label(x, y, ' x (' + x.toFixed(1) + ', ' + y.toFixed(1) + ')', C.fg, { size: 11, box: true, dx: 10 });
 
@@ -2042,7 +1563,7 @@
         for (var k = 0; k < 3; k++) {
           var el = M.ellipseFromCov(h.sigmas[k], 2.0);
           p.ellipse(h.mus[k][0], h.mus[k][1], el.rx, el.ry, el.theta, C.d[k], 'rgba(233,180,76,0.1)');
-          p.dot(h.mus[k][0], h.mus[k][1], 4, '#FFFFFF');
+          p.dot(h.mus[k][0], h.mus[k][1], 4, C.fg);
         }
 
         p.unclip();
@@ -2140,7 +1661,7 @@
         var minB = Math.min.apply(null, bics) - 50;
         var maxB = Math.max.apply(null, bics) + 50;
 
-        var p = new F.Plot(cv, { w: 460, h: 240, xlim: [0.5, 6.5], ylim: [minB, maxB], pad: { l: 45, r: 15, t: 15, b: 25 } });
+        var p = new F.Plot(cv, { w: 460, h: 240, xlim: [0.5, 6.5], ylim: [minB, maxB], pad: { l: 56, r: 15, t: 15, b: 25 } });
         p.frame({ xlabel: 'Número de Componentes K', ylabel: 'Score BIC (menor é melhor)' });
         p.clip();
 
@@ -2167,27 +1688,177 @@
   /* =========================================================================
      21. LAB: DETECÇÃO DE ANOMALIA (Slide 48)
      ========================================================================= */
+  /* =========================================================================
+     25. LAB: COLAPSO DA GAUSSIANA E reg_covar (Slide 67)
+     ========================================================================= */
+  LAB.register('lab-singularity', {
+    build: function (inst) {
+      inst.el.innerHTML =
+        '<div class="lab-grid-2" style="grid-template-columns:1fr 470px">' +
+          '<div class="lab-panel">' +
+            '<div class="lab-title">Encolha ' + tex('\\sigma_1') + ' e veja a verossimilhança explodir</div>' +
+            '<div class="slider-row">' +
+              '<label style="flex:0 0 118px">Desvio σ₁:</label>' +
+              '<input type="range" class="s-sing" min="-6" max="0.18" step="0.02" value="0.0">' +
+              '<span class="v-sing" style="flex:0 0 80px">1.000</span>' +
+            '</div>' +
+            '<label class="check-row"><input type="checkbox" class="c-sing-reg"> aplicar <code>reg_covar</code> — piso σ² ≥ 10⁻²</label>' +
+            '<div class="lab-stats-box" style="margin-top:6px">' +
+              '<div>Variância <b>σ₁²</b>: <span class="out-sing-var" style="font-family:var(--mono);color:var(--fg)">—</span></div>' +
+              '<div>Log-verossimilhança <b>ln L</b>: <span class="out-sing-ll" style="font-family:var(--mono);font-weight:600;font-size:15px;color:var(--accent)">—</span></div>' +
+              '<div class="sing-alert" style="margin-top:8px;padding:8px 10px;border-radius:3px;font-family:var(--mono);font-size:12px;text-align:center">—</div>' +
+            '</div>' +
+            '<p class="lab-caption" style="text-align:left;margin-top:8px">' +
+              'O componente 1 está centrado <b>exatamente</b> sobre ' + tex('x_1') + '. Quando σ₁ → 0, ' +
+              'o fator ' + tex('1/\\sigma_1') + ' diverge e leva ' + tex('\\ln L') + ' junto — sem piso, o EM persegue esse máximo espúrio.' +
+            '</p>' +
+          '</div>' +
+          '<div class="lab-panel" style="display:flex;flex-direction:column;align-items:center">' +
+            '<canvas class="sing-cv" width="450" height="298"></canvas>' +
+            '<div class="legend" style="margin-top:6px;justify-content:center;font-size:11px">' +
+              '<span><i class="line" style="background:var(--d1)"></i>comp. 1 (colapsando)</span>' +
+              '<span><i class="line" style="background:var(--d2)"></i>comp. 2 (saudável)</span>' +
+              '<span><i class="line" style="background:var(--fg)"></i>mistura p(x)</span>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+
+      var sSig = inst.el.querySelector('.s-sing');
+      var vSig = inst.el.querySelector('.v-sing');
+      var cReg = inst.el.querySelector('.c-sing-reg');
+      var outVar = inst.el.querySelector('.out-sing-var');
+      var outLL = inst.el.querySelector('.out-sing-ll');
+      var alertBox = inst.el.querySelector('.sing-alert');
+      var cv = inst.el.querySelector('.sing-cv');
+      var ctx = setupCanvas(cv, 450, 298);
+
+      var X = [0.9, 1.4, 1.9, 2.2, 2.6, 3.0];     // x_1 = 0.9 é o ponto capturado
+      var MU1 = 0.9, MU2 = 2.2, SIG2 = 0.75, PI1 = 0.3, PI2 = 0.7;
+      var REG = 1e-2;                              // piso de variância (ε didático)
+      var LOG_MIN = -6, LOG_MAX = 0.18;
+
+      function normal(x, mu, sg) {
+        return Math.exp(-0.5 * Math.pow((x - mu) / sg, 2)) / (sg * Math.sqrt(2 * Math.PI));
+      }
+      function logLik(sig) {
+        var ll = 0;
+        for (var i = 0; i < X.length; i++) {
+          ll += Math.log(PI1 * normal(X[i], MU1, sig) + PI2 * normal(X[i], MU2, SIG2));
+        }
+        return ll;
+      }
+      var LL_REF = logLik(1.0);                    // referência: o ajuste "honesto"
+
+      function draw(sig, ll) {
+        ctx.clearRect(0, 0, 450, 298);
+
+        /* Painel de cima: as duas componentes ponderadas e a mistura */
+        var peak = PI1 * normal(MU1, MU1, sig);
+        var ymax = Math.max(0.55, Math.min(peak * 1.15, 3.4));
+        var p = F.subPlot(ctx, { x: 0, y: 0, w: 450, h: 182 },
+          { xlim: [-1.2, 5.0], ylim: [0, ymax], pad: { l: 46, r: 12, t: 12, b: 26 } });
+        p.frame({ xlabel: 'x', ylabel: 'densidade' });
+        p.clip();
+        var c1 = [], c2 = [], mix = [];
+        for (var x = -1.2; x <= 5.0; x += 0.008) {
+          var a = PI1 * normal(x, MU1, sig), b = PI2 * normal(x, MU2, SIG2);
+          c1.push([x, a]); c2.push([x, b]); mix.push([x, a + b]);
+        }
+        p.line(c2, C.d[1], 1.6);
+        p.line(c1, C.d[0], 1.6);
+        p.line(mix, C.fg, 2.2);
+        for (var j = 0; j < X.length; j++) {
+          var caught = j === 0;
+          p.dot(X[j], 0, caught ? 5.5 : 3.4, caught ? C.d[0] : C.dim, caught ? 1 : 0.8);
+        }
+        p.label(MU1, ymax * 0.92, 'x₁ capturado', C.d[0], { size: 11, box: true, align: 'left', dx: 8 });
+        p.unclip();
+
+        /* Painel de baixo: ln L em função de σ₁ — a divergência fica explícita */
+        var lo = logLik(Math.pow(10, LOG_MIN)), hi = LL_REF;
+        var q = F.subPlot(ctx, { x: 0, y: 186, w: 450, h: 112 },
+          { xlim: [LOG_MIN, LOG_MAX], ylim: [Math.min(hi, LL_REF) - 2, lo + 2],
+            pad: { l: 46, r: 12, t: 16, b: 30 } });
+        q.frame({ xlabel: 'log₁₀ σ₁', ylabel: 'ln L' });
+        q.clip();
+        var curve = [];
+        for (var t = LOG_MIN; t <= LOG_MAX; t += 0.03) curve.push([t, logLik(Math.pow(10, t))]);
+        q.line(curve, C.accent, 2);
+        q.segment(LOG_MIN, LL_REF, LOG_MAX, LL_REF, C.dim, { width: 1, dash: [4, 3] });
+        q.label(LOG_MIN, LL_REF, 'ln L do ajuste honesto', C.dim, { size: 10, align: 'left', dx: 6, dy: -9, box: true });
+        if (cReg.checked) {
+          var floor = Math.log10(Math.sqrt(REG));
+          q.segment(floor, q.ylim[0], floor, q.ylim[1], C.d[1], { width: 1.4, dash: [5, 3] });
+          q.label(floor, q.ylim[1], 'piso reg_covar ', C.d[1], { size: 10, align: 'right', dx: -5, dy: 9, box: true });
+        }
+        q.dot(Math.log10(sig), ll, 5.5, C.fg);
+        q.unclip();
+      }
+
+      function update() {
+        var sig = Math.pow(10, parseFloat(sSig.value));
+        if (cReg.checked) sig = Math.sqrt(Math.max(sig * sig, REG));
+        vSig.textContent = sig < 0.001 ? sig.toExponential(1) : sig.toFixed(3);
+        outVar.textContent = (sig * sig).toExponential(2);
+
+        var ll = logLik(sig);
+        outLL.textContent = (ll > 0 ? '+' : '') + ll.toFixed(2);
+
+        if (cReg.checked) {
+          alertBox.style.background = 'rgba(var(--m2-rgb), 0.12)';
+          alertBox.style.color = 'var(--m2)';
+          alertBox.style.border = '1px solid var(--m2)';
+          alertBox.textContent = '✓ reg_covar segura σ² no piso — ln L fica limitado';
+        } else if (ll > LL_REF + 1) {
+          alertBox.style.background = 'rgba(var(--m3-rgb), 0.12)';
+          alertBox.style.color = 'var(--m3)';
+          alertBox.style.border = '1px solid var(--m3)';
+          alertBox.textContent = '⚠ singularidade: ln L cresce sem limite (→ +∞)';
+        } else {
+          alertBox.style.background = 'transparent';
+          alertBox.style.color = 'var(--fg-dim)';
+          alertBox.style.border = '1px solid var(--line)';
+          alertBox.textContent = 'ajuste saudável — nenhum componente colapsou';
+        }
+        draw(sig, ll);
+      }
+
+      sSig.addEventListener('input', update);
+      cReg.addEventListener('change', update);
+      inst.state.update = update;
+    },
+    start: function (inst) {
+      if (inst.state.update) inst.state.update();
+    }
+  });
+
   LAB.register('lab-anomaly', {
     build: function (inst) {
       inst.el.innerHTML =
         '<div class="lab-grid-2">' +
           '<div class="lab-panel">' +
-            '<div class="lab-title">Arraste a amostra de teste x_probe e ajuste o limiar τ:</div>' +
+            '<div class="lab-title">Arraste a amostra de teste e ajuste o limiar ' + tex('\\tau') + '</div>' +
             '<div class="slider-row"><label>Posição x₁:</label><input type="range" class="s-anom-x" min="-6" max="6" step="0.2" value="4.5"><span class="v-anom-x">4.5</span></div>' +
             '<div class="slider-row"><label>Posição x₂:</label><input type="range" class="s-anom-y" min="-6" max="6" step="0.2" value="-3.0"><span class="v-anom-y">-3.0</span></div>' +
-            '<div class="slider-row"><label>Limiar ln(τ):</label><input type="range" class="s-anom-tau" min="-15" max="-2" step="0.5" value="-7.0"><span class="v-anom-tau">-7.0</span></div>' +
+            '<div class="slider-row"><label>Limiar ln(τ):</label><input type="range" class="s-anom-tau" min="-16" max="-3" step="0.5" value="-9.0"><span class="v-anom-tau">-9.0</span></div>' +
             '<div class="lab-stats-box" style="margin-top:10px">' +
               '<div>Log-Densidade <b>ln p(x_probe)</b>: <span class="out-probe-ll" style="font-family:var(--mono);font-weight:600">--</span></div>' +
               '<div class="anom-alert-box" style="margin-top:8px;padding:8px;border-radius:3px;text-align:center;font-weight:600;font-family:var(--mono)">--</div>' +
             '</div>' +
           '</div>' +
           '<div class="lab-panel" style="display:flex;flex-direction:column;align-items:center">' +
-            '<canvas class="anom-cv" width="460" height="240"></canvas>' +
+            '<canvas class="anom-cv" width="460" height="250"></canvas>' +
+            '<div class="legend" style="margin-top:9px;justify-content:center">' +
+              '<span><i class="sw-normal"></i>normal: p(x) ≥ τ (mais denso = mais forte)</span>' +
+              '<span><i class="sw-anom"></i>anomalia: p(x) &lt; τ</span>' +
+              '<span><i class="line" style="background:var(--d3)"></i>fronteira p(x) = τ</span>' +
+            '</div>' +
+            '<p class="lab-caption">Mover <b>ln(τ)</b> desloca a fronteira: quanto maior o limiar, maior a área do plano classificada como anomalia.</p>' +
           '</div>' +
         '</div>';
 
       var cv = inst.el.querySelector('.anom-cv');
-      var ctx = setupCanvas(cv, 460, 240);
+      var ctx = setupCanvas(cv, 460, 250);
       var sX = inst.el.querySelector('.s-anom-x');
       var sY = inst.el.querySelector('.s-anom-y');
       var sTau = inst.el.querySelector('.s-anom-tau');
@@ -2224,31 +1895,59 @@
 
         var isAnomaly = logP < tau;
         if (isAnomaly) {
-          alertBox.style.background = 'rgba(217, 108, 130, 0.25)';
+          alertBox.style.background = 'rgba(var(--m3-rgb), 0.12)';
           alertBox.style.color = 'var(--m3)';
           alertBox.style.border = '1px solid var(--m3)';
           alertBox.textContent = '🚨 ALERTA: ANOMALIA DETECTADA! (ln p < ln τ)';
         } else {
-          alertBox.style.background = 'rgba(91, 192, 190, 0.2)';
+          alertBox.style.background = 'rgba(var(--m2-rgb), 0.12)';
           alertBox.style.color = 'var(--m2)';
           alertBox.style.border = '1px solid var(--m2)';
           alertBox.textContent = '✓ PADRÃO NORMAL (ln p ≥ ln τ)';
         }
 
-        ctx.clearRect(0, 0, 460, 240);
-        var p = new F.Plot(cv, { w: 460, h: 240, xlim: [-7, 7], ylim: [-7, 7], equal: true, pad: { l: 20, r: 10, t: 15, b: 20 } });
+        ctx.clearRect(0, 0, 460, 250);
+        var p = new F.Plot(cv, { w: 460, h: 250, xlim: [-7, 7], ylim: [-7, 7], equal: true, pad: { l: 22, r: 10, t: 14, b: 22 } });
+
+        /* A região de anomalia é todo ponto do plano cuja densidade cai abaixo
+           do limiar. Desenhá-la é o que dá efeito visível ao slider ln(τ):
+           antes, mover τ só trocava o texto do alerta. */
+        var BAND = 0.085;                   // meia-espessura da curva de nível
+        var EDGE = C.catRGB[2];
+        p.field(function (gx, gy) {
+          return evaluateDensity([gx, gy]) - tau;    // zero exatamente na fronteira
+        }, function (v) {
+          if (Math.abs(v) < BAND) return [EDGE[0], EDGE[1], EDGE[2], 255];   // curva p(x) = τ
+          // Região normal sombreada pela densidade; região de anomalia com um
+          // véu da cor da fronteira. As duas rampas partem da superfície do
+          // painel, então cada tema tem a sua.
+          if (C.dark) {
+            if (v > 0) {
+              var td = Math.min(1, v / 6);
+              return [Math.round(27 + 88 * td), Math.round(22 + 55 * td), Math.round(27 + 5 * td), 255];
+            }
+            var ad = Math.min(1, -v / 5);
+            return [Math.round(27 + 24 * ad), Math.round(22 + 5 * ad), Math.round(27 + 9 * ad), 255];
+          }
+          if (v > 0) {
+            var t = Math.min(1, v / 6);
+            return [Math.round(247 - 8 * t), Math.round(245 - 47 * t), Math.round(240 - 86 * t), 255];
+          }
+          var a = Math.min(1, -v / 5);
+          return [Math.round(252 - 2 * a), Math.round(244 - 14 * a), Math.round(244 - 16 * a), 255];
+        });
         p.frame({ grid: true });
         p.clip();
 
         // Dados normais
         for (var i = 0; i < X.length; i++) {
-          p.dot(X[i][0], X[i][1], 2.2, C.dim, 0.45);
+          p.dot(X[i][0], X[i][1], 2.2, C.dim, 0.55);
         }
 
         // Elipses do modelo
         for (var k = 0; k < 3; k++) {
           var el = M.ellipseFromCov(gmm.sigmas[k], 2.0);
-          p.ellipse(gmm.mus[k][0], gmm.mus[k][1], el.rx, el.ry, el.theta, C.accent, 'rgba(233,180,76,0.08)');
+          p.ellipse(gmm.mus[k][0], gmm.mus[k][1], el.rx, el.ry, el.theta, C.accent, null);
         }
 
         // Probe Point

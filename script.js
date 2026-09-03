@@ -5,12 +5,17 @@
   'use strict';
 
   var MEMBERS = {
-    0: { nome: 'Preparação', bloco: 'Bloco 0 · Nivelamento e fundamentos', janela: 'Introdução' },
-    1: { nome: 'Henrique Matheus', bloco: 'Bloco 1 · Fundamentos e variáveis latentes', janela: '00:00–15:00' },
-    2: { nome: 'Lucas Nogueira', bloco: 'Bloco 2 · K-Means clustering', janela: '15:00–30:00' },
-    3: { nome: 'Antonio Carlos', bloco: 'Bloco 3 · Misturas de Bernoulli e EM', janela: '30:00–45:00' },
-    4: { nome: 'Bianca Visco', bloco: 'Bloco 4 · GMM, demonstração e comparação', janela: '45:00–60:00' }
+    1: { nome: 'Bloco 1', pessoa: 'Henrique Matheus Mendonça de Miranda',
+         bloco: 'Fundamentos e variáveis latentes', janela: '00:00–15:00' },
+    2: { nome: 'Bloco 2', pessoa: 'Luiany Gonçalves Carvalho',
+         bloco: 'K-Means clustering', janela: '15:00–30:00' },
+    3: { nome: 'Bloco 3', pessoa: 'Antonio Carlos de Barcelos Fernandes',
+         bloco: 'Misturas de Bernoulli e EM', janela: '30:00–45:00' },
+    4: { nome: 'Bloco 4', pessoa: 'Bianca Fernandes Visco',
+         bloco: 'GMM, demonstração e comparação', janela: '45:00–60:00' }
   };
+  /* "Bloco 2 · Luiany Gonçalves Carvalho" no cabeçalho. */
+  function quem(m) { return m.pessoa ? m.nome + ' · ' + m.pessoa : m.nome; }
 
   var slides = [], current = 0, stage, wrap;
 
@@ -35,7 +40,7 @@
         var k = document.createElement('div');
         k.className = 'kicker';
         k.innerHTML = '<span class="member-bar" aria-hidden="true"></span>' +
-          '<span class="who">' + m.nome + '</span>' +
+          '<span class="who">' + quem(m) + '</span>' +
           '<span class="sep">/</span><span>' + m.bloco + '</span>' +
           '<span class="sep">/</span><span class="time">' + (sl.dataset.time || '') + '</span>' +
           '<span class="badge-slide ' + (isAprof ? 'badge-aprof' : 'badge-nucleo') + '">' +
@@ -56,7 +61,6 @@
       sl.appendChild(f);
       setupMicroSteps(sl);
     });
-    wireQuickChecks();
   }
   function title(sl) {
     var h = sl.querySelector('.s-title, h1');
@@ -75,21 +79,27 @@
       ctrl = document.createElement('div');
       ctrl.className = 'step-controls';
       ctrl.innerHTML =
-        '<button type="button" class="btn btn-step-next">Passo seguinte (Espaço)</button>' +
-        '<button type="button" class="btn btn-step-all">Revelar todos</button>';
+        '<button type="button" class="btn btn-primary btn-step-next">Passo seguinte (Espaço)</button>' +
+        '<button type="button" class="btn btn-step-all">Revelar todos</button>' +
+        '<span class="step-count"></span>';
       var parent = steps[0].parentNode;
       parent.appendChild(ctrl);
     }
     var btnNext = ctrl.querySelector('.btn-step-next');
     var btnAll = ctrl.querySelector('.btn-step-all');
     if (btnNext) btnNext.addEventListener('click', function () { advanceMicroStep(sl); });
-    if (btnAll) btnAll.addEventListener('click', function () { revealAllSteps(sl); });
+    if (btnAll) btnAll.addEventListener('click', function () {
+      if (btnAll.dataset.mode === 'reset') resetMicroSteps(sl);
+      else revealAllSteps(sl);
+    });
+    updateStepControls(sl);
   }
   function advanceMicroStep(sl) {
     sl = sl || slides[current];
     var locked = sl.querySelectorAll('.micro-step.is-locked');
     if (locked.length > 0) {
       locked[0].classList.remove('is-locked');
+      updateStepControls(sl);
       return true; // consumiu o passo
     }
     return false; // todos já estavam revelados
@@ -98,22 +108,73 @@
     sl = sl || slides[current];
     var locked = sl.querySelectorAll('.micro-step.is-locked');
     for (var i = 0; i < locked.length; i++) locked[i].classList.remove('is-locked');
+    updateStepControls(sl);
+  }
+  /* Ao (re)entrar no slide a demonstração recomeça do primeiro passo. Sem isto,
+     voltar a um slide já percorrido deixava tudo revelado e os botões pareciam
+     não fazer nada. */
+  function resetMicroSteps(sl) {
+    var steps = sl.querySelectorAll('.micro-step');
+    for (var i = 1; i < steps.length; i++) steps[i].classList.add('is-locked');
+    if (steps.length) steps[0].classList.remove('is-locked');
+    updateStepControls(sl);
+  }
+  /* Rótulo dos botões e contador "passo n de N": o estado fica visível. */
+  function updateStepControls(sl) {
+    var ctrl = sl.querySelector('.step-controls');
+    if (!ctrl) return;
+    var total = sl.querySelectorAll('.micro-step').length;
+    var locked = sl.querySelectorAll('.micro-step.is-locked').length;
+    var shown = total - locked;
+    var counter = ctrl.querySelector('.step-count');
+    if (counter) counter.textContent = 'passo ' + shown + ' de ' + total;
+    var btnNext = ctrl.querySelector('.btn-step-next');
+    var btnAll = ctrl.querySelector('.btn-step-all');
+    if (btnNext) btnNext.disabled = locked === 0;
+    if (btnAll) btnAll.textContent = locked === 0 ? 'Recomeçar' : 'Revelar todos';
+    if (btnAll) btnAll.dataset.mode = locked === 0 ? 'reset' : 'all';
   }
 
-  /* ------------------------------------------------ 2c. Checagem Rápida */
-  function wireQuickChecks() {
-    document.querySelectorAll('.qc-btn').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var card = btn.closest('.qc-card');
-        if (!card) return;
-        var ans = card.querySelector('.qc-ans');
-        if (ans) {
-          var open = ans.classList.toggle('is-open');
-          btn.textContent = open ? 'Ocultar resposta' : 'Ver resposta';
-        }
-      });
-    });
+  /* --------------------------------------------------- 2d. Tema claro/escuro */
+  var THEME_KEY = 'vld-tema';
+  var theme = 'light';
+
+  function readStoredTheme() {
+    try { return localStorage.getItem(THEME_KEY); } catch (e) { return null; }
   }
+  function storeTheme(t) {
+    try { localStorage.setItem(THEME_KEY, t); } catch (e) { /* modo privado */ }
+  }
+
+  /* Troca os tokens no <html>. Todo o CSS já lê esses tokens; só os desenhos em
+     Canvas precisam ser refeitos, porque leram as cores uma vez ao iniciar. */
+  function applyTheme(t, redraw) {
+    theme = (t === 'dark') ? 'dark' : 'light';
+    var root = document.documentElement;
+    if (theme === 'dark') root.setAttribute('data-theme', 'dark');
+    else root.removeAttribute('data-theme');
+    storeTheme(theme);
+
+    var btn = document.getElementById('btn-theme');
+    if (btn) {
+      var dark = theme === 'dark';
+      btn.setAttribute('aria-pressed', dark ? 'true' : 'false');
+      var icon = btn.querySelector('.theme-icon');
+      var label = btn.querySelector('.theme-label');
+      if (icon) icon.textContent = dark ? '◑' : '◐';
+      if (label) label.textContent = dark ? 'Tema claro' : 'Tema escuro';
+    }
+
+    // as cores dos gráficos foram lidas dos tokens uma vez, ao carregar:
+    // relê-las agora é o que faz o Canvas acompanhar a troca de tema
+    if (window.FigCore && window.FigCore.readTheme) window.FigCore.readTheme();
+    if (redraw === false) return;      // no arranque, quem desenha é o init()
+    renderFigures();
+    if (window.LAB && slides[current]) window.LAB.onSlideEnter(slides[current]);
+    var live = document.getElementById('live');
+    if (live) live.textContent = 'Tema ' + (theme === 'dark' ? 'escuro' : 'claro') + ' ativado.';
+  }
+  function toggleTheme() { applyTheme(theme === 'dark' ? 'light' : 'dark'); }
 
   /* -------------------------------------------------------- 3. Navegação */
   function show(i, push) {
@@ -128,7 +189,7 @@
     document.getElementById('progressfill').style.width = (n / slides.length * 100) + '%';
     var mid = slides[current].dataset.memberId || '1';
     var m = MEMBERS[mid] || MEMBERS[1];
-    document.getElementById('member-now').textContent = m.nome + ' · ' + m.janela;
+    document.getElementById('member-now').textContent = quem(m) + ' · ' + m.janela;
     document.getElementById('btn-prev').disabled = current === 0;
     document.getElementById('btn-next').disabled = current === slides.length - 1;
     document.getElementById('live').textContent = 'Slide ' + n + ' de ' + slides.length + ': ' + title(slides[current]);
@@ -136,6 +197,7 @@
     fillNotes();
     markOverview();
     if (push !== false) history.replaceState(null, '', '#slide-' + String(n).padStart(2, '0'));
+    resetMicroSteps(slides[current]);
     var cv = slides[current].querySelector('canvas[data-viz]');
     if (cv && cv._render) cv._render();
     if (window.LAB) window.LAB.onSlideEnter(slides[current]);
@@ -153,7 +215,7 @@
     var mid = sl.dataset.memberId || '1';
     var m = MEMBERS[mid] || MEMBERS[1];
     document.getElementById('np-head').textContent =
-      'Slide ' + (current + 1) + ' · ' + m.nome + ' · ' + (sl.dataset.time || '');
+      'Slide ' + (current + 1) + ' · ' + quem(m) + ' · ' + (sl.dataset.time || '');
     document.getElementById('np-title').textContent = title(sl);
     document.getElementById('notes-body').innerHTML = src ? src.innerHTML : '<p>Sem notas.</p>';
     var nb = document.getElementById('notes-body');
@@ -185,7 +247,7 @@
       b.innerHTML = '<span class="n">' + String(i + 1).padStart(2, '0') +
         ' <span style="opacity:0.75;font-size:9px">[' + (isAprof ? 'APROF' : 'NÚCLEO') + ']</span></span>' +
         '<span class="t">' + title(sl) + '</span>' +
-        '<span class="w">' + m.nome + ' · ' + (sl.dataset.time || '') + '</span>';
+        '<span class="w">' + quem(m) + ' · ' + (sl.dataset.time || '') + '</span>';
       b.addEventListener('click', function () { show(i); overlay('overview', false); });
       grid.appendChild(b);
     });
@@ -247,6 +309,7 @@
       case 'o': case 'O': overlay('overview'); break;
       case 'g': case 'G': overlay('glossary'); break;
       case 'f': case 'F': fullscreen(); break;
+      case 't': case 'T': toggleTheme(); break;
       case 'c': case 'C': document.body.classList.toggle('chrome-hidden'); break;
       case '?': case 'h': case 'H': overlay('help'); break;
       case 'Escape':
@@ -402,6 +465,14 @@
     document.body.classList.add('no-katex');
     if (mathDegraded) return;
     mathDegraded = true;
+    /* Onde existe uma transcrição .plain escrita à mão, ela substitui o bloco
+       .tex correspondente; onde não existe, o próprio LaTeX é convertido em
+       texto legível por degradeIn — nunca se esconde conteúdo sem reposição. */
+    document.querySelectorAll('.plain').forEach(function (pl) {
+      pl.style.display = 'block';
+      var prev = pl.previousElementSibling;
+      if (prev && prev.classList.contains('tex')) prev.style.display = 'none';
+    });
     var roots = [document.getElementById('stage')];
     document.querySelectorAll('.overlay').forEach(function (o) { roots.push(o); });
     roots.forEach(function (root) { degradeIn(root); });
@@ -438,6 +509,7 @@
 
   /* ------------------------------------- 8. Figuras calculadas no navegador */
   function renderFigures() {
+    if (window.FigCore && window.FigCore.readTheme) window.FigCore.readTheme();
     var list = document.querySelectorAll('canvas[data-viz]');
     for (var i = 0; i < list.length; i++) {
       var cv = list[i], name = cv.dataset.viz;
@@ -528,8 +600,9 @@
       if (tb2) {
         tb2.innerHTML = cov._stats.fits.map(function (f) {
           var win = f.type === cov._stats.best;
-          return '<tr><td class="rowlab">' + f.type + '</td><td>' + f.p + '</td><td>' +
-            f.ll.toFixed(1) + '</td><td' + (win ? ' class="one"' : '') + '>' + f.bic.toFixed(0) + '</td></tr>';
+          return '<tr' + (win ? ' class="row-best"' : '') + '><td class="rowlab">' + f.type + '</td><td>' + f.p + '</td><td>' +
+            f.ll.toFixed(1) + '</td><td' + (win ? ' class="one"' : '') + '>' + f.bic.toFixed(0) +
+            (win ? ' <span class="best-tag">menor BIC</span>' : '') + '</td></tr>';
         }).join('');
       }
       var bn = q('[data-out="cov-best"]');
@@ -565,6 +638,8 @@
     stage = document.getElementById('stage');
     wrap = document.getElementById('stage-wrap');
     slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+    // o tema escolhido na sessão anterior vale desde o primeiro quadro
+    applyTheme(readStoredTheme() || 'light', false);
     decorate();
     buildOverview();
     wireTabs();
@@ -579,6 +654,8 @@
     if (btnGlossary) btnGlossary.addEventListener('click', function () { overlay('glossary'); });
     document.getElementById('btn-help').addEventListener('click', function () { overlay('help'); });
     document.getElementById('btn-full').addEventListener('click', fullscreen);
+    var btnTheme = document.getElementById('btn-theme');
+    if (btnTheme) btnTheme.addEventListener('click', toggleTheme);
     document.querySelectorAll('.ov-close').forEach(function (b) {
       b.addEventListener('click', function () { overlay(b.dataset.close, false); });
     });

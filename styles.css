@@ -7,45 +7,126 @@
    1. TOKENS DE DESIGN
    -------------------------------------------------------------------------- */
 :root {
+  /* Base clara — papel quente, alto contraste para projetor */
+  --bg:          #FFFFFF;
+  --bg-deep:     #E7E3DA;
+  --surface:     #F7F5F0;
+  --surface-2:   #EEEAE1;
+
+  /* Traços e divisórias */
+  --line:        rgba(28, 25, 23, 0.14);
+  --line-strong: rgba(28, 25, 23, 0.30);
+
+  /* Tipografia */
+  --fg:          #1B1917;
+  --fg-muted:    #45403B;
+  --fg-dim:      #756E68;
+
+  /* Cor de destaque única (conceitos, fórmulas, ênfase) */
+  --accent:      #B4530A;
+  --accent-soft: rgba(180, 83, 10, 0.10);
+  --accent-line: rgba(180, 83, 10, 0.45);
+  --accent-ink:  #FFFFFF;   /* texto sobre preenchimento de destaque */
+  --accent-hover:#96450A;
+
+  /* Marcadores de bloco (uso funcional: identificar a seção) */
+  --m1: #B4530A;   /* Bloco 1 */
+  --m2: #0C7C7A;   /* Bloco 2 */
+  --m3: #BC2A53;   /* Bloco 3 */
+  --m4: #3B4CA6;   /* Bloco 4 */
+
+  /* Série categórica exclusiva de visualização de dados */
+  --d1: #B4530A;
+  --d2: #0C7C7A;
+  --d3: #BC2A53;
+  --d4: #3B4CA6;
+
+  --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  --gap: 24px;
+  --pad-x: 60px;
+  --pad-y: 38px;
+
+  /* Componentes RGB, para traços e véus com opacidade variável */
+  --ink-rgb:    28, 25, 23;    /* a cor da tinta sobre o papel */
+  --accent-rgb: 180, 83, 10;
+  --m2-rgb:     12, 124, 122;
+  --m3-rgb:     188, 42, 83;
+  --m4-rgb:     59, 76, 166;
+  --chrome-rgb: 231, 227, 218; /* barra inferior e recortes sobre ela */
+
+  /* Superfícies derivadas */
+  --panel:      #FFFFFF;       /* caixas internas dos laboratórios */
+  --code-bg:    #FBF9F5;
+  --notes-bg:   #FBFAF7;
+  --warn-bg:    #FDF3E3;
+  --warn-fg:    #7A3B06;
+  --cover-glow: rgba(180, 83, 10, 0.09);
+  --stage-shadow: 0 1px 3px rgba(28,25,23,0.10), 0 12px 40px rgba(28,25,23,0.13);
+
+  /* Realce de sintaxe do Python */
+  --c-cm: #6B7F6B;   /* comentário */
+  --c-kw: #A32B54;   /* palavra-chave */
+  --c-st: #3F7A46;   /* string */
+  --c-nu: #3B4CA6;   /* número */
+  --c-pa: #0C6E6C;   /* parâmetro nomeado */
+}
+
+/* --------------------------------------------------------------------------
+   1b. TEMA ESCURO (alternado pelo botão "Tema" ou pela tecla T)
+   Só os tokens mudam: nenhuma regra abaixo precisa saber qual tema está ativo.
+   -------------------------------------------------------------------------- */
+html[data-theme="dark"] {
   /* Base grafite-vinho */
   --bg:          #131013;
   --bg-deep:     #0D0A0D;
   --surface:     #1B161B;
   --surface-2:   #221B22;
 
-  /* Traços e divisórias */
   --line:        rgba(238, 232, 229, 0.11);
   --line-strong: rgba(238, 232, 229, 0.24);
 
-  /* Tipografia */
   --fg:          #EFE9E6;
   --fg-muted:    #A99FA2;
   --fg-dim:      #7B7276;
 
-  /* Cor de destaque única (conceitos, fórmulas, ênfase) */
   --accent:      #E9B44C;
   --accent-soft: rgba(233, 180, 76, 0.14);
   --accent-line: rgba(233, 180, 76, 0.42);
+  --accent-ink:  #131013;
+  --accent-hover:#F2C570;
 
-  /* Marcadores de integrante (uso funcional: identificar o responsável) */
-  --m0: #B388FF;   /* Preparação / Nivelamento */
-  --m1: #E9B44C;   /* Henrique Matheus */
-  --m2: #5BC0BE;   /* Lucas Nogueira   */
-  --m3: #D96C82;   /* Antonio Carlos   */
-  --m4: #9BA9E8;   /* Bianca Visco     */
+  --m1: #E9B44C;
+  --m2: #5BC0BE;
+  --m3: #D96C82;
+  --m4: #9BA9E8;
 
-  /* Série categórica exclusiva de visualização de dados */
   --d1: #E9B44C;
   --d2: #5BC0BE;
   --d3: #D96C82;
   --d4: #9BA9E8;
 
-  --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-  --sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --ink-rgb:    238, 232, 229;
+  --accent-rgb: 233, 180, 76;
+  --m2-rgb:     91, 192, 190;
+  --m3-rgb:     217, 108, 130;
+  --m4-rgb:     155, 169, 232;
+  --chrome-rgb: 9, 7, 9;
 
-  --gap: 24px;
-  --pad-x: 64px;
-  --pad-y: 44px;
+  --panel:      #0D0A0D;
+  --code-bg:    #0D0A0D;
+  --notes-bg:   #0F0C0F;
+  --warn-bg:    #3A2A12;
+  --warn-fg:    #F0D9A8;
+  --cover-glow: rgba(122, 26, 52, 0.30);
+  --stage-shadow: 0 0 0 1px rgba(238, 232, 229, 0.07);
+
+  --c-cm: #6E7F6E;
+  --c-kw: #D96C82;
+  --c-st: #8FBF8F;
+  --c-nu: #9BA9E8;
+  --c-pa: #7FB4B4;
 }
 
 * { box-sizing: border-box; }
@@ -75,7 +156,8 @@ html, body {
   transform-origin: center center;
   background: var(--bg);
   overflow: hidden;
-  box-shadow: 0 0 0 1px rgba(238, 232, 229, 0.07);
+  box-shadow: var(--stage-shadow);
+  border-radius: 4px;
 }
 
 .slide {
@@ -106,7 +188,6 @@ html, body {
   background: var(--m1);
   flex: 0 0 auto;
 }
-[data-member-id="0"] .member-bar { background: var(--m0); }
 [data-member-id="1"] .member-bar { background: var(--m1); }
 [data-member-id="2"] .member-bar { background: var(--m2); }
 [data-member-id="3"] .member-bar { background: var(--m3); }
@@ -136,8 +217,11 @@ html, body {
   display: grid;
   grid-template-columns: repeat(12, 1fr);
   gap: var(--gap);
-  align-content: start;
+  /* "safe center" centraliza o conteúdo curto sem cortar o topo do conteúdo
+     alto — evita a faixa vazia sob os slides de pouca altura. */
+  align-content: safe center;
 }
+.s-body.top { align-content: start; }
 .s-body.middle { align-content: center; }
 
 .s-foot {
@@ -170,6 +254,12 @@ html, body {
 p { margin: 0; font-size: 16px; line-height: 1.5; color: var(--fg-muted); }
 strong { color: var(--fg); font-weight: 600; }
 code, .mono { font-family: var(--mono); }
+code {
+  font-size: 0.92em;
+  background: var(--surface-2); color: var(--fg);
+  padding: 1px 5px; border-radius: 3px;
+}
+.n-title code, .s-title code { background: none; padding: 0; }
 
 .lead { font-size: 17.5px; line-height: 1.5; color: var(--fg); }
 
@@ -210,7 +300,7 @@ ul.sub > li::before { content: "·"; position: absolute; left: 2px; color: var(-
    -------------------------------------------------------------------------- */
 .formula {
   position: relative;
-  background: linear-gradient(90deg, var(--accent-soft), rgba(233, 180, 76, 0.03));
+  background: linear-gradient(90deg, var(--accent-soft), rgba(var(--accent-rgb), 0.025));
   border-left: 2px solid var(--accent);
   padding: 13px 18px 13px 20px;
   overflow-x: auto; overflow-y: hidden;
@@ -231,15 +321,23 @@ ul.sub > li::before { content: "·"; position: absolute; left: 2px; color: var(-
   color: var(--accent);
   margin-bottom: 6px; display: block;
 }
+/* Fórmulas lado a lado numa linha só */
+.formula-row {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px; align-items: stretch;
+}
+.formula-row > .formula { display: flex; flex-direction: column; justify-content: center; }
+.formula-row > .note-box { align-self: center; }
+
 /* Glossário de símbolos junto à fórmula */
 .symbols { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 8px; }
 .symbols div { font-size: 13px; color: var(--fg-dim); line-height: 1.35; }
 .symbols .katex { font-size: 0.95em; color: var(--fg-muted); }
 
-/* Fallback quando o KaTeX não carrega (sem rede) */
-body.no-katex .formula .tex { display: none; }
-body.no-katex .formula .plain { display: block; }
-.formula .plain {
+/* Fallback quando o KaTeX não carrega (sem rede).
+   A troca .tex ↔ .plain é feita por script.js (degradeMath), que só esconde
+   um bloco .tex quando existe de fato um .plain irmão para substituí-lo. */
+.plain {
   display: none;
   font-family: var(--mono); font-size: 13.5px; line-height: 1.6;
   color: var(--fg); white-space: pre-wrap;
@@ -247,7 +345,7 @@ body.no-katex .formula .plain { display: block; }
 #katex-warning {
   display: none;
   position: fixed; left: 0; right: 0; bottom: 38px; z-index: 40;
-  background: #3A2A12; color: #F0D9A8;
+  background: var(--warn-bg); color: var(--warn-fg);
   font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em;
   padding: 7px 16px; text-align: center;
   border-top: 1px solid var(--accent-line);
@@ -266,9 +364,9 @@ body.no-katex #katex-warning { display: block; }
   color: var(--fg-dim);
   white-space: nowrap;
 }
-.tag.intuicao { border-color: rgba(233,180,76,0.45); color: var(--accent); }
-.tag.expansao { border-color: rgba(155,169,232,0.45); color: var(--m4); }
-.tag.aviso    { border-color: rgba(217,108,130,0.5);  color: var(--m3); }
+.tag.intuicao { border-color: var(--accent-line); color: var(--accent); background: var(--accent-soft); }
+.tag.expansao { border-color: rgba(var(--m4-rgb),0.45); color: var(--m4); background: rgba(var(--m4-rgb),0.08); }
+.tag.aviso    { border-color: rgba(var(--m3-rgb),0.5);  color: var(--m3); background: rgba(var(--m3-rgb),0.07); }
 
 .note-box {
   border-left: 2px solid var(--line-strong);
@@ -293,11 +391,46 @@ figcaption b { color: var(--fg-muted); font-weight: 600; }
   color: var(--fg-dim); opacity: 0.85;
 }
 
+/* Modelo gráfico em notação de placa (slides 10 e 12).
+   As cores saem dos tokens, e não de literais, para o diagrama acompanhar os
+   dois temas. Convenção padrão de PGM: nó sombreado = observado. */
+.pgm { display: block; width: 100%; height: auto; }
+.pgm text { font-family: var(--mono); }
+.pgm .pl        { fill: rgba(var(--ink-rgb), 0.03); stroke: var(--line-strong); stroke-dasharray: 5 4; }
+.pgm .pl-n      { fill: var(--fg-muted); font-size: 15px; font-weight: 600; }
+.pgm .nd-lat    { fill: var(--bg); stroke: var(--accent); stroke-width: 1.8; }
+.pgm .nd-obs    { fill: rgba(var(--ink-rgb), 0.17); stroke: var(--fg-muted); stroke-width: 1.6; }
+.pgm .t-lat     { fill: var(--accent); font-size: 17px; }
+.pgm .t-obs     { fill: var(--fg); font-size: 17px; }
+.pgm .t-role    { fill: var(--fg-dim); font-family: var(--sans); font-size: 10.5px; }
+.pgm .par       { fill: none; stroke: var(--line-strong); }
+.pgm .t-par     { fill: var(--fg-muted); font-size: 14px; }
+.pgm .edge      { fill: none; stroke: var(--fg-dim); stroke-width: 1.5; }
+.pgm .head      { fill: var(--fg-dim); }
+.pgm .t-note    { fill: var(--fg-dim); font-size: 10px; }
+.pgm .sub       { font-size: 11px; }
+
+/* Variante do slide 12, onde a própria placa é o assunto da explicação. */
+.pgm.pgm-focus .pl     { stroke: var(--accent); stroke-width: 1.8; fill: var(--accent-soft); }
+.pgm.pgm-focus .pl-n   { fill: var(--accent); font-size: 18px; }
+.pgm .t-call           { fill: var(--accent); font-size: 10px; }
+.pgm .call             { fill: none; stroke: var(--accent-line); stroke-width: 1.2; stroke-dasharray: 3 3; }
+
 .legend { display: flex; flex-wrap: wrap; gap: 5px 16px; font-size: 12px; color: var(--fg-muted); }
 .legend span { display: inline-flex; align-items: center; gap: 6px; }
 .legend i { width: 10px; height: 10px; display: inline-block; flex: 0 0 auto; }
 .legend i.line { height: 2px; width: 16px; }
 .legend i.ring { background: none; border: 1.5px solid currentColor; border-radius: 50%; }
+/* Amostras da legenda do laboratório de anomalias: seguem os mesmos tons que
+   o campo desenha no canvas, em qualquer um dos dois temas. */
+.legend i.sw-normal {
+  background: color-mix(in srgb, var(--accent) 40%, var(--surface));
+  border: 1px solid var(--line);
+}
+.legend i.sw-anom {
+  background: color-mix(in srgb, var(--m3) 10%, var(--surface));
+  border: 1px solid var(--line-strong);
+}
 
 /* --------------------------------------------------------------------------
    8. DIAGRAMAS EM CSS
@@ -317,6 +450,50 @@ figcaption b { color: var(--fg-muted); font-weight: 600; }
 .node.accent { border-color: var(--accent-line); background: var(--accent-soft); }
 .node.accent .n-title { color: var(--accent); }
 .node.dim { background: transparent; border-style: dashed; }
+.node.thanks {
+  text-align: center; padding: 16px 18px;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.node.thanks b { font-size: 15px; color: var(--accent); letter-spacing: 0.01em; }
+.node.thanks span { font-family: var(--mono); font-size: 11px; color: var(--fg-dim); }
+/* Matemática dentro de rótulos em caixa-alta: manter a grafia original dos
+   símbolos (senão `r_{nk}` aparece renderizado como `R_{NK}`). Vale para o
+   KaTeX e para o texto simples do modo sem rede. */
+.katex, .tex-fallback { text-transform: none; }
+
+/* Faixa compacta de dois enunciados lado a lado */
+.strip { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.strip-item {
+  border: 1px solid var(--line); border-left: 3px solid var(--line-strong);
+  border-radius: 3px; background: var(--surface);
+  padding: 10px 14px 11px;
+  font-size: 13px; line-height: 1.5; color: var(--fg-muted);
+}
+.strip-item.accent { border-left-color: var(--accent); background: var(--accent-soft); }
+.strip-lab {
+  display: block; font-family: var(--mono);
+  font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--fg-dim); margin-bottom: 4px;
+}
+.strip-item.accent .strip-lab { color: var(--accent); }
+
+/* Fluxo de passos numerados (algoritmo de Lloyd, ciclo do EM) */
+.steps-flow .node { border-radius: 3px; }
+.steps-flow .node .n-title { color: var(--accent); }
+.loop-wrap {
+  position: relative;
+  display: flex; flex-direction: column;
+  border: 1px dashed var(--accent-line);
+  border-radius: 4px;
+  background: var(--accent-soft);
+  padding: 12px 12px 12px 14px;
+}
+.loop-wrap .node { background: var(--bg); }
+.loop-tag {
+  position: absolute; top: -8px; left: 12px;
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--accent); background: var(--bg); padding: 0 6px;
+}
 
 .arrow-down, .arrow-right {
   display: flex; align-items: center; justify-content: center;
@@ -327,6 +504,36 @@ figcaption b { color: var(--fg-muted); font-weight: 600; }
 
 .flow-row { display: flex; align-items: stretch; gap: 0; }
 .flow-row > .node { flex: 1 1 0; }
+
+/* Árvore genealógica: um tronco comum que se ramifica em quatro famílias */
+.tree { display: flex; flex-direction: column; }
+.tree-root {
+  align-self: center; max-width: 640px; text-align: center;
+  border: 1px solid var(--accent-line); background: var(--accent-soft);
+  border-radius: 4px; padding: 12px 22px 14px;
+}
+.tree-root-lab {
+  display: block; font-family: var(--mono);
+  font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 2px;
+}
+.tree-root .katex { font-size: 1em; }
+.tree-branch { position: relative; height: 34px; }
+.tree-stem {
+  position: absolute; left: 50%; top: 0; width: 1px; height: 16px;
+  background: var(--line-strong);
+}
+.tree-bar {
+  position: absolute; left: 12.5%; right: 12.5%; top: 16px; height: 1px;
+  background: var(--line-strong);
+}
+.tree-drop {
+  position: absolute; top: 16px; width: 1px; height: 18px;
+  background: var(--line-strong);
+  left: calc(12.5% + var(--i) * 25%);
+}
+.tree-leaves { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.tree-leaves .node p { font-size: 12px; color: var(--fg-muted); line-height: 1.5; }
 
 /* Ciclo de duas etapas (Lloyd / EM) */
 .cycle { display: grid; grid-template-columns: 1fr 44px 1fr; align-items: center; gap: 0; }
@@ -357,6 +564,21 @@ table.binmat th, table.binmat td {
 table.binmat th { color: var(--fg-dim); font-weight: 500; font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase; }
 table.binmat td.one { color: var(--accent); background: var(--accent-soft); }
 table.binmat td.rowlab { text-align: left; color: var(--fg); font-family: var(--sans); font-size: 12.5px; }
+table.binmat tr.row-best td { background: rgba(var(--accent-rgb), 0.05); }
+table.binmat .best-tag {
+  font-family: var(--mono); font-size: 8.5px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--accent-ink); background: var(--accent);
+  padding: 1px 5px; border-radius: 2px; margin-left: 6px; vertical-align: 1px;
+}
+.th-hint { font-family: var(--sans); text-transform: none; letter-spacing: 0; color: var(--fg-dim); font-size: 10.5px; }
+.table-note {
+  font-size: 12px; line-height: 1.45; color: var(--fg-dim); margin-top: 9px;
+}
+.table-note b { color: var(--fg); }
+.swatch-best {
+  display: inline-block; width: 10px; height: 10px; margin-right: 5px; vertical-align: -1px;
+  background: var(--accent-soft); border: 1px solid var(--accent-line); border-radius: 2px;
+}
 
 /* --------------------------------------------------------------------------
    9. TABELA COMPARATIVA
@@ -379,7 +601,7 @@ table.cmp tbody th {
   color: var(--fg-muted); width: 19%;
 }
 table.cmp td { color: var(--fg-dim); }
-table.cmp tbody tr:hover td, table.cmp tbody tr:hover th { background: rgba(238,232,229,0.028); }
+table.cmp tbody tr:hover td, table.cmp tbody tr:hover th { background: rgba(var(--ink-rgb),0.035); }
 table.cmp col.k { }
 table.cmp .th-mark { display: inline-block; width: 8px; height: 8px; margin-right: 7px; vertical-align: 1px; }
 table.cmp .katex { font-size: 0.94em; }
@@ -388,20 +610,45 @@ table.cmp .katex { font-size: 0.94em; }
    10. CÓDIGO PYTHON
    -------------------------------------------------------------------------- */
 .codeblock {
-  background: var(--bg-deep);
+  background: var(--code-bg);
   border: 1px solid var(--line);
   border-left: 2px solid var(--accent-line);
-  padding: 12px 13px;
+  border-radius: 3px;
+  padding: 12px 14px;
   overflow: auto;
   min-height: 0;
 }
 .codeblock pre { margin: 0; font-family: var(--mono); font-size: 11.4px; line-height: 1.52; color: var(--fg-muted); white-space: pre; }
-.codeblock .cm { color: #6E7F6E; font-style: italic; }   /* comentário */
-.codeblock .kw { color: #D96C82; }                        /* palavra-chave */
+/* Listagens longas: mesma legibilidade, cabendo na altura do slide. */
+.codeblock.dense pre { font-size: 10.4px; line-height: 1.45; }
+.codeblock .cm { color: var(--c-cm); font-style: italic; }
+.codeblock .kw { color: var(--c-kw); }
 .codeblock .fn { color: var(--accent); }                  /* função/classe */
-.codeblock .st { color: #8FBF8F; }                        /* string */
-.codeblock .nu { color: #9BA9E8; }                        /* número */
-.codeblock .pa { color: #7FB4B4; }                        /* parâmetro nomeado */
+.codeblock .st { color: var(--c-st); }
+.codeblock .nu { color: var(--c-nu); }
+.codeblock .pa { color: var(--c-pa); }
+
+/* Saída de console: o resultado real da execução do código ao lado */
+.console {
+  background: #241F1C;
+  border: 1px solid #241F1C;
+  border-radius: 3px;
+  overflow: auto; min-height: 0;
+}
+.console-bar {
+  font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: #B8AFA6; background: rgba(255,255,255,0.06);
+  padding: 6px 12px; border-bottom: 1px solid rgba(255,255,255,0.10);
+  position: sticky; top: 0;
+}
+.console pre {
+  margin: 0; padding: 11px 12px 12px;
+  font-family: var(--mono); font-size: 11px; line-height: 1.55;
+  color: #E6DFD8; white-space: pre;
+}
+.console .pr { color: #7FB8A6; }        /* prompt >>> */
+.console .ou { color: #F0B860; }        /* valor retornado */
+.console .cm { color: #8D8079; font-style: italic; }
 
 /* Abas dentro do slide */
 .tabs { display: flex; gap: 0; border-bottom: 1px solid var(--line); margin-bottom: 12px; }
@@ -425,40 +672,50 @@ table.cmp .katex { font-size: 0.94em; }
   grid-template-columns: 7fr 5fr;
   grid-template-rows: 1fr auto;      /* conteúdo ocupa a altura; rodapé no pé */
   background:
-    radial-gradient(120% 90% at 0% 100%, rgba(122, 26, 52, 0.30), transparent 62%),
+    radial-gradient(120% 90% at 0% 100%, var(--cover-glow), transparent 62%),
     var(--bg);
 }
-.cover-main { padding: 52px 44px 30px 64px; display: flex; flex-direction: column; }
+.cover-main { padding: 56px 44px 26px 60px; display: flex; flex-direction: column; }
 .cover-side {
   border-left: 1px solid var(--line);
-  padding: 58px 56px 34px 40px;
+  padding: 56px 52px 30px 40px;
   display: flex; flex-direction: column; justify-content: space-between;
-  background: rgba(0,0,0,0.16);
+  background: var(--surface);
 }
 .cover h1 {
   font-family: var(--mono); font-weight: 600;
-  font-size: 38px; line-height: 1.15; letter-spacing: -0.02em;
-  margin: 0 0 16px; color: var(--fg); max-width: 21ch;
+  font-size: 40px; line-height: 1.14; letter-spacing: -0.02em;
+  margin: 0 0 14px; color: var(--fg); max-width: 21ch;
 }
 .cover h1 .nb { white-space: nowrap; }   /* impede quebrar "K-Means" ao meio */
 .cover h1 .hl { color: var(--accent); }
-.cover .sub { font-size: 16.5px; line-height: 1.45; color: var(--fg-muted); max-width: 46ch; }
-.cover .rule { height: 2px; width: 74px; background: var(--accent); margin: 22px 0; }
+.cover .sub { font-size: 16px; line-height: 1.5; color: var(--fg-muted); max-width: 48ch; }
+.cover .rule { height: 3px; width: 74px; background: var(--accent); margin: 20px 0; border-radius: 2px; }
 .cover .meta { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--fg-dim); line-height: 1.9; }
 
-.cover .s-foot { grid-column: 1 / -1; margin: 0 64px 30px; }
+.cover .s-foot { grid-column: 1 / -1; margin: 0 60px 26px; }
 .team { display: flex; flex-direction: column; gap: 0; }
-.team li { list-style: none; display: flex; align-items: baseline; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+.team li { list-style: none; display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--line); }
 .team li:first-child { border-top: 1px solid var(--line); }
-.team .bar { width: 3px; height: 26px; flex: 0 0 auto; align-self: center; }
-.team .nm { font-size: 14.5px; color: var(--fg); font-weight: 600; flex: 1 1 auto; }
-.team .rl { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; color: var(--fg-dim); text-align: right; }
-.team .tm { font-family: var(--mono); font-size: 10.5px; color: var(--fg-muted); width: 82px; text-align: right; flex: 0 0 auto; }
+.team .bar { width: 3px; align-self: stretch; min-height: 30px; flex: 0 0 auto; border-radius: 2px; }
+.team .nm { font-size: 14px; color: var(--fg); font-weight: 600; flex: 1 1 auto; line-height: 1.3; }
+.team .nm em {
+  display: block; font-style: normal; font-weight: 400;
+  font-size: 11.5px; color: var(--fg-dim); margin-top: 2px;
+}
+.team .tm { font-family: var(--mono); font-size: 11px; color: var(--fg-muted); width: 46px; text-align: right; flex: 0 0 auto; }
 
-/* Mapa da apresentação na capa */
-.cover-map { display: flex; flex-direction: column; gap: 7px; margin-top: 4px; }
-.cover-map .mrow { display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 11px; color: var(--fg-dim); }
-.cover-map .mrow .dot { width: 7px; height: 7px; flex: 0 0 auto; }
+/* Números-resumo da capa */
+.cover-stats { display: flex; gap: 30px; margin-top: 4px; }
+.cstat { display: flex; align-items: baseline; gap: 8px; }
+.cstat b {
+  font-family: var(--mono); font-size: 27px; font-weight: 600;
+  color: var(--accent); line-height: 1;
+}
+.cstat span {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--fg-dim); line-height: 1.45;
+}
 
 /* --------------------------------------------------------------------------
    12. CROMO: BARRA DE NAVEGAÇÃO, PROGRESSO
@@ -467,15 +724,15 @@ table.cmp .katex { font-size: 0.94em; }
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
   display: flex; align-items: center; gap: 14px;
   padding: 8px 16px;
-  background: linear-gradient(to top, rgba(9,7,9,0.94), rgba(9,7,9,0.0));
+  background: linear-gradient(to top, rgba(var(--chrome-rgb),0.97) 55%, rgba(var(--chrome-rgb),0));
   font-family: var(--mono); font-size: 11px; color: var(--fg-dim);
   transition: opacity .25s ease;
 }
 body.chrome-hidden #chrome { opacity: 0; pointer-events: none; }
 
-#progressbar { position: relative; flex: 1 1 auto; height: 3px; background: rgba(238,232,229,0.12); }
+#progressbar { position: relative; flex: 1 1 auto; height: 3px; background: rgba(var(--ink-rgb),0.14); border-radius: 2px; }
 #progressfill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--accent); width: 0; transition: width .18s ease; }
-#progressbar .seg { position: absolute; top: -3px; bottom: -3px; width: 1px; background: rgba(9,7,9,0.9); }
+#progressbar .seg { position: absolute; top: -3px; bottom: -3px; width: 1px; background: rgba(var(--chrome-rgb),0.95); }
 
 .btn {
   appearance: none; background: transparent; color: var(--fg-muted);
@@ -483,10 +740,20 @@ body.chrome-hidden #chrome { opacity: 0; pointer-events: none; }
   font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em;
   cursor: pointer; white-space: nowrap;
 }
-.btn:hover { border-color: var(--accent-line); color: var(--accent); }
-.btn:disabled { opacity: 0.32; cursor: not-allowed; }
+.btn:hover { border-color: var(--accent-line); color: var(--accent); background: var(--accent-soft); }
+.btn:disabled { opacity: 0.38; cursor: not-allowed; }
+.btn:disabled:hover { border-color: var(--line-strong); color: var(--fg-muted); background: transparent; }
+.btn.btn-primary {
+  background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600;
+}
+.btn.btn-primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); color: var(--accent-ink); }
+.btn.btn-primary:disabled:hover { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
 .btn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Botão de alternância de tema */
+#btn-theme .theme-icon { font-size: 12px; line-height: 1; vertical-align: -1px; }
+#btn-theme .theme-label { letter-spacing: 0.06em; }
 
 #counter { min-width: 118px; color: var(--fg-muted); letter-spacing: 0.06em; }
 #counter b { color: var(--accent); font-weight: 600; }
@@ -497,7 +764,8 @@ body.chrome-hidden #chrome { opacity: 0; pointer-events: none; }
    -------------------------------------------------------------------------- */
 #notes-panel {
   position: fixed; right: 0; top: 0; bottom: 0; width: 420px; z-index: 35;
-  background: #0F0C0F; border-left: 1px solid var(--line-strong);
+  background: var(--notes-bg); border-left: 1px solid var(--line-strong);
+  box-shadow: -8px 0 30px rgba(var(--ink-rgb),0.10);
   padding: 22px 24px 60px; overflow-y: auto;
   transform: translateX(100%); transition: transform .22s ease;
 }
@@ -526,7 +794,7 @@ body.notes-open #notes-panel { transform: translateX(0); }
    -------------------------------------------------------------------------- */
 .overlay {
   position: fixed; inset: 0; z-index: 50;
-  background: rgba(8,6,8,0.97);
+  background: var(--surface);
   display: none; flex-direction: column;
   padding: 30px 40px;
   overflow-y: auto;
@@ -551,7 +819,6 @@ body.notes-open #notes-panel { transform: translateX(0); }
 .ov-card .n { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; color: var(--fg-dim); }
 .ov-card .t { font-size: 12.5px; line-height: 1.32; color: var(--fg); }
 .ov-card .w { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.06em; color: var(--fg-dim); margin-top: auto; }
-.ov-card[data-member-id="0"] { border-top-color: var(--m0); }
 .ov-card[data-member-id="1"] { border-top-color: var(--m1); }
 .ov-card[data-member-id="2"] { border-top-color: var(--m2); }
 .ov-card[data-member-id="3"] { border-top-color: var(--m3); }
@@ -611,73 +878,53 @@ body.notes-open #notes-panel { transform: translateX(0); }
   padding: 2px 6px; border-radius: 2px; margin-left: auto;
 }
 .badge-nucleo {
-  background: rgba(233, 180, 76, 0.12); color: var(--accent); border: 1px solid var(--accent-line);
+  background: var(--accent-soft); color: var(--accent); border: 1px solid var(--accent-line);
 }
 .badge-aprof {
-  background: rgba(155, 169, 232, 0.12); color: var(--m4); border: 1px solid rgba(155, 169, 232, 0.35);
+  background: rgba(var(--m4-rgb), 0.10); color: var(--m4); border: 1px solid rgba(var(--m4-rgb), 0.35);
 }
 
 /* --------------------------------------------------------------------------
    17. MICRO-PASSOS REVELÁVEIS
    -------------------------------------------------------------------------- */
 .micro-steps {
-  display: flex; flex-direction: column; gap: 10px; margin: 8px 0;
+  display: flex; flex-direction: column; gap: 11px; margin: 4px 0;
 }
 .micro-step {
-  display: flex; gap: 12px; align-items: flex-start;
-  padding: 8px 12px; background: var(--surface);
-  border: 1px solid var(--line); border-left: 2px solid var(--accent-line);
-  transition: all 0.25s ease;
+  display: flex; gap: 14px; align-items: flex-start;
+  padding: 11px 16px; background: var(--surface);
+  border: 1px solid var(--line); border-left: 3px solid var(--accent);
+  border-radius: 3px;
+  transition: opacity .28s ease, filter .28s ease, transform .28s ease, background .28s ease;
 }
 .micro-step.is-locked {
-  opacity: 0.20; filter: blur(1.5px); pointer-events: none; transform: translateY(2px);
+  opacity: 0.28; filter: blur(2.5px); pointer-events: none;
+  transform: translateY(3px);
+  border-left-color: var(--line-strong);
+  background: transparent;
 }
 .micro-step .step-num {
-  font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--accent);
-  flex: 0 0 20px;
+  font-family: var(--mono); font-size: 11px; font-weight: 600;
+  color: var(--accent-ink); background: var(--accent);
+  width: 20px; height: 20px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  flex: 0 0 20px; margin-top: 1px;
 }
+.micro-step.is-locked .step-num { background: var(--fg-dim); }
 .micro-step .step-content {
-  font-size: 14px; line-height: 1.45; color: var(--fg-muted); flex: 1 1 auto;
+  font-size: 14.5px; line-height: 1.5; color: var(--fg-muted); flex: 1 1 auto;
 }
+.micro-step .step-content b, .micro-step .step-content strong { color: var(--fg); }
 .step-controls {
-  display: flex; gap: 10px; align-items: center; margin-top: 10px;
+  display: flex; gap: 10px; align-items: center; margin-top: 14px;
+}
+.step-controls .step-count {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--fg-dim); margin-left: 2px;
 }
 
 /* --------------------------------------------------------------------------
-   18. CHECAGEM RÁPIDA (FOOTER DE SÍNTESE)
-   -------------------------------------------------------------------------- */
-.quick-check {
-  border-top: 1px dashed var(--line-strong);
-  margin-top: 12px; padding-top: 10px;
-  display: flex; flex-direction: column; gap: 8px;
-}
-.quick-check-title {
-  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase;
-  color: var(--accent); display: flex; align-items: center; gap: 6px;
-}
-.qc-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
-}
-.qc-card {
-  background: var(--surface); border: 1px solid var(--line); padding: 9px 12px;
-  font-size: 12.5px; line-height: 1.35; display: flex; flex-direction: column; gap: 6px;
-}
-.qc-q { color: var(--fg); font-weight: 500; }
-.qc-ans {
-  font-size: 11.5px; color: var(--accent); line-height: 1.35;
-  background: var(--surface-2); padding: 6px 8px; border-left: 2px solid var(--accent);
-  display: none;
-}
-.qc-ans.is-open { display: block; }
-.qc-btn {
-  appearance: none; background: transparent; border: 1px solid var(--line-strong);
-  color: var(--fg-dim); font-family: var(--mono); font-size: 9.5px; padding: 2px 7px;
-  cursor: pointer; align-self: flex-start; border-radius: 2px;
-}
-.qc-btn:hover { color: var(--accent); border-color: var(--accent-line); }
-
-/* --------------------------------------------------------------------------
-   19. COMPONENTES DE LABORATÓRIO (LABS)
+   18. COMPONENTES DE LABORATÓRIO (LABS)
    -------------------------------------------------------------------------- */
 .lab-grid-2 {
   display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start;
@@ -700,11 +947,16 @@ body.notes-open #notes-panel { transform: translateX(0); }
 .slider-row span {
   flex: 0 0 44px; text-align: right; color: var(--accent); font-weight: 600;
 }
+.check-row {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12.5px; color: var(--fg-muted); cursor: pointer;
+}
+.check-row input[type="checkbox"] { accent-color: var(--accent); width: 15px; height: 15px; cursor: pointer; }
 .lab-btn-row {
   display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
 }
 .lab-stats-box {
-  background: var(--bg-deep); border: 1px solid var(--line);
+  background: var(--panel); border: 1px solid var(--line); border-radius: 3px;
   padding: 10px 12px; font-size: 13px; color: var(--fg-muted);
   display: flex; flex-direction: column; gap: 4px;
 }
@@ -739,7 +991,7 @@ body.notes-open #notes-panel { transform: translateX(0); }
 .dec-sym { font-family: var(--mono); font-size: 32px; color: var(--accent); font-weight: 600; min-height: 44px; display: flex; align-items: center; }
 .dec-sym .katex-display { margin: 0; font-size: 32px; }
 .dec-nome { font-size: 18px; font-weight: 600; color: var(--fg); }
-.dec-box { font-size: 13.5px; line-height: 1.5; color: var(--fg-muted); background: var(--bg-deep); padding: 10px 14px; border-left: 3px solid var(--line-strong); border-radius: 2px; }
+.dec-box { font-size: 13.5px; line-height: 1.5; color: var(--fg-muted); background: var(--panel); padding: 10px 14px; border-left: 3px solid var(--line-strong); border-radius: 2px; }
 .dec-box b { color: var(--fg); font-size: 11px; text-transform: uppercase; font-family: var(--mono); letter-spacing: 0.08em; display: block; margin-bottom: 4px; }
 .dec-box.dec-trad { border-left-color: var(--accent); }
 .dec-box.dec-ex { border-left-color: var(--m2); }
@@ -750,7 +1002,7 @@ body.notes-open #notes-panel { transform: translateX(0); }
   display: flex; align-items: center; gap: 10px; font-size: 12px;
 }
 .prog-bar {
-  flex: 1 1 auto; height: 10px; background: rgba(238,232,229,0.1); border-radius: 2px; overflow: hidden;
+  flex: 1 1 auto; height: 10px; background: rgba(var(--ink-rgb),0.10); border-radius: 2px; overflow: hidden;
 }
 .prog-fill {
   height: 100%; width: 0%; background: var(--accent); transition: width 0.15s ease;
@@ -760,7 +1012,7 @@ body.notes-open #notes-panel { transform: translateX(0); }
 .prog-fill.f3 { background: var(--d3); }
 
 /* --------------------------------------------------------------------------
-   20. GLOSSÁRIO DE CONCEITOS E SÍMBOLOS (#glossary)
+   19. GLOSSÁRIO DE CONCEITOS E SÍMBOLOS (#glossary)
    -------------------------------------------------------------------------- */
 .glossary-grid {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
